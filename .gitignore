@@ -1,0 +1,4 @@
+_old/
+.playwright-mcp/
+.vercel/
+.DS_Store

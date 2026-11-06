@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Join TRAVI</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="style.css">
+<style>
+.join { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: 72px; padding: 40px 0 128px; align-items: start; }
+.join-left { position: sticky; top: calc(var(--header-h) + 40px); }
+.join-left h1 { font-size: 52px; letter-spacing: -0.03em; line-height: 1.08; margin: 14px 0 18px; }
+.next { list-style: none; padding: 0; margin: 36px 0 0; border-top: 1px solid var(--line); }
+.next li { display: grid; grid-template-columns: 40px 1fr; padding: 18px 0; border-bottom: 1px solid var(--line); font-size: 15px; color: var(--muted); line-height: 1.55; }
+.next b { display: block; color: var(--text); font-size: 16px; margin-bottom: 2px; }
+.next .mono { color: var(--accent); font-size: 13px; font-weight: 700; padding-top: 2px; }
+
+.form { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 36px; }
+.form h2 { font-size: 22px; margin: 0 0 4px; }
+.form .hint { color: var(--faint); font-size: 14px; margin: 0 0 28px; }
+.fs { border: 0; padding: 0; margin: 0 0 28px; }
+.fs legend { font-size: 11px; letter-spacing: 0.18em; font-weight: 700; color: var(--faint); margin-bottom: 14px; padding: 0; }
+.row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.field { display: flex; flex-direction: column; gap: 7px; margin-bottom: 14px; }
+.field label { font-size: 14px; font-weight: 600; }
+.field label .opt { color: var(--faint); font-weight: 400; }
+.field input, .field select, .field textarea { font: inherit; font-size: 15px; padding: 12px 14px; border: 1px solid var(--line-2); border-radius: 10px; background: var(--bg); color: var(--text); }
+.field input:focus, .field select:focus, .field textarea:focus { outline: 2px solid var(--accent-soft); border-color: var(--accent); }
+.field textarea { min-height: 110px; resize: vertical; }
+.chips { display: flex; flex-wrap: wrap; gap: 10px; }
+.chip { position: relative; }
+.chip input { position: absolute; opacity: 0; }
+.chip span { display: inline-block; padding: 10px 16px; border: 1px solid var(--line-2); border-radius: 999px; font-size: 14px; cursor: pointer; }
+.chip input:checked + span { background: var(--text); color: #fff; border-color: var(--text); }
+.chip input:focus-visible + span { outline: 2px solid var(--accent); }
+.consent { display: flex; gap: 10px; align-items: flex-start; font-size: 14px; color: var(--muted); line-height: 1.5; margin: 6px 0 24px; }
+.consent input { margin-top: 3px; }
+.submit { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; padding-top: 24px; border-top: 1px solid var(--line); }
+.submit .alt { font-size: 14px; color: var(--muted); }
+.submit .alt a { color: var(--text); font-weight: 600; text-decoration: underline; }
+@media (max-width: 960px) { .join { grid-template-columns: 1fr; gap: 40px; } .join-left { position: static; } .row { grid-template-columns: 1fr; } .form { padding: 24px; } }
+</style>
+</head>
+<body>
+
+<!-- 가입 페이지: 오른쪽 메뉴가 LOG IN, SIGN UP으로 바뀐다 -->
+<header class="topbar">
+  <div class="wrap">
+    <a class="brand" href="index.html">
+      <svg viewBox="0 0 32 32" aria-hidden="true">
+        <defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1aa3d9"/><stop offset=".55" stop-color="#5b4ce0"/><stop offset="1" stop-color="#e0675e"/></linearGradient></defs>
+        <circle cx="16" cy="16" r="12.5" fill="none" stroke="url(#lg)" stroke-width="2.4"/>
+        <path d="M6 22 C10 12, 14 22, 18 12 S 25 14, 26 8" fill="none" stroke="#0d1220" stroke-width="2" stroke-linecap="round"/>
+        <circle cx="6" cy="22" r="2.2" fill="#0d1220"/><circle cx="18" cy="12" r="2.2" fill="#0d1220"/><circle cx="26" cy="8" r="2.2" fill="#e0675e"/>
+      </svg>
+      TRAVI
+    </a>
+    <div class="spacer"></div>
+    <nav class="nav">
+      <a class="hide-sm" href="domain.html">DOMAIN</a>
+      <a class="hide-sm" href="whitepaper.html">WHITEPAPER</a>
+      <a class="btn ghost" href="#">LOG IN</a>
+      <a class="btn solid" href="#signup">SIGN UP</a>
+    </nav>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="crumb"><a href="index.html">Home</a><span class="sep">›</span><span class="cur">Join TRAVI</span></div>
+
+  <div class="join">
+    <div class="join-left">
+      <div class="eyebrow">JOIN TRAVI</div>
+      <h1>Join an<br>AI Cooperative</h1>
+      <p class="sec-lead" style="font-size:17px">Tell us about your organization. We will match you with a cohort that shares your assets, risks, and goals.</p>
+      <ul class="next">
+        <li><span class="mono">01</span><div><b>Apply</b>Submit this form with your organization's details.</div></li>
+        <li><span class="mono">02</span><div><b>Review</b>We check fit with an existing or new cohort and contact you.</div></li>
+        <li><span class="mono">03</span><div><b>Onboard</b>Your node connects with verified identity. Raw data stays with you.</div></li>
+      </ul>
+    </div>
+
+    <form class="form" id="signup" onsubmit="return false">
+      <h2>Organization details</h2>
+      <p class="hint">시안용 양식입니다. 제출해도 아무 데도 전송되지 않습니다.</p>
+
+      <fieldset class="fs">
+        <legend>ORGANIZATION</legend>
+        <div class="row">
+          <div class="field"><label for="org">Organization name</label><input id="org" placeholder="Acme Co."></div>
+          <div class="field"><label for="type">Organization type</label>
+            <select id="type"><option>Select</option><option>Small / medium business</option><option>Public institution</option><option>Research institute</option><option>Cooperative</option><option>Other</option></select>
+          </div>
+        </div>
+        <div class="field"><label>Domain</label>
+          <div class="chips">
+            <label class="chip"><input type="radio" name="dom" checked><span>Security</span></label>
+            <label class="chip"><input type="radio" name="dom"><span>Agriculture</span></label>
+            <label class="chip"><input type="radio" name="dom"><span>Healthcare</span></label>
+            <label class="chip"><input type="radio" name="dom"><span>Other</span></label>
+          </div>
+        </div>
+        <div class="field"><label>How will you take part?</label>
+          <div class="chips">
+            <label class="chip"><input type="checkbox" checked><span>Provide data</span></label>
+            <label class="chip"><input type="checkbox"><span>Provide compute</span></label>
+            <label class="chip"><input type="checkbox"><span>Use the shared model</span></label>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset class="fs">
+        <legend>CONTACT PERSON</legend>
+        <div class="row">
+          <div class="field"><label for="name">Full name</label><input id="name" placeholder="Jane Kim"></div>
+          <div class="field"><label for="role">Role</label><input id="role" placeholder="IT manager"></div>
+        </div>
+        <div class="row">
+          <div class="field"><label for="mail">Work email</label><input id="mail" type="email" placeholder="jane@acme.com"></div>
+          <div class="field"><label for="tel">Phone <span class="opt">(optional)</span></label><input id="tel" placeholder="+82 10 0000 0000"></div>
+        </div>
+      </fieldset>
+
+      <fieldset class="fs">
+        <legend>ABOUT YOUR DATA</legend>
+        <div class="field"><label for="desc">What data could you bring, and what would you like the cooperative model to do?</label><textarea id="desc" placeholder="e.g. Firewall and web server logs from two sites. We want earlier warning of attacks on our Linux servers."></textarea></div>
+      </fieldset>
+
+      <label class="consent"><input type="checkbox"> I agree that TRAVI may contact me about joining a cooperative.</label>
+
+      <div class="submit">
+        <span class="alt">Already a member? <a href="#">Log in</a></span>
+        <button class="btn solid lg" type="submit">SUBMIT APPLICATION</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<footer class="foot">
+  <div class="wrap">
+    <div class="foot-top">
+      <div>
+        <div class="eyebrow">CONTACT</div>
+        <h3>Contact TRAVI</h3>
+        <a class="mail" href="mailto:contact@travi.example">contact@travi.example <span class="todo">교체 필요</span></a>
+        <div class="social"><a href="#" aria-label="LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5C4.98 4.88 3.87 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.22 8h4.56v14H.22V8zm7.4 0h4.37v1.92h.06c.61-1.150 2.1-2.36 4.32-2.36 4.62 0 5.47 3.04 5.47 7V22h-4.56v-6.6c0-1.57-.03-3.6-2.2-3.6-2.2 0-2.53 1.72-2.53 3.49V22H7.62V8z"/></svg></a></div>
+      </div>
+      <a class="btn solid lg" href="mailto:contact@travi.example">CONTACT US</a>
+    </div>
+    <div class="foot-bottom"><span>© 2026 TRAVI</span><span>DINA Lab, Hongik University · Neouly</span></div>
+  </div>
+</footer>
+</body>
+</html>

@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TRAVI</title>
+<script>document.documentElement.classList.add('js')</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="style.css">
+<style>
+/* 첫 화면: 위는 도식 전용 공간, 아래는 글(폭 2/3). 둘은 겹치지 않는다 */
+.hero { position: relative; height: 100vh; min-height: 760px; display: flex; flex-direction: column; padding-top: var(--header-h); }
+.hero-visual { position: relative; flex: 1; min-height: 0; margin: 20px 0 8px; }
+.hero-visual canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.hero-copy { padding-bottom: 64px; }
+.hero-copy .inner { width: 66%; }
+.hero h1 { font-size: clamp(40px, 4.1vw, 68px); line-height: 1.06; letter-spacing: -0.035em; margin: 16px 0 20px; font-weight: 700; white-space: nowrap; }
+.hero .lead { font-size: 18px; line-height: 1.65; color: var(--muted); max-width: 640px; margin: 0 0 28px; }
+.hero .ctas { display: flex; gap: 12px; flex-wrap: wrap; }
+.scroll-hint { position: absolute; right: 40px; bottom: 68px; font-size: 11px; letter-spacing: 0.24em; color: var(--faint); writing-mode: vertical-rl; }
+.scroll-hint::after { content: ''; display: block; width: 1px; height: 56px; margin: 12px auto 0; background: linear-gradient(var(--faint), transparent); animation: drip 2.4s ease-in-out infinite; }
+@keyframes drip { 0% { transform: scaleY(0); transform-origin: top; } 50% { transform: scaleY(1); transform-origin: top; } 51% { transform-origin: bottom; } 100% { transform: scaleY(0); transform-origin: bottom; } }
+.node-label { font-family: ui-monospace, Consolas, monospace; font-size: 11px; fill: var(--faint); letter-spacing: 0.06em; }
+
+/* What we're looking at: 왼쪽 제목이 붙어 있고 오른쪽 문장이 차례로 지나간다 */
+.ctx { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: 64px; }
+.ctx-left { position: sticky; top: calc(var(--header-h) + 64px); align-self: start; }
+.ctx-item { padding: 56px 0; border-top: 1px solid var(--line); }
+.ctx-item:first-child { border-top: 0; padding-top: 0; }
+.ctx-num { font-size: 64px; font-weight: 700; letter-spacing: -0.04em; color: var(--line-2); line-height: 1; }
+.ctx-item h3 { font-size: 30px; letter-spacing: -0.02em; line-height: 1.25; margin: 18px 0 12px; }
+.ctx-item p { font-size: 17px; line-height: 1.7; color: var(--muted); margin: 0; max-width: 520px; }
+.manifesto { padding: 40px 0 0; }
+.manifesto blockquote { margin: 0; font-size: clamp(32px, 3.6vw, 52px); line-height: 1.2; letter-spacing: -0.03em; font-weight: 600; max-width: 980px; }
+.manifesto .sub { margin-top: 22px; color: var(--muted); font-size: 17px; }
+
+/* 분산학습이 어떻게 동작하는가 */
+.methods { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; margin-top: 56px; }
+.method { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 24px 24px 26px; display: flex; flex-direction: column; }
+.method.core { border-color: var(--text); }
+.method .fig { background: var(--bg-2); border-radius: 10px; aspect-ratio: 2 / 1; margin-bottom: 22px; }
+.method .fig { position: relative; }
+.method .fig canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.method .kicker { display: flex; justify-content: space-between; align-items: center; font-size: 12px; letter-spacing: 0.14em; font-weight: 700; color: var(--faint); }
+.method .badge { font-size: 11px; letter-spacing: 0.06em; padding: 3px 9px; border-radius: 999px; background: var(--text); color: #fff; }
+.method h3 { font-size: 22px; margin: 10px 0 10px; letter-spacing: -0.01em; }
+.method p { margin: 0; color: var(--muted); line-height: 1.65; font-size: 15px; }
+.method dl { margin: 20px 0 0; padding-top: 16px; border-top: 1px solid var(--line); display: grid; grid-template-columns: auto 1fr; gap: 8px 14px; font-size: 14px; margin-top: auto; }
+.method .body { margin-bottom: 20px; }
+.method dt { color: var(--faint); }
+.method dd { margin: 0; }
+.m-node { fill: var(--card); stroke: var(--text); stroke-width: 1.4; }
+.m-line { stroke: var(--line-2); stroke-width: 1.2; fill: none; }
+
+.tlpp { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; margin-top: 20px; }
+.tlpp .box { border: 1px solid var(--line); border-radius: 16px; padding: 28px; background: var(--card); }
+.tlpp h4 { margin: 8px 0 10px; font-size: 20px; }
+.tlpp p { margin: 0; color: var(--muted); line-height: 1.65; font-size: 15px; }
+
+.oplayer { margin-top: 96px; }
+.steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; margin-top: 32px; border: 1px solid var(--line); border-radius: 16px; overflow: hidden; background: var(--card); }
+.step { padding: 28px; position: relative; }
+.step + .step { border-left: 1px solid var(--line); }
+.step .n { font-size: 13px; color: var(--accent); font-weight: 700; }
+.step h4 { margin: 10px 0 8px; font-size: 20px; }
+.step p { margin: 0; color: var(--muted); font-size: 15px; line-height: 1.6; }
+
+/* 파트너: 이름만 글자로 */
+.partners { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin-top: 48px; border-top: 1px solid var(--line); border-left: 1px solid var(--line); }
+.partner { border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: 44px 28px; font-size: 26px; font-weight: 600; letter-spacing: -0.015em; color: var(--muted); text-align: center; transition: color .2s, background .2s; }
+.partner:hover { color: var(--text); background: var(--card); }
+
+@media (max-width: 960px) {
+  .hero-copy .inner { width: 100%; }
+  .scroll-hint { display: none; }
+  .ctx, .methods, .tlpp, .steps { grid-template-columns: 1fr; }
+  .ctx-left { position: static; }
+  .step + .step { border-left: 0; border-top: 1px solid var(--line); }
+  .partners { grid-template-columns: 1fr 1fr; }
+  .partner { font-size: 20px; padding: 32px 16px; }
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wrap">
+    <a class="brand" href="index.html">
+      <svg viewBox="0 0 32 32" aria-hidden="true">
+        <defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1aa3d9"/><stop offset=".55" stop-color="#5b4ce0"/><stop offset="1" stop-color="#e0675e"/></linearGradient></defs>
+        <circle cx="16" cy="16" r="12.5" fill="none" stroke="url(#lg)" stroke-width="2.4"/>
+        <path d="M6 22 C10 12, 14 22, 18 12 S 25 14, 26 8" fill="none" stroke="#0d1220" stroke-width="2" stroke-linecap="round"/>
+        <circle cx="6" cy="22" r="2.2" fill="#0d1220"/><circle cx="18" cy="12" r="2.2" fill="#0d1220"/><circle cx="26" cy="8" r="2.2" fill="#e0675e"/>
+      </svg>
+      TRAVI
+    </a>
+    <div class="spacer"></div>
+    <nav class="nav">
+      <a href="domain.html">DOMAIN</a>
+      <a href="whitepaper.html">WHITEPAPER</a>
+      <a class="btn solid" href="join.html">JOIN TRAVI</a>
+    </nav>
+  </div>
+</header>
+
+<!-- 첫 화면 -->
+<main class="hero">
+  <!-- 조작 없이 계속 움직이는 도식(viz.js). 기울어진 궤도 위 노드, 차례로 지나가는 모델, 공동 모델로 오가는 신호 -->
+  <div class="hero-visual" aria-hidden="true"><canvas data-viz="hero"></canvas></div>
+
+  <div class="hero-copy">
+    <div class="wrap">
+      <div class="inner">
+        <div class="eyebrow">AI COOPERATIVES FABRIC &amp; PLATFORM</div>
+        <h1>Self-sovereign <span class="grad">collaborative</span><br>intelligence.</h1>
+        <p class="lead">TRAVI lets independent participants turn the data and capabilities they hold into shared AI value, while keeping control of their own resources.</p>
+        <div class="ctas">
+          <a class="btn solid lg" href="domain.html">EXPLORE DOMAINS</a>
+          <a class="btn ghost lg" href="whitepaper.html">READ WHITEPAPER</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-hint">SCROLL</div>
+</main>
+
+<!-- 철학 -->
+<section class="sec" id="context">
+  <div class="wrap">
+    <div class="ctx">
+      <div class="ctx-left reveal">
+        <div class="eyebrow">CONTEXT</div>
+        <h2 class="sec-title">What we're<br>looking at</h2>
+        <p class="sec-lead">AI moves fast. The question is who gets to shape it, and who shares in what it creates.</p>
+      </div>
+      <div>
+        <div class="ctx-item reveal">
+          <div class="ctx-num">01</div>
+          <h3>Value pooled in a few hands</h3>
+          <p>AI moves fast, but contributors lose control and fair returns.</p>
+        </div>
+        <div class="ctx-item reveal">
+          <div class="ctx-num">02</div>
+          <h3>Data creates value when combined, not isolated</h3>
+          <p>Created cooperatively, with contributors rewarded transparently for what they bring.</p>
+        </div>
+        <div class="ctx-item reveal">
+          <div class="ctx-num">03</div>
+          <h3>Cooperation needs distributed infrastructure</h3>
+          <p>A distributed foundation where contribution, reward, and sovereignty hold together.</p>
+        </div>
+      </div>
+    </div>
+    <div class="manifesto reveal">
+      <blockquote>Distributed intelligence should increase human agency, <span class="grad">not concentrate it.</span></blockquote>
+      <p class="sub">A vision we've been building through the AI Cooperative.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 분산학습은 어떻게 동작하나 -->
+<section class="sec" id="how">
+  <div class="wrap">
+    <div class="reveal">
+      <div class="eyebrow">HOW DISTRIBUTED LEARNING WORKS</div>
+      <h2 class="sec-title">Many ways to learn together.<br>One rule: the data stays home.</h2>
+      <p class="sec-lead">Distributed learning trains a model across participants without pooling raw data in one place. Methods differ in what crosses the network. TRAVI runs on TL++, and is not locked to a single method.</p>
+    </div>
+
+    <div class="methods">
+      <article class="method reveal">
+        <div class="fig"><canvas data-viz="fl"></canvas></div>
+        <div class="body">
+          <div class="kicker">METHOD A</div>
+          <h3>Federated Learning</h3>
+          <p>Each participant trains a copy of the model on local data. Only model updates go to a server, which averages them into a new global model, round after round.</p>
+        </div>
+        <dl><dt>Moves</dt><dd>Model updates (weights or gradients)</dd><dt>Fits</dt><dd>Neural networks, linear models</dd></dl>
+      </article>
+
+      <article class="method reveal">
+        <div class="fig"><canvas data-viz="tree"></canvas></div>
+        <div class="body">
+          <div class="kicker">METHOD B</div>
+          <h3>Federated tree ensembles</h3>
+          <p>Random forests and gradient-boosted trees can be built across participants. Each site grows trees on its own data, or shares split statistics, and the results are combined into one ensemble.</p>
+        </div>
+        <dl><dt>Moves</dt><dd>Trees or split statistics</dd><dt>Fits</dt><dd>Tabular data, Random Forest, XGBoost</dd></dl>
+      </article>
+
+      <article class="method core reveal">
+        <div class="fig"><canvas data-viz="tl"></canvas></div>
+        <div class="body">
+          <div class="kicker">METHOD C <span class="badge">TRAVI CORE</span></div>
+          <h3>Traversal Learning (TL++)</h3>
+          <p>The model visits participants in turn. Only cut-layer activations and gradients move, and virtual batches give the same gradient updates as centralized training on the same batch. Intermediate computation is protected by multi-party computation.</p>
+        </div>
+        <dl><dt>Moves</dt><dd>Cut-layer signals only</dd><dt>Fits</dt><dd>Deep neural networks</dd></dl>
+      </article>
+    </div>
+
+    <div class="tlpp">
+      <div class="box reveal">
+        <div class="eyebrow">ONLY WITH TL++</div>
+        <h4>Value alignment</h4>
+        <p>Every sample is checked against a participant's own values, so only data that fits enters training. Similar participants group into cohorts that build a shared model.</p>
+      </div>
+      <div class="box reveal">
+        <div class="eyebrow">ONLY WITH TL++</div>
+        <h4>Transparent attribution</h4>
+        <p>Each sample's effect on the model is traceable, so reward maps directly to contribution. Conventional federated learning shares only aggregated updates, which makes per-sample tracking infeasible.</p>
+      </div>
+    </div>
+
+    <div class="oplayer reveal">
+      <div class="eyebrow">THE OPERATING LAYER</div>
+      <h2 class="sec-title" style="font-size:34px">Built as a system for AI Cooperatives</h2>
+      <div class="steps">
+        <div class="step"><div class="n mono">01</div><h4>Onboard participants</h4><p>Bring independent organizations into a cooperative with verified identity.</p></div>
+        <div class="step"><div class="n mono">02</div><h4>Run distributed learning</h4><p>Train a shared model while raw data stays on each node.</p></div>
+        <div class="step"><div class="n mono">03</div><h4>Track contribution &amp; distribute rewards</h4><p>Measure what each participant brought and settle rewards transparently.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 파트너 -->
+<section class="sec" id="partners">
+  <div class="wrap">
+    <div class="reveal">
+      <div class="eyebrow">PARTNERS</div>
+      <h2 class="sec-title">Built together with</h2>
+    </div>
+    <div class="partners reveal">
+      <div class="partner">Hongik University</div>
+      <div class="partner">DINA Lab</div>
+      <div class="partner">Neouly</div>
+      <div class="partner">Shelley Labs</div>
+      <div class="partner">T-Rize</div>
+      <div class="partner">Netcore</div>
+    </div>
+  </div>
+</section>
+
+<!-- 바닥글: 왼쪽 연락처, 오른쪽 문의 버튼 -->
+<footer class="foot" id="contact">
+  <div class="wrap">
+    <div class="foot-top">
+      <div>
+        <div class="eyebrow">CONTACT</div>
+        <h3>Contact TRAVI</h3>
+        <a class="mail" href="mailto:contact@travi.example">contact@travi.example <span class="todo">교체 필요</span></a>
+        <div class="social">
+          <a href="#" aria-label="LinkedIn" title="LinkedIn (주소 교체 필요)">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5C4.98 4.88 3.87 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.22 8h4.56v14H.22V8zm7.4 0h4.37v1.92h.06c.61-1.15 2.1-2.36 4.32-2.36 4.62 0 5.47 3.04 5.47 7V22h-4.56v-6.6c0-1.57-.03-3.6-2.2-3.6-2.2 0-2.53 1.72-2.53 3.49V22H7.62V8z"/></svg>
+          </a>
+        </div>
+      </div>
+      <a class="btn solid lg" href="mailto:contact@travi.example">CONTACT US</a>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 TRAVI</span>
+      <span>DINA Lab, Hongik University · Neouly</span>
+    </div>
+  </div>
+</footer>
+
+<script src="viz.js?v=3"></script>
+<script src="common.js"></script>
+</body>
+</html>

@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TRAVI Domains</title>
+<script>document.documentElement.classList.add('js')</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="style.css">
+<style>
+.page-head { padding: 40px 0 56px; }
+.page-head h1 { font-size: 56px; letter-spacing: -0.03em; margin: 14px 0 16px; }
+.tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; padding-bottom: 128px; }
+.tile { display: block; }
+.tile .thumb { aspect-ratio: 1 / 1; border-radius: 18px; border: 1px solid var(--line); background: var(--bg-2); position: relative; overflow: hidden; transition: border-color .2s, transform .3s; }
+.tile:hover .thumb { border-color: var(--text); transform: translateY(-4px); }
+.tile .thumb svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.tile .thumb .status { position: absolute; top: 18px; left: 18px; font-size: 11px; font-weight: 700; letter-spacing: 0.12em; padding: 5px 10px; border-radius: 999px; background: var(--card); border: 1px solid var(--line); }
+.tile .thumb .status.live { background: var(--text); color: #fff; border-color: var(--text); }
+.tile .meta { padding: 20px 4px 0; }
+.tile .meta .k { font-size: 12px; letter-spacing: 0.18em; font-weight: 700; color: var(--faint); }
+.tile h2 { font-size: 26px; margin: 8px 0 8px; letter-spacing: -0.015em; }
+.tile p { margin: 0; color: var(--muted); line-height: 1.6; font-size: 15px; }
+.tile .go { display: inline-block; margin-top: 14px; font-size: 13px; font-weight: 600; letter-spacing: 0.08em; }
+.tile.soon { opacity: .72; }
+@media (max-width: 960px) { .tiles { grid-template-columns: 1fr; } .page-head h1 { font-size: 40px; } }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wrap">
+    <a class="brand" href="index.html">
+      <svg viewBox="0 0 32 32" aria-hidden="true">
+        <defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1aa3d9"/><stop offset=".55" stop-color="#5b4ce0"/><stop offset="1" stop-color="#e0675e"/></linearGradient></defs>
+        <circle cx="16" cy="16" r="12.5" fill="none" stroke="url(#lg)" stroke-width="2.4"/>
+        <path d="M6 22 C10 12, 14 22, 18 12 S 25 14, 26 8" fill="none" stroke="#0d1220" stroke-width="2" stroke-linecap="round"/>
+        <circle cx="6" cy="22" r="2.2" fill="#0d1220"/><circle cx="18" cy="12" r="2.2" fill="#0d1220"/><circle cx="26" cy="8" r="2.2" fill="#e0675e"/>
+      </svg>
+      TRAVI
+    </a>
+    <div class="spacer"></div>
+    <nav class="nav">
+      <a class="on" href="domain.html">DOMAIN</a>
+      <a href="whitepaper.html">WHITEPAPER</a>
+      <a class="btn solid" href="join.html">JOIN TRAVI</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="crumb"><a href="index.html">Home</a><span class="sep">›</span><span class="cur">Domain</span></div>
+
+  <div class="page-head">
+    <div class="eyebrow">DOMAIN</div>
+    <h1>Where cooperatives form</h1>
+    <p class="sec-lead">We start in fields where valuable data is split across many organizations that cannot pool it. Each domain runs its own cohorts on the same TRAVI fabric.</p>
+  </div>
+
+  <div class="tiles">
+    <a class="tile reveal" href="domain-security.html">
+      <div class="thumb">
+        <span class="status live">CASE STUDY</span>
+        <!-- 썸네일 자리: 방패 안에 노드 그물 -->
+        <svg viewBox="0 0 400 400" aria-hidden="true">
+          <path d="M200 90 L290 125 V200 C290 255 250 295 200 315 C150 295 110 255 110 200 V125 Z" fill="#fff" stroke="#0d1220" stroke-width="2"/>
+          <g stroke="#cfd5e1" stroke-width="1.5"><line x1="170" y1="170" x2="230" y2="170"/><line x1="170" y1="170" x2="200" y2="240"/><line x1="230" y1="170" x2="200" y2="240"/></g>
+          <g fill="#fff" stroke="#5b4ce0" stroke-width="2"><circle cx="170" cy="170" r="9"/><circle cx="230" cy="170" r="9"/><circle cx="200" cy="240" r="9"/></g>
+        </svg>
+      </div>
+      <div class="meta">
+        <div class="k">01</div>
+        <h2>Security</h2>
+        <p>Cohort-based attack prediction for small and medium businesses without a security operations team.</p>
+        <span class="go">READ THE CASE →</span>
+      </div>
+    </a>
+
+    <a class="tile soon reveal" href="domain-agriculture.html">
+      <div class="thumb">
+        <span class="status">COMING SOON</span>
+        <svg viewBox="0 0 400 400" aria-hidden="true">
+          <path d="M200 300 V170" stroke="#0d1220" stroke-width="2"/>
+          <path d="M200 200 C160 200 140 170 140 140 C175 140 200 160 200 200 Z" fill="#fff" stroke="#0d1220" stroke-width="2"/>
+          <path d="M200 175 C240 175 260 145 260 115 C225 115 200 135 200 175 Z" fill="#fff" stroke="#0d1220" stroke-width="2"/>
+          <line x1="130" y1="300" x2="270" y2="300" stroke="#cfd5e1" stroke-width="2"/>
+        </svg>
+      </div>
+      <div class="meta">
+        <div class="k">02</div>
+        <h2>Agriculture</h2>
+        <p>Cooperative models across farms and regional cooperatives. Details to come.</p>
+        <span class="go">PREVIEW →</span>
+      </div>
+    </a>
+
+    <a class="tile soon reveal" href="domain-healthcare.html">
+      <div class="thumb">
+        <span class="status">COMING SOON</span>
+        <svg viewBox="0 0 400 400" aria-hidden="true">
+          <rect x="140" y="140" width="120" height="120" rx="20" fill="#fff" stroke="#0d1220" stroke-width="2"/>
+          <path d="M200 170 V230 M170 200 H230" stroke="#5b4ce0" stroke-width="3" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="meta">
+        <div class="k">03</div>
+        <h2>Healthcare</h2>
+        <p>Cooperative models across hospitals and clinics. Details to come.</p>
+        <span class="go">PREVIEW →</span>
+      </div>
+    </a>
+  </div>
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <div class="foot-top">
+      <div>
+        <div class="eyebrow">CONTACT</div>
+        <h3>Contact TRAVI</h3>
+        <a class="mail" href="mailto:contact@travi.example">contact@travi.example <span class="todo">교체 필요</span></a>
+        <div class="social"><a href="#" aria-label="LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5C4.98 4.88 3.87 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.22 8h4.56v14H.22V8zm7.4 0h4.37v1.92h.06c.61-1.15 2.1-2.36 4.32-2.36 4.62 0 5.47 3.04 5.47 7V22h-4.56v-6.6c0-1.57-.03-3.6-2.2-3.6-2.2 0-2.530 1.72-2.53 3.49V22H7.62V8z"/></svg></a></div>
+      </div>
+      <a class="btn solid lg" href="mailto:contact@travi.example">CONTACT US</a>
+    </div>
+    <div class="foot-bottom"><span>© 2026 TRAVI</span><span>DINA Lab, Hongik University · Neouly</span></div>
+  </div>
+</footer>
+
+<script src="common.js"></script>
+</body>
+</html>
