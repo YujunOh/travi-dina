@@ -14,8 +14,14 @@ TRAVI(AI 협동조합 플랫폼) 소개 사이트의 화면 시안입니다. 빌
 | `domain-agriculture.html`, `domain-healthcare.html` | 준비 중인 자리 |
 | `whitepaper.html` | 논문과 글 목록 |
 | `join.html` | 참여 신청 양식 (전송 기능 없음) |
+| `coop.html` | 로그인 뒤: 코옵 둘러보기와 참여 신청 (Participant) |
+| `coop-manage.html` | 로그인 뒤: 코옵 관리, 정산 기간과 분배 규칙 미리보기 (Co-op leader) |
+| `mypage.html` | 로그인 뒤: 내 역할, 내 코옵, 기여, 정산과 지급 내역 (Participant) |
+| `admin.html` | 로그인 뒤: 신청 승인, 사이트, 언러닝, 정산 감사, 감사 로그 (Admin) |
 
-공통 파일은 `style.css`(스타일), `viz.js`(움직이는 도식), `common.js`(스크롤할 때 나타나는 효과)입니다.
+로그인 뒤 화면 4개는 모두 같은 예시 데이터(as of Dec 3, 2026)를 쓰고, 헤더의 "Viewing as"로 역할을 바꿔 가며 볼 수 있습니다. 각 화면 맨 아래 Review notes에 미결 사항과 가정을 출처와 함께 적었습니다.
+
+공통 파일은 `style.css`(스타일), `viz.js`(움직이는 도식), `common.js`(스크롤할 때 나타나는 효과), `app.js`(로그인 뒤 화면의 헤더 메뉴)입니다.
 
 ## 로컬에서 보기
 
