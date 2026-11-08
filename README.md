@@ -3,7 +3,6 @@
 TRAVI(AI 협동조합 플랫폼) 소개 사이트의 화면 시안입니다. 빌드 없이 HTML, CSS, JS 파일만으로 돌아갑니다.
 
 - 사이트: https://travi-dina.vercel.app
-- Figma 와이어프레임(lo-fi): https://www.figma.com/design/cgEcLDSVfSsRuBk1V4Jjot/TRAVI
 
 ## 페이지
 
