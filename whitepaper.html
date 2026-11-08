@@ -23,7 +23,7 @@
     <div class="spacer"></div>
     <nav class="nav">
       <a href="domain.html">DOMAIN</a>
-      <a class="on" href="whitepaper.html">WHITEPAPER</a>
+      <a class="on hide-sm" href="whitepaper.html">WHITEPAPER</a>
       <a class="btn solid" href="join.html">JOIN TRAVI</a>
     </nav>
   </div>
@@ -51,11 +51,11 @@
       <div class="ph" style="margin-top:28px">Whitepaper PDF 자리. 파일이 정해지면 다운로드 버튼으로 바꿉니다.</div>
 
       <h2 id="settlement">Settlement on Hedera</h2>
-      <p>Fair rewards need settlement that participants can check. Public blockchains make this hard for distributed learning: as SettleFL puts it, "the prohibitive cost of permissionless blockchains directly clashes with the high-frequency, iterative nature of model training."</p>
-      <p>TRAVI splits settlement into three layers. Contribution records for each round are anchored to Hedera Consensus Service, at about $0.0008 per message (Hedera fee schedule, Nov 2026). Settlement amounts are computed off-chain from contribution scores using the cooperative's sharing rule. Payouts are made on the Hedera network each settlement round.</p>
+      <p>Fair rewards need settlement that participants can check. Permissionless blockchains make this hard for distributed learning: as SettleFL puts it, "the prohibitive cost of permissionless blockchains directly clashes with the high-frequency, iterative nature of model training."</p>
+      <p>TRAVI splits settlement into three layers. Contribution records for each training round are anchored to Hedera Consensus Service, at about $0.0008 per message (Hedera fee schedule, Nov 2026). Settlement amounts are computed off-chain from contribution scores using the cooperative's sharing rule. Payouts are made on the Hedera network each settlement period, according to the cooperative's sharing rule.</p>
       <div class="callout">
         <div class="eyebrow">STATUS</div>
-        <p style="margin:0">Record: in design. Compute: research (arXiv:2606.28217). Pay: planned. Unlearning on exit: roadmap.</p>
+        <p style="margin:0">Record: planned. Compute: research (arXiv:2606.28217). Pay: planned. Unlearning on exit: roadmap.</p>
       </div>
       <ul class="refs">
         <li>SettleFL (2026). arXiv:2602.23167.</li>
@@ -97,5 +97,19 @@
     <div class="foot-bottom"><span>© 2026 TRAVI</span><span>DINA Lab, Hongik University · Neouly</span></div>
   </div>
 </footer>
+<script>
+/* 스크롤 위치에 맞춰 왼쪽 목차의 현재 항목을 표시한다 */
+(function () {
+  var links = Array.prototype.slice.call(document.querySelectorAll('.side a[href^="#"]'));
+  var heads = links.map(function (a) { return document.querySelector(a.getAttribute('href')); });
+  function update() {
+    var y = window.scrollY + 140, cur = 0;
+    heads.forEach(function (h, i) { if (h && h.offsetTop <= y) cur = i; });
+    links.forEach(function (a, i) { a.classList.toggle('on', i === cur); });
+  }
+  window.addEventListener('scroll', update, { passive: true });
+  update();
+})();
+</script>
 </body>
 </html>

@@ -61,7 +61,7 @@
 .steps { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; margin-top: 32px; border: 1px solid var(--line); border-radius: 16px; overflow: hidden; background: var(--card); }
 .step { padding: 28px; position: relative; }
 .step + .step { border-left: 1px solid var(--line); }
-.step .n { font-size: 13px; color: var(--accent); font-weight: 700; }
+.step .n { font-size: 13px; color: var(--accent); font-weight: 700; min-height: 20px; display: flex; align-items: center; }
 .step h4 { margin: 10px 0 8px; font-size: 20px; }
 .step p { margin: 0; color: var(--muted); font-size: 15px; line-height: 1.6; }
 
@@ -99,9 +99,10 @@
 .receipt th:not(:first-child), .receipt td:not(:first-child) { text-align: right; font-variant-numeric: tabular-nums; }
 .r-meta { display: grid; grid-template-columns: auto 1fr; gap: 6px 18px; margin: 18px 0 0; font-size: 12px; }
 .r-meta dt { color: var(--faint); }
-.r-meta dd { margin: 0; color: var(--muted); word-break: break-all; }
-.r-foot { display: flex; justify-content: space-between; margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--line); font-size: 13px; color: var(--faint); }
-.r-link { color: var(--muted); font-weight: 600; }
+.r-meta dd { margin: 0; color: var(--muted); overflow-wrap: anywhere; }
+.r-note { margin: 12px 0 0; font-size: 12px; color: var(--faint); }
+.r-foot { display: flex; flex-wrap: wrap; gap: 6px 12px; justify-content: space-between; margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--line); font-size: 13px; color: var(--faint); }
+.r-link { color: var(--faint); font-style: italic; }
 .leave { background: var(--bg-2); border: 1px solid var(--line); border-radius: 16px; padding: 28px; }
 .leave h3 { font-size: 22px; line-height: 1.3; margin: 14px 0 14px; letter-spacing: -0.01em; }
 .leave p { margin: 0 0 12px; color: var(--muted); line-height: 1.65; font-size: 15px; }
@@ -113,6 +114,7 @@
 
 @media (max-width: 960px) {
   .hero-copy .inner { width: 100%; }
+  .hero h1 { white-space: normal; font-size: clamp(34px, 9vw, 48px); }
   .scroll-hint { display: none; }
   .ctx, .methods, .tlpp, .steps, .layers, .settle-grid { grid-template-columns: 1fr; }
   .flow { grid-template-columns: 1fr 1fr; row-gap: 28px; }
@@ -140,7 +142,7 @@
     <div class="spacer"></div>
     <nav class="nav">
       <a href="domain.html">DOMAIN</a>
-      <a href="whitepaper.html">WHITEPAPER</a>
+      <a class="hide-sm" href="whitepaper.html">WHITEPAPER</a>
       <a class="btn solid" href="join.html">JOIN TRAVI</a>
     </nav>
   </div>
@@ -173,7 +175,7 @@
     <div class="ctx">
       <div class="ctx-left reveal">
         <div class="eyebrow">CONTEXT</div>
-        <h2 class="sec-title">What we're<br>looking at</h2>
+        <h2 class="sec-title">What we're <br>looking at</h2>
         <p class="sec-lead">AI moves fast. The question is who gets to shape it, and who shares in what it creates.</p>
       </div>
       <div>
@@ -206,7 +208,7 @@
   <div class="wrap">
     <div class="reveal">
       <div class="eyebrow">HOW DISTRIBUTED LEARNING WORKS</div>
-      <h2 class="sec-title">Many ways to learn together.<br>One rule: the data stays home.</h2>
+      <h2 class="sec-title">Many ways to learn together. <br>One rule: the data stays home.</h2>
       <p class="sec-lead">Distributed learning trains a model across participants without pooling raw data in one place. Methods differ in what crosses the network. TRAVI runs on TL++, and is not locked to a single method.</p>
     </div>
 
@@ -261,8 +263,8 @@
       <div class="steps">
         <div class="step"><div class="n mono">01</div><h4>Onboard participants</h4><p>Bring independent organizations into a cooperative with verified identity.</p></div>
         <div class="step"><div class="n mono">02</div><h4>Run distributed learning</h4><p>Train a shared model while raw data stays on each node.</p></div>
-        <div class="step"><div class="n mono">03</div><h4>Attribute contribution</h4><p>Measure how each participant's data shaped the shared model.</p></div>
-        <div class="step"><div class="n mono">04 <span class="st plan">PLANNED</span></div><h4>Settle on Hedera</h4><p>Pay each participant for the value their contribution created, round by round, on the Hedera network.</p></div>
+        <div class="step"><div class="n mono">03 <span class="st research">RESEARCH</span></div><h4>Attribute contribution</h4><p>Measure how each participant's data shaped the shared model.</p></div>
+        <div class="step"><div class="n mono">04 <span class="st plan">PLANNED</span></div><h4>Settle on Hedera</h4><p>Pay each participant for the value their contribution created, every settlement period, on the Hedera network.</p></div>
       </div>
     </div>
   </div>
@@ -273,24 +275,24 @@
   <div class="wrap">
     <div class="reveal">
       <div class="eyebrow">SETTLEMENT</div>
-      <h2 class="sec-title">From contribution to payment,<br>settled on Hedera.</h2>
-      <p class="sec-lead">A cooperative only works if contributors are paid fairly and can check it. TRAVI turns contribution scores into payouts every settlement round, and pays them out on the Hedera network.</p>
+      <h2 class="sec-title">From contribution to payment, <br>settled on Hedera.</h2>
+      <p class="sec-lead">A cooperative only works if contributors are paid fairly and can check it. TRAVI turns contribution scores into payouts every settlement period, and pays them out on the Hedera network.</p>
     </div>
 
     <!-- 흐름 띠: 기여 점수 → 정산 회차 → Hedera 지급 → 검증 가능한 기록 -->
     <div class="flow reveal" aria-hidden="true">
       <div class="flow-line"><span></span></div>
-      <div class="flow-step"><i></i><b>Contribution score</b><small>from TL++ training</small></div>
-      <div class="flow-step"><i></i><b>Settlement round</b><small>shares computed off-chain</small></div>
+      <div class="flow-step"><i></i><b>Contribution score</b><small>from distributed training</small></div>
+      <div class="flow-step"><i></i><b>Settlement period</b><small>shares computed off-chain</small></div>
       <div class="flow-step"><i></i><b>Payout on Hedera</b><small>to each participant</small></div>
       <div class="flow-step"><i></i><b>Verifiable record</b><small>timestamped on the ledger</small></div>
     </div>
 
     <div class="layers">
       <article class="layer reveal">
-        <div class="layer-k">RECORD <span class="st design">IN DESIGN</span></div>
+        <div class="layer-k">RECORD <span class="st plan">PLANNED</span></div>
         <h3>Anchor every round</h3>
-        <p>Each round's contribution summary is written to Hedera Consensus Service. Anyone can check its consensus timestamp and sequence number.</p>
+        <p>Each training round's contribution summary is written to Hedera Consensus Service. Anyone can check its consensus timestamp and sequence number.</p>
         <p class="note">About $0.0008 per message (Hedera fee schedule, Nov 2026).</p>
       </article>
       <article class="layer reveal">
@@ -302,7 +304,7 @@
       <article class="layer reveal">
         <div class="layer-k">PAY <span class="st plan">PLANNED</span></div>
         <h3>Pay out on Hedera</h3>
-        <p>Each settlement round pays participants on the Hedera network, in proportion to the value their contribution created. Only revenue from contribution is shared.</p>
+        <p>Each settlement period pays participants on the Hedera network, according to the cooperative's sharing rule and each participant's cumulative contribution. Only revenue from contribution is shared.</p>
       </article>
     </div>
 
@@ -310,7 +312,7 @@
       <!-- 예시 영수증. 실제 데이터가 아니다 -->
       <div class="receipt reveal">
         <div class="r-head">
-          <div><div class="layer-k">SETTLEMENT #12</div><div class="r-period">Nov 1 – Nov 30, 2026</div></div>
+          <div><div class="layer-k">SETTLEMENT #1</div><div class="r-period">Nov 1 – Nov 30, 2026</div></div>
           <span class="st ill">ILLUSTRATIVE</span>
         </div>
         <table>
@@ -322,13 +324,15 @@
             <tr><td>node-04 · Org D</td><td>13.2%</td><td>132.00</td></tr>
           </tbody>
         </table>
+        <p class="r-note">Sharing rule shown with α = 1 (proportional). Payout unit to be decided.</p>
+        <!-- 기록(HCS 메시지)과 지급(송금 트랜잭션)은 서로 다른 트랜잭션이다. 지급 계정은 토픽과 다른 계정, valid start는 합의 시각보다 앞선다 -->
         <dl class="r-meta mono">
-          <dt>topic</dt><dd>0.0.4811023</dd>
-          <dt>sequence_number</dt><dd>12</dd>
-          <dt>consensus_timestamp</dt><dd>1764547200.123456789</dd>
-          <dt>transaction</dt><dd>0.0.4811023@1764547200.123456789</dd>
+          <dt>record topic</dt><dd>0.0.4811023</dd>
+          <dt>sequence_number</dt><dd>1247</dd>
+          <dt>consensus_timestamp</dt><dd>1796083512.384012001</dd>
+          <dt>payout transaction</dt><dd>0.0.4811001<wbr>@1796083505.000000000</dd>
         </dl>
-        <div class="r-foot"><span>Example only. Not real data.</span><span class="r-link">View on HashScan →</span></div>
+        <div class="r-foot"><span>Example only. Not real data.</span><span class="r-link">HashScan link appears when live</span></div>
       </div>
 
       <!-- 탈퇴와 언러닝 -->
