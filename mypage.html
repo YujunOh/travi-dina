@@ -1,0 +1,743 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>My page · TRAVI</title>
+<script>document.documentElement.classList.add('js')</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="style.css">
+<style>
+/* 마이페이지 전용. 상태 색 몇 개만 여기서 더한다 */
+:root { --ok: #1f8a5b; --ok-soft: #eaf6f0; --warn: #a86a00; --warn-soft: #fdf5e6; --danger: #c0392b; --danger-soft: #fdf1f0; }
+
+/* 헤더 드롭다운 스타일·동작은 style.css·app.js 공통. 여기서는 표 행의 ⋯ More 메뉴 안 버튼만 맞춘다 */
+.menu button.mi { width: 100%; background: none; border: 0; font: inherit; text-align: left; cursor: pointer; }
+.menu button.mi:hover:not(:disabled) { background: var(--bg-2); }
+
+/* 경로 표시 줄 오른쪽에 Sample data 표시 */
+.crumb-tag { margin-left: auto; display: flex; align-items: center; gap: 8px; color: var(--faint); font-size: 12px; }
+.crumb-tag .st { margin-left: 0; }
+
+/* 페이지 머리 */
+.page-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 32px; flex-wrap: wrap; padding: 32px 0 28px; }
+.page-head h1 { font-size: 44px; letter-spacing: -0.025em; line-height: 1.12; margin: 12px 0 12px; }
+.page-head .sec-lead { font-size: 17px; max-width: 640px; }
+.statusline { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+.tag { display: inline-block; line-height: 1.45; font-size: 13px; padding: 5px 11px; border-radius: 16px; background: var(--card); border: 1px solid var(--line); color: var(--muted); }
+.tag b { color: var(--text); font-weight: 600; }
+.onpage { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 13px; color: var(--muted); }
+.onpage a:hover { color: var(--text); }
+.onpage .k { color: var(--faint); letter-spacing: 0.16em; font-size: 11px; font-weight: 700; }
+
+/* 요약 지표 4칸 */
+.kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border: 1px solid var(--line); border-radius: 16px; background: var(--card); overflow: hidden; }
+/* 이름·값·설명을 같은 줄 높이로 맞춘다. 배지 때문에 이름이 두 줄이 되어도 값이 칸마다 어긋나지 않는다 */
+.kpi { padding: 22px 24px; display: grid; grid-row: span 3; grid-template-rows: subgrid; row-gap: 0; align-content: start; }
+.kpi + .kpi { border-left: 1px solid var(--line); }
+.kpi .k { font-size: 11px; letter-spacing: 0.16em; font-weight: 700; color: var(--faint); display: flex; flex-wrap: wrap; align-items: center; align-self: start; gap: 4px 6px; }
+.kpi .k .st { margin-left: 0; white-space: nowrap; }
+.kpi .v { font-size: 28px; font-weight: 700; letter-spacing: -0.02em; margin-top: 8px; font-variant-numeric: tabular-nums; }
+.kpi .v small { font-size: 15px; color: var(--muted); font-weight: 500; letter-spacing: 0; }
+.kpi .d { font-size: 13px; color: var(--muted); margin-top: 4px; line-height: 1.5; }
+
+/* 구역 공통 */
+.blk { margin-top: 72px; scroll-margin-top: calc(var(--header-h) + 24px); }
+.blk-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px 24px; flex-wrap: wrap; margin-bottom: 18px; }
+.blk-head h2 { font-size: 26px; letter-spacing: -0.015em; margin: 8px 0 6px; }
+.blk-head h2 .st { vertical-align: 5px; }
+.blk-head p { margin: 0; color: var(--muted); font-size: 15px; line-height: 1.6; max-width: 680px; }
+.panel { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 26px; }
+.layer-k { font-size: 12px; letter-spacing: 0.16em; font-weight: 700; color: var(--faint); }
+.note { font-size: 13px; color: var(--faint); line-height: 1.6; margin: 14px 0 0; }
+
+/* 계정과 역할 */
+.acct-grid { display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(0, 0.55fr); gap: 20px; }
+.prof { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; padding-bottom: 22px; border-bottom: 1px solid var(--line); }
+.prof .k { font-size: 11px; letter-spacing: 0.16em; font-weight: 700; color: var(--faint); }
+.prof .v { margin-top: 6px; font-size: 15px; font-weight: 600; overflow-wrap: anywhere; }
+.prof .v.tbd { color: var(--faint); font-weight: 500; }
+.roles { list-style: none; margin: 0; padding: 0; }
+.roles li { display: grid; grid-template-columns: 200px minmax(0, 1fr); gap: 16px; padding: 16px 0; border-bottom: 1px solid var(--line); align-items: start; }
+.roles li:last-child { border-bottom: 0; padding-bottom: 0; }
+.roles .scope { font-size: 13px; color: var(--muted); font-weight: 600; padding-top: 5px; }
+.roles .scope small { display: block; color: var(--faint); font-weight: 400; margin-top: 2px; }
+.rchips { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.rchip { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; padding: 6px 12px; border-radius: 999px; border: 1px solid var(--line-2); background: var(--bg); }
+.rchip.lead { border-color: var(--text); }
+.rchip.attr { font-weight: 500; color: var(--muted); border-style: dashed; }
+.rchip.ghosted { color: var(--faint); font-weight: 500; border-style: dashed; background: none; }
+.rlink { font-size: 13px; font-weight: 600; color: var(--accent); }
+.rlink:hover { text-decoration: underline; }
+.payacct dl { display: grid; grid-template-columns: auto 1fr; gap: 10px 16px; margin: 16px 0 18px; font-size: 14px; }
+.payacct dt { color: var(--faint); }
+.payacct dd { margin: 0; overflow-wrap: anywhere; }
+.btn.sm { padding: 7px 14px; font-size: 12px; }
+.btn[disabled], .btn.dis { opacity: .45; cursor: not-allowed; pointer-events: none; }
+
+/* 표 공통 */
+.tbl { width: 100%; border-collapse: collapse; font-size: 14px; }
+.tbl th { text-align: left; font-size: 11px; letter-spacing: 0.12em; color: var(--faint); font-weight: 700; padding: 0 12px 12px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+.tbl td { padding: 16px 12px; border-bottom: 1px solid var(--line); vertical-align: top; line-height: 1.5; }
+.tbl th:first-child, .tbl td:first-child { padding-left: 0; }
+.tbl th:last-child, .tbl td:last-child { padding-right: 0; }
+.tbl tr:last-child td { border-bottom: 0; }
+.tbl .num { text-align: right; font-variant-numeric: tabular-nums; }
+.tbl .name { font-weight: 600; font-size: 15px; }
+#my-coops .tbl td.first { min-width: 250px; }
+.tbl .sub { display: block; color: var(--faint); font-size: 12px; font-weight: 400; margin-top: 2px; }
+.tbl .mono { font-size: 13px; }
+
+/* 상태 표시: 점 + 글자, 또는 알약 */
+.tbl .sub .conn { color: var(--text); font-size: 13px; margin-top: 4px; }
+.conn { display: inline-flex; align-items: center; gap: 7px; white-space: nowrap; }
+.conn::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--line-2); }
+.conn.ok::before { background: var(--ok); }
+.conn.slow::before { background: var(--warn); }
+.pill { display: inline-block; font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 999px; border: 1px solid var(--line); background: var(--bg-2); color: var(--muted); white-space: nowrap; }
+.pill.ok { color: var(--ok); background: var(--ok-soft); border-color: #bfe3d1; }
+.pill.acc { color: var(--accent); background: var(--accent-soft); border-color: #cdd2fb; }
+.pill.wait { color: var(--warn); background: var(--warn-soft); border-color: #f0d9a8; }
+.leave-chip { white-space: nowrap; display: inline-flex; align-items: center; gap: 6px; margin-top: 8px; font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 999px; color: var(--warn); background: var(--warn-soft); border: 1px solid #f0d9a8; }
+.leave-chip i { font-style: normal; font-weight: 400; color: var(--muted); }
+.ex { font-size: 11px; color: var(--faint); font-weight: 400; }
+.leave-box { display: flex; justify-content: space-between; align-items: center; gap: 16px 24px; flex-wrap: wrap; margin-top: 18px; padding: 16px 18px; border-radius: 12px; background: var(--bg-2); }
+.leave-box p { margin: 6px 0 0; font-size: 14px; color: var(--muted); line-height: 1.6; max-width: 720px; }
+.leave-box p b { color: var(--text); font-weight: 600; }
+.leave-box .done { color: var(--warn); }
+
+/* 행 동작 */
+.acts { display: flex; gap: 8px; justify-content: flex-end; align-items: center; flex-wrap: nowrap; }
+.tbl .nw { white-space: nowrap; }
+.more-btn { white-space: nowrap; font: inherit; font-size: 13px; font-weight: 600; padding: 7px 12px; border-radius: 999px; border: 1px solid transparent; background: none; color: var(--muted); cursor: pointer; letter-spacing: 0.04em; }
+.more-btn:hover, .more-btn[aria-expanded="true"] { color: var(--text); border-color: var(--line-2); }
+.menu button.mi:disabled { color: var(--faint); cursor: not-allowed; }
+.menu .danger-mi { color: var(--danger); }
+
+/* 기여 */
+.contrib { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 0.65fr); gap: 20px; }
+.ctl { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; flex-wrap: wrap; }
+.ctl label { font-size: 13px; color: var(--muted); font-weight: 600; }
+.ctl select { font: inherit; font-size: 14px; padding: 9px 12px; border: 1px solid var(--line-2); border-radius: 10px; background: var(--bg); color: var(--text); max-width: 100%; }
+.bar { display: inline-block; vertical-align: middle; width: 120px; height: 6px; background: var(--bg-2); border-radius: 999px; margin-right: 12px; overflow: hidden; }
+.bar span { display: block; height: 100%; background: linear-gradient(90deg, var(--g1), var(--g2)); border-radius: 999px; }
+.cum .big { font-size: 56px; font-weight: 700; letter-spacing: -0.04em; line-height: 1; margin: 16px 0 8px; font-variant-numeric: tabular-nums; }
+.cum p { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.6; }
+.cum .link { display: inline-block; margin-top: 16px; font-size: 13px; font-weight: 600; letter-spacing: 0.06em; }
+.cum .link:hover { color: var(--accent); }
+.sep-note { display: flex; gap: 10px; align-items: flex-start; margin-top: 16px; padding: 12px 14px; border-radius: 10px; background: var(--bg-2); font-size: 13px; color: var(--muted); line-height: 1.55; }
+
+/* 정산과 지급 */
+.paysum { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; border-bottom: 1px solid var(--line); margin: -26px -26px 22px; }
+.paysum > div { padding: 20px 26px; }
+.paysum > div + div { border-left: 1px solid var(--line); }
+.paysum .v { font-size: 22px; font-weight: 700; margin-top: 6px; font-variant-numeric: tabular-nums; }
+.paysum .v small { font-size: 13px; color: var(--faint); font-weight: 500; }
+.paysum .d { font-size: 13px; color: var(--muted); margin-top: 2px; }
+.det-btn { font: inherit; font-size: 13px; font-weight: 600; padding: 6px 12px; border-radius: 999px; border: 1px solid var(--line-2); background: var(--card); cursor: pointer; white-space: nowrap; }
+.det-btn:hover { border-color: var(--text); }
+tr.detail td { background: var(--bg); padding: 0; }
+.drawer { padding: 22px 24px; border-left: 3px solid var(--g2); display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px 40px; }
+.drawer h4 { margin: 0 0 10px; font-size: 13px; letter-spacing: 0.14em; color: var(--faint); }
+.drawer p { margin: 0 0 8px; font-size: 14px; color: var(--muted); line-height: 1.6; }
+.r-meta { display: grid; grid-template-columns: auto 1fr; gap: 6px 18px; margin: 0; font-size: 12px; }
+.r-meta dt { color: var(--faint); }
+.r-meta dd { margin: 0; color: var(--muted); overflow-wrap: anywhere; }
+.r-link { display: inline-block; margin-top: 12px; color: var(--faint); font-style: italic; font-size: 13px; cursor: default; }
+tr.hl td { background: #f7f8ff; }
+
+/* 위험 구역: 계정 삭제 */
+.danger { border: 1px solid #f2c6c2; background: #fffbfb; border-radius: 16px; padding: 26px; display: flex; justify-content: space-between; align-items: center; gap: 20px; flex-wrap: wrap; }
+.danger h3 { margin: 6px 0 6px; font-size: 19px; }
+.danger p { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.6; max-width: 620px; }
+.danger .layer-k { color: var(--danger); }
+.btn.red { background: var(--danger); color: #fff; }
+.btn.red:hover { background: #a93226; }
+.done-msg { margin-top: 12px; font-size: 13px; color: var(--danger); font-weight: 600; }
+
+/* 모달 */
+dialog.modal { border: 0; border-radius: 18px; padding: 0; width: min(560px, calc(100% - 32px)); max-height: calc(100vh - 48px); color: var(--text); background: var(--card); box-shadow: 0 24px 64px rgba(13,18,32,.25); }
+dialog.modal::backdrop { background: rgba(13,18,32,.45); }
+.m-body { padding: 28px; }
+.m-body h3 { margin: 10px 0 10px; font-size: 22px; letter-spacing: -0.01em; line-height: 1.3; }
+.m-body > p { margin: 0 0 14px; color: var(--muted); font-size: 15px; line-height: 1.6; }
+.m-steps { list-style: none; padding: 0; margin: 18px 0; border: 1px solid var(--line); border-radius: 12px; }
+.m-steps li { display: grid; grid-template-columns: 28px 1fr; gap: 12px; padding: 14px 16px; font-size: 14px; line-height: 1.5; color: var(--muted); }
+.m-steps li + li { border-top: 1px solid var(--line); }
+.m-steps .n { width: 24px; height: 24px; border-radius: 50%; border: 1.5px solid var(--text); display: grid; place-items: center; font-size: 12px; font-weight: 700; color: var(--text); }
+.m-steps b { color: var(--text); display: block; }
+.m-steps .st { margin-left: 4px; }
+.m-facts { list-style: none; padding: 0; margin: 0 0 18px; font-size: 14px; }
+.m-facts li { padding: 6px 0 6px 18px; position: relative; color: var(--text); line-height: 1.5; }
+.m-facts li::before { content: ''; position: absolute; left: 2px; top: 13px; width: 6px; height: 6px; border-radius: 50%; background: var(--line-2); }
+.asm { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; color: var(--warn); border: 1px dashed #e2c386; border-radius: 4px; padding: 1px 6px; margin-left: 6px; vertical-align: 1px; }
+.m-ledger { font-size: 13px; color: var(--muted); background: var(--bg-2); border-radius: 10px; padding: 12px 14px; line-height: 1.55; margin-bottom: 18px; }
+.m-check { display: flex; gap: 10px; align-items: flex-start; font-size: 14px; color: var(--muted); line-height: 1.5; }
+.m-check input { margin-top: 3px; }
+.m-foot { display: flex; justify-content: flex-end; gap: 10px; padding: 18px 28px; border-top: 1px solid var(--line); background: var(--bg); flex-wrap: wrap; }
+.btn:disabled { opacity: .4; cursor: not-allowed; }
+
+/* 검토 메모: 교수님 온라인 검토용, 접어 둔다 */
+.review { margin-top: 96px; border: 1px solid var(--line); border-radius: 16px; background: var(--card); }
+.review summary { cursor: pointer; padding: 20px 26px; font-weight: 700; font-size: 16px; display: flex; justify-content: space-between; gap: 12px; align-items: center; list-style: none; }
+.review summary::-webkit-details-marker { display: none; }
+.review summary::after { content: '+'; font-size: 20px; color: var(--faint); font-weight: 400; }
+.review[open] summary::after { content: '−'; }
+.review summary small { font-weight: 400; color: var(--faint); font-size: 13px; margin-left: 10px; }
+.rv { padding: 0 26px 26px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 32px; }
+.rv h4 { font-size: 12px; letter-spacing: 0.16em; color: var(--faint); margin: 8px 0 10px; }
+.rv ol { margin: 0; padding-left: 20px; }
+.rv li { font-size: 14px; line-height: 1.6; color: #2c3446; margin-bottom: 12px; }
+.rv .src { display: block; font-size: 12px; color: var(--faint); font-family: ui-monospace, 'SFMono-Regular', Consolas, monospace; margin-top: 2px; overflow-wrap: anywhere; }
+.rv .full { grid-column: 1 / -1; border-top: 1px solid var(--line); padding-top: 18px; }
+
+main.wrap { padding-bottom: 128px; }
+
+@media (max-width: 1100px) {
+  .prof { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 960px) {
+  .acct-grid, .contrib, .rv, .drawer { grid-template-columns: minmax(0, 1fr); }
+  .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .kpi:nth-child(3) { border-left: 0; }
+  .kpi:nth-child(n+3) { border-top: 1px solid var(--line); }
+  .roles li { grid-template-columns: 1fr; gap: 8px; }
+}
+@media (max-width: 760px) {
+  /* 표 행의 ⋯ More 메뉴는 헤더 메뉴와 달리 그 행 바로 아래에 연다 */
+  .tbl.stack .acts { position: relative; }
+  .tbl.stack .acts .dd { position: static; }
+  .acts .menu.sm { position: absolute; top: calc(100% + 6px); left: 0; right: auto; width: 240px; }
+  .page-head h1 { font-size: 34px; }
+  .kpi { padding: 16px; }
+  .kpi .v { font-size: 22px; }
+  .panel { padding: 18px; }
+  .paysum { grid-template-columns: 1fr; margin: -18px -18px 18px; }
+  .paysum > div { padding: 14px 18px; }
+  .paysum > div + div { border-left: 0; border-top: 1px solid var(--line); }
+  .prof { grid-template-columns: 1fr; }
+  .cum .big { font-size: 44px; }
+  .bar { width: 64px; margin-right: 8px; }
+  .tbl th { white-space: normal; letter-spacing: 0.08em; }
+  .tbl td { padding: 12px 8px; }
+  /* 좁은 화면에서는 표 행을 카드처럼 세운다 */
+  .tbl.stack thead { display: none; }
+  .tbl.stack, .tbl.stack tbody, .tbl.stack tr, .tbl.stack td { display: block; width: 100%; }
+  .tbl.stack tr:not(.detail) { border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; margin-bottom: 12px; }
+  .tbl.stack td { border: 0; padding: 5px 0; display: flex; justify-content: space-between; gap: 12px; text-align: right; }
+  .tbl.stack td::before { content: attr(data-label); color: var(--faint); font-size: 12px; text-align: left; flex: none; }
+  .tbl.stack .cv { text-align: right; }
+  .tbl.stack .cv .sub { margin-top: 0; }
+  .tbl.stack td.first { display: block; text-align: left; padding-bottom: 8px; }
+  .tbl.stack td.first::before { content: none; }
+  .tbl.stack td.acts-cell { justify-content: flex-start; padding-top: 10px; }
+  .tbl.stack td.acts-cell::before { content: none; }
+  .tbl.stack .acts { justify-content: flex-start; }
+  .tbl.stack tr.detail { margin: -6px 0 12px; }
+  .tbl.stack tr.detail td { display: block; text-align: left; }
+  .tbl.stack tr.detail td::before { content: none; }
+  .drawer { padding: 16px; }
+  .danger { padding: 18px; }
+  .m-body { padding: 22px; }
+  .m-foot { padding: 14px 22px; }
+  .review summary { padding: 16px 18px; }
+  .rv { padding: 0 18px 18px; }
+}
+/* 접힌 상세 행: 좁은 화면의 display:block보다 우선해야 토글이 동작한다 */
+.tbl.stack tr[hidden] { display: none; }
+</style>
+</head>
+<body>
+
+<!-- 앱 영역 헤더: 자리와 모양은 공통, 오른쪽 메뉴만 역할(Participant)에 맞춘다 -->
+<header class="topbar">
+  <div class="wrap">
+    <a class="brand" href="index.html">
+      <svg viewBox="0 0 32 32" aria-hidden="true">
+        <defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1aa3d9"/><stop offset=".55" stop-color="#5b4ce0"/><stop offset="1" stop-color="#e0675e"/></linearGradient></defs>
+        <circle cx="16" cy="16" r="12.5" fill="none" stroke="url(#lg)" stroke-width="2.4"/>
+        <path d="M6 22 C10 12, 14 22, 18 12 S 25 14, 26 8" fill="none" stroke="#0d1220" stroke-width="2" stroke-linecap="round"/>
+        <circle cx="6" cy="22" r="2.2" fill="#0d1220"/><circle cx="18" cy="12" r="2.2" fill="#0d1220"/><circle cx="26" cy="8" r="2.2" fill="#e0675e"/>
+      </svg>
+      TRAVI
+    </a>
+    <div class="spacer"></div>
+    <nav class="nav">
+      <a class="hide-sm" href="coop.html">CO-OPS</a>
+      <a class="on hide-sm" href="mypage.html" aria-current="page">MY PAGE</a>
+      <!-- 역할 전환: 이 계정이 가진 역할만. 같은 세션에서 화면 묶음만 바뀐다 -->
+      <div class="dd">
+        <button class="va" type="button" data-dd aria-haspopup="true" aria-expanded="false" aria-controls="m-role">
+          <span class="long">Viewing as: <b>Participant</b></span><span class="short"><b>P</b></span> ▾
+        </button>
+        <div class="menu" id="m-role" role="menu">
+          <div class="mh">VIEW TRAVI AS</div>
+          <a class="mi" role="menuitem" href="coop.html" aria-current="true"><span class="ck">✓</span><span>Participant<small>Browse co-ops, your requests, My page</small></span></a>
+          <a class="mi" role="menuitem" href="coop-manage.html"><span></span><span>Co-op leader<small>SOC Threat Detection Co-op · manage this one co-op</small></span></a>
+          <a class="mi" role="menuitem" href="admin.html"><span></span><span>Admin<small>Platform operations (granted in this mock)</small></span></a>
+          <div class="mf">Switching changes the screens you see. You stay signed in. Roles are listed per co-op. CO-OPS and MY PAGE open the Participant view.</div>
+        </div>
+      </div>
+      <div class="dd">
+        <button class="me" type="button" data-dd aria-haspopup="true" aria-expanded="false" aria-controls="m-me" aria-label="Account menu"><i>JK</i>▾</button>
+        <div class="menu sm" id="m-me" role="menu">
+          <div class="who"><b>Jane Kim</b><span>Org A · jane@org-a.example</span></div>
+          <a class="mi" role="menuitem" href="mypage.html"><span></span><span>My page</span></a>
+          <a class="mi" role="menuitem" href="index.html"><span></span><span>Log out</span></a>
+        </div>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="crumb">
+    <a href="index.html">Home</a><span class="sep">›</span><span class="cur">My page</span>
+    <span class="crumb-tag"><span class="st ill">SAMPLE DATA</span><span class="txt">as of Dec 3, 2026</span></span>
+  </div>
+
+  <div class="page-head">
+    <div>
+      <div class="eyebrow">MY PAGE</div>
+      <h1>My page</h1>
+      <p class="sec-lead">Your account and roles, the co-ops you belong to, what your site contributed in each training round, and what each settlement period paid you.</p>
+      <!-- '가입 즉시 조합원인가'가 미결이라 TRAVI 회원과 코옵 회원을 따로 적는다 -->
+      <div class="statusline">
+        <span class="tag"><b>Member of TRAVI</b> · since Sep 15, 2026</span>
+        <span class="tag"><b>Member of SOC Threat Detection Co-op</b> · approved Oct 1</span>
+        <span class="tag">Smart Farm Yield Co-op · join request pending (Nov 30)</span>
+      </div>
+    </div>
+    <nav class="onpage" aria-label="On this page">
+      <span class="k">ON THIS PAGE</span>
+      <a href="#account">Account</a><a href="#my-coops">My co-ops</a><a href="#contribution">Contribution</a><a href="#settlements">Settlements</a><a href="#delete-account">Delete account</a>
+    </nav>
+  </div>
+
+  <!-- 요약 지표 -->
+  <div class="kpis">
+    <div class="kpi"><div class="k">MY CO-OPS</div><div class="v">1 <small>joined · 1 pending</small></div><div class="d">SOC Threat Detection Co-op</div></div>
+    <div class="kpi"><div class="k">CURRENT TRAINING ROUND</div><div class="v">5 <small>of 6</small></div><div class="d">Running Dec 1–14 · your site is in this round</div></div>
+    <div class="kpi"><div class="k">CUMULATIVE CONTRIBUTION <span class="st research">RESEARCH</span></div><div class="v">1.146 <small>score</small></div><div class="d">SOC co-op · raw score (settlement #1)</div></div>
+    <div class="kpi"><div class="k">LATEST SETTLEMENT <span class="st plan">PLANNED</span></div><div class="v">382.00 <small>unit TBD</small></div><div class="d">Period #1 (Nov) · Paid (example)</div></div>
+  </div>
+
+  <!-- 1. 계정과 역할 -->
+  <section class="blk" id="account">
+    <div class="blk-head">
+      <div>
+        <div class="layer-k">01 · ACCOUNT</div>
+        <h2>Account and roles</h2>
+        <p>One account can hold several roles. Roles in a co-op belong to that co-op only.</p>
+      </div>
+    </div>
+    <div class="acct-grid">
+      <div class="panel">
+        <div class="prof">
+          <div><div class="k">NAME</div><div class="v">Jane Kim</div></div>
+          <div><div class="k">ORGANIZATION</div><div class="v">Org A</div></div>
+          <div><div class="k">EMAIL</div><div class="v mono" style="font-size:14px">jane@org-a.example</div></div>
+          <div><div class="k">SIGN-IN METHOD</div><div class="v tbd">TBD</div></div>
+        </div>
+        <ul class="roles">
+          <li>
+            <div class="scope">TRAVI<small>Account</small></div>
+            <div class="rchips"><span class="rchip">Member of TRAVI</span><span class="rchip attr">Since Sep 15, 2026</span></div>
+          </li>
+          <li>
+            <div class="scope">SOC Threat Detection Co-op<small>Security</small></div>
+            <div class="rchips">
+              <span class="rchip">Participant</span>
+              <span class="rchip attr">Approved Oct 1 · Startup Kit received Oct 2</span>
+              <span class="rchip lead">Co-op leader</span>
+              <a class="rlink" href="coop-manage.html">Switch to Co-op leader view →</a>
+            </div>
+          </li>
+          <li>
+            <div class="scope">Smart Farm Yield Co-op<small>Agriculture</small></div>
+            <div class="rchips"><span class="rchip ghosted">Participant · after approval (requested Nov 30)</span></div>
+          </li>
+          <li>
+            <div class="scope">Platform</div>
+            <div class="rchips">
+              <span class="rchip lead">Admin</span>
+              <span class="rchip attr">Granted in this mock</span>
+              <a class="rlink" href="admin.html">Switch to Admin view →</a>
+            </div>
+          </li>
+        </ul>
+        <p class="note">Running training at your site (as a Node or OC) comes with being a Participant and gives no management rights. This page only shows your roles. It does not change them.</p>
+      </div>
+
+      <div class="panel payacct">
+        <div class="layer-k">PAYOUT ACCOUNT <span class="st plan">PLANNED</span></div>
+        <dl>
+          <dt>Hedera account</dt><dd><span class="conn ok"><b>Connected</b></span> <span class="nw" style="white-space:nowrap">· Nov 20, 2026</span></dd>
+          <dt>Account ID</dt><dd class="mono">0.0.5120001</dd>
+          <dt>Holder</dt><dd>Org A</dd>
+          <dt>Payout unit</dt><dd>TBD</dd>
+        </dl>
+        <p class="note">Settlement payouts for Org A go to this Hedera account. How the account is verified and the payout unit are not decided yet.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. 내 코옵 -->
+  <section class="blk" id="my-coops">
+    <div class="blk-head">
+      <div>
+        <div class="layer-k">02 · CO-OPS</div>
+        <h2>My co-ops</h2>
+        <p>Co-ops you joined or asked to join, with your site's status and onboarding progress.</p>
+      </div>
+      <a class="btn ghost sm" href="coop.html">FIND MORE CO-OPS</a>
+    </div>
+    <div class="panel">
+      <table class="tbl stack">
+        <thead><tr><th>Co-op</th><th>My role</th><th>Site and connection</th><th>Training round</th><th>Onboarding</th><th><span class="sr" style="position:absolute;left:-9999px">Actions</span></th></tr></thead>
+        <tbody>
+          <tr id="row-soc">
+            <td class="first"><span class="name">SOC Threat Detection Co-op</span><span class="sub">Security · Training · 4 members</span><span class="leave-slot"></span></td>
+            <td data-label="My role" class="nw"><span class="cv">Participant<span class="sub">Co-op leader</span></span></td>
+            <td data-label="Site" class="nw"><span class="cv"><span class="mono">org-a-soc-01</span><span class="sub"><span class="conn ok">Connected · just now</span></span></span></td>
+            <td data-label="Training round" class="nw"><span class="cv">Round 5 of 6<span class="sub">Running · Dec 1–14</span></span></td>
+            <td data-label="Onboarding"><span class="cv"><span class="pill ok">Onboarding done</span><span class="sub">Startup Kit Oct 2</span></span></td>
+            <td class="acts-cell">
+              <div class="acts">
+                <a class="btn ghost sm" href="coop.html#co=soc">OPEN</a>
+                <!-- Manage는 코옵 리더 역할이 있을 때만 -->
+                <a class="btn solid sm" href="coop-manage.html">MANAGE</a>
+                <div class="dd">
+                  <button class="more-btn" type="button" data-dd aria-haspopup="true" aria-expanded="false" aria-controls="m-more-soc" aria-label="More actions for SOC Threat Detection Co-op">⋯ More</button>
+                  <div class="menu sm" id="m-more-soc" role="menu">
+                    <button class="mi danger-mi" type="button" role="menuitem" data-leave="soc" data-name="SOC Threat Detection Co-op"><span></span><span>Leave this co-op<small>Not instant. Opens the steps first.</small></span></button>
+                  </div>
+                </div>
+              </div>
+            </td>
+          </tr>
+          <tr id="row-farm">
+            <td class="first"><span class="name">Smart Farm Yield Co-op</span><span class="sub">Agriculture · Forming · 2 of 5 members</span></td>
+            <td data-label="My role" class="nw"><span class="cv">Participant<span class="sub">after approval</span></span></td>
+            <td data-label="Site" class="nw"><span class="cv"><span style="color:var(--faint)">No site yet</span><span class="sub"><span class="conn">Not connected</span></span></span></td>
+            <td data-label="Training round"><span style="color:var(--faint)">—</span></td>
+            <td data-label="Onboarding"><span class="cv"><span class="pill wait">Join request pending</span><span class="sub">Requested Nov 30</span></span></td>
+            <td class="acts-cell">
+              <div class="acts">
+                <a class="btn ghost sm" href="coop.html#co=farm">OPEN</a>
+                <div class="dd">
+                  <button class="more-btn" type="button" data-dd aria-haspopup="true" aria-expanded="false" aria-controls="m-more-farm" aria-label="More actions for Smart Farm Yield Co-op">⋯ More</button>
+                  <div class="menu sm" id="m-more-farm" role="menu">
+                    <button class="mi" type="button" role="menuitem" disabled><span></span><span>Leave this co-op<small>Available after the co-op approves you</small></span></button>
+                  </div>
+                </div>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <!-- 내 탈퇴 흐름: 아직 요청 전. 버튼을 누르면 단계 안내 모달이 먼저 뜬다 -->
+      <div class="leave-box" id="leave-box">
+        <div>
+          <div class="layer-k">LEAVE A CO-OP <span class="st road">ROADMAP</span></div>
+          <p><b>You have not asked to leave SOC Threat Detection Co-op.</b> Leaving is not instant: you send a request, what the model learned from your site's data is removed by unlearning, and the exit is recorded on the ledger. You can leave only a co-op that approved you.</p>
+        </div>
+        <button class="btn ghost sm" type="button" data-leave="soc" data-name="SOC Threat Detection Co-op">LEAVE THIS CO-OP</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. 내 기여: 학습 라운드 단위. 정산 기간과 섞지 않는다 -->
+  <section class="blk" id="contribution">
+    <div class="blk-head">
+      <div>
+        <div class="layer-k">03 · CONTRIBUTION</div>
+        <h2>My contribution <span class="st research">RESEARCH</span></h2>
+        <p>How much your site contributed in each training round, and the running total that settlement uses.</p>
+      </div>
+    </div>
+    <div class="contrib">
+      <div class="panel">
+        <div class="ctl">
+          <label for="cosel">Co-op</label>
+          <select id="cosel">
+            <option>SOC Threat Detection Co-op</option>
+            <option disabled>Smart Farm Yield Co-op (no rounds yet)</option>
+          </select>
+        </div>
+        <table class="tbl">
+          <thead><tr><th>Training round</th><th>Dates</th><th>State</th><th>Settlement period</th></tr></thead>
+          <tbody>
+            <tr><td>Round 1</td><td class="nw">Oct 6–19</td><td>Done</td><td style="color:var(--faint)">—</td></tr>
+            <tr><td>Round 2</td><td class="nw">Oct 20–Nov 2</td><td>Done</td><td style="color:var(--faint)">—</td></tr>
+            <tr><td>Round 3</td><td class="nw">Nov 3–16</td><td>Done</td><td>#1</td></tr>
+            <tr><td>Round 4</td><td class="nw">Nov 17–30</td><td>Done</td><td>#1</td></tr>
+            <tr><td>Round 5</td><td class="nw">Dec 1–14</td><td><span class="pill acc">Running</span></td><td>#2</td></tr>
+            <tr><td>Round 6</td><td class="nw">Dec 15–28</td><td style="color:var(--faint)">Scheduled</td><td>#2</td></tr>
+          </tbody>
+        </table>
+        <p class="note">Your site took part in every round so far. Contribution comes from attribution analysis, and the method is still being researched. Per-round scores are not shown in this mock.</p>
+      </div>
+      <div class="panel cum">
+        <div class="layer-k">CUMULATIVE CONTRIBUTION</div>
+        <div class="big">1.146</div>
+        <p>Raw cumulative contribution score of Org A in this co-op, as used by settlement #1 (computed Dec 1, 2026). This is a score, not a percentage.</p>
+        <div class="sep-note">Your share is a separate number. The co-op's sharing rule (α = 1 setting, example) turns the cumulative scores of all members into shares: 38.2% for Org A in settlement #1.</div>
+        <div class="sep-note">Training rounds and settlement periods are counted separately. Settlement #1 covers rounds 3–4.</div>
+        <a class="link" href="#settlements">SEE SETTLEMENTS ↓</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. 정산과 지급: 정산 기간 단위 -->
+  <section class="blk" id="settlements">
+    <div class="blk-head">
+      <div>
+        <div class="layer-k">04 · SETTLEMENTS</div>
+        <h2>Settlements and payouts <span class="st plan">PLANNED</span></h2>
+        <p>One row per settlement period. Your share comes from the co-op's sharing rule on cumulative contribution, and the payout goes out on Hedera. Only revenue from contribution is shared.</p>
+      </div>
+      <span class="st ill">ILLUSTRATIVE</span>
+    </div>
+    <div class="panel">
+      <div class="paysum">
+        <div><div class="layer-k">PAID TO DATE</div><div class="v">382.00 <small>unit TBD</small></div><div class="d">1 settlement period · Paid (example)</div></div>
+        <div><div class="layer-k">OPEN PERIOD</div><div class="v" style="font-size:16px;line-height:1.4">#2 · Dec 1–31, 2026</div><div class="d">Not computed yet. Preview after Round 5 ends Dec 14.</div></div>
+        <div><div class="layer-k">PAYOUT SCHEDULE</div><div class="v" style="font-size:16px;line-height:1.4">After each settlement period closes</div><div class="d">To Hedera account <span class="mono">0.0.5120001</span> (planned)</div></div>
+      </div>
+      <table class="tbl stack">
+        <thead><tr><th>Settlement period</th><th>Co-op</th><th>Rounds included</th><th class="num">My share</th><th class="num">Payout</th><th>State</th><th><span style="position:absolute;left:-9999px">Details</span></th></tr></thead>
+        <tbody>
+          <tr id="sp2">
+            <td class="first nw"><span class="name">#2 · Dec 1–31, 2026</span></td>
+            <td data-label="Co-op">SOC Threat Detection Co-op</td>
+            <td data-label="Rounds included">Rounds 5–6</td>
+            <td data-label="My share" class="num" style="color:var(--faint)">—</td>
+            <td data-label="Payout" class="num" style="color:var(--faint)">—</td>
+            <td data-label="State"><span class="cv"><span class="pill acc">Open</span><span class="sub">Not computed yet</span></span></td>
+            <td class="acts-cell"><div class="acts"><span class="ex">Preview after Dec 14</span></div></td>
+          </tr>
+          <tr id="sp1">
+            <td class="first nw"><span class="name">#1 · Nov 1–30, 2026</span></td>
+            <td data-label="Co-op">SOC Threat Detection Co-op</td>
+            <td data-label="Rounds included">Rounds 3–4</td>
+            <td data-label="My share" class="num nw"><span class="cv">38.2%<span class="sub">sharing rule, α = 1</span></span></td>
+            <td data-label="Payout" class="num nw"><span class="cv">382.00<span class="sub">unit TBD</span></span></td>
+            <td data-label="State" class="nw"><span class="cv"><span class="pill ok">Paid (example)</span><span class="st plan">PLANNED</span></span></td>
+            <td class="acts-cell"><div class="acts"><button class="det-btn" type="button" aria-expanded="false" aria-controls="sp1-detail" data-detail="sp1-detail">Payout detail ▾</button></div></td>
+          </tr>
+          <tr class="detail" id="sp1-detail" hidden>
+            <td colspan="7">
+              <div class="drawer">
+                <div>
+                  <h4>SHARING RULE <span class="st research">RESEARCH</span></h4>
+                  <p>Power rule on cumulative contribution, α ≥ 1 (arXiv:2606.28217). This co-op uses α = 1 (example).</p>
+                  <p>Your cumulative contribution score was 1.146. The sharing rule turned the scores of all four members into shares, and yours came out at 38.2%: 382.00 of 1,000.00 paid out for this period (unit TBD).</p>
+                  <p>Only revenue from contribution is shared.</p>
+                  <h4 style="margin-top:16px">TIMELINE</h4>
+                  <dl class="r-meta">
+                    <dt>Closed</dt><dd>Nov 30, 2026</dd>
+                    <dt>Computed</dt><dd>Dec 1, 2026 00:00 UTC</dd>
+                    <dt>Payout submitted</dt><dd>Dec 1, 2026 00:05:05 UTC (tx valid start)</dd>
+                    <dt>Recorded to HCS</dt><dd>Dec 1, 2026 00:05:12 UTC</dd>
+                    <dt>Status</dt><dd>Paid (example)</dd>
+                  </dl>
+                </div>
+                <div>
+                  <h4>PAYOUT ON HEDERA <span class="st plan">PLANNED</span></h4>
+                  <!-- 기록(HCS 메시지)과 지급(송금)은 서로 다른 트랜잭션이다 -->
+                  <dl class="r-meta mono">
+                    <dt>paid to</dt><dd>0.0.5120001 (Org A)</dd>
+                    <dt>payout transaction</dt><dd>0.0.4811001<wbr>@1796083505.000000000</dd>
+                    <dt>record topic</dt><dd>0.0.4811023</dd>
+                    <dt>sequence_number</dt><dd>1247</dd>
+                    <dt>consensus_timestamp</dt><dd>1796083512.384012001</dd>
+                  </dl>
+                  <span class="r-link" aria-disabled="true">View on HashScan (example, not a link)</span>
+                </div>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="note">Example only. Not real data. States are Open, Computed and Paid. Payout unit and who runs the payout are not decided.</p>
+    </div>
+  </section>
+
+  <!-- 5. 계정 삭제: 코옵 탈퇴와 다른 기능. 맨 아래에 따로 -->
+  <section class="blk" id="delete-account">
+    <div class="danger">
+      <div>
+        <div class="layer-k">DANGER ZONE <span class="st design">IN DESIGN</span></div>
+        <h3>Delete TRAVI account</h3>
+        <p>This deletes your TRAVI account. It is not the same as leaving a co-op. To leave one co-op, use <b style="white-space:nowrap">Leave this co-op</b> in My co-ops.</p>
+        <div class="done-msg" id="del-done" hidden>Deletion request received (mock). Nothing was sent.</div>
+      </div>
+      <button class="btn red lg" type="button" id="del-open">DELETE MY ACCOUNT</button>
+    </div>
+  </section>
+
+  <!-- 검토 메모: open questions와 assumptions -->
+  <details class="review">
+    <summary><span>Review notes<small>Open questions and assumptions for this screen</small></span></summary>
+    <div class="rv">
+      <div>
+        <h4>OPEN QUESTIONS</h4>
+        <ol>
+          <li>If a member deletes their account while still in a co-op, does leaving (unlearning) start for every co-op at once, or must they leave each co-op first?<span class="src">회의정리_1105_1106.md:117 (only decided that the two functions are separate)</span></li>
+          <li>Does "unlearning" include retraining? What should the processing step be called?<span class="src">회의정리_1105_1106.md:130, :305~306</span></li>
+          <li>Legal deadline for processing an exit needs checking: GDPR one month, 45 days (assumed to be CCPA), Singapore "reasonable period".<span class="src">회의정리_1105_1106.md:217, SESSION_SYNC_2026-11-03.md:1061</span></li>
+          <li>How are payouts already received handled when a member leaves? A severance-style idea was rejected; the current direction is "only revenue from contribution". When does settlement end after leaving?<span class="src">회의정리_1105_1106.md:221, 1105목 발표.merged.txt 0:50:17~0:52:21 (governance issue; speaker assumed to be the professor)</span></li>
+          <li>How is contribution handled for a round a node missed because of a failure? (A failed node gets no reward; grey zone.)<span class="src">1105목 발표.merged.txt 0:57:17~0:58:48 (speaker assumed to be the professor)</span></li>
+          <li>How does a participant connect the Hedera account that receives payouts, and what is the payout unit?<span class="src">SESSION_SYNC_2026-11-03.md:1077, index.html:320</span></li>
+        </ol>
+      </div>
+      <div>
+        <h4>ASSUMPTIONS</h4>
+        <ol>
+          <li>"Payouts already settled are not changed" is drawn from David's rebuttal (contribution was already paid for) and the remark that attacks already blocked do not disappear after unlearning. It is marked as an assumption in the leave dialog and needs the professor's confirmation.<span class="src">11/6 다비드회의.merged 0:24:59~0:25:29, 0:26:44</span></li>
+          <li>The Hedera payout account line is the minimum the Pay layer needs (participants paid on Hedera), so it is shown as PLANNED.<span class="src">index.html:298~301</span></li>
+          <li>You can leave only a co-op that approved you, so the Smart Farm row (request pending) has no active leave action. This page shows your own leave flow before a request is sent.<span class="src">11/6 다비드회의.merged 1:14:30</span></li>
+        </ol>
+        <h4 style="margin-top:20px">ALSO ON THIS SCREEN</h4>
+        <ol>
+          <li>Hedera is treated as the means of paying settlements. This is the team's reading and is not confirmed by the professor.<span class="src">SESSION_SYNC_2026-11-03.md:1077</span></li>
+          <li>Whether a member becomes a co-op member at sign-up is open, so "Member of TRAVI" and "Member of &lt;co-op&gt;" are written separately.<span class="src">회의정리_1105_1106.md:140, 11/6 다비드회의.merged 1:59:28 (student opinion)</span></li>
+          <li>The screen shows several roles on one account but does not change FLARE certificate roles. This conflicts with SER-001 ("one role only") and the SER-008 proposal (role fixed at registration).<span class="src">회의정리_1105_1106.md:160, 요구사항_추가초안_1105.md:103</span></li>
+        </ol>
+      </div>
+      <div class="full">
+        <p class="note" style="margin:0">Quotes from 1105목 발표.merged.txt and the 11/6 merged transcript up to 2:52 are attributed with "speaker assumed" where marked and are not agreed decisions. They will be re-checked after the 7da0f219 analysis.</p>
+      </div>
+    </div>
+  </details>
+</main>
+
+<!-- 탈퇴 모달: 요청 → 처리(언러닝, 자원이 되면 재학습) → 원장 기록 -->
+<dialog class="modal" id="leave" aria-labelledby="leave-title">
+  <form method="dialog">
+    <div class="m-body">
+      <div class="layer-k">LEAVE A CO-OP <span class="st road">ROADMAP</span></div>
+      <h3 id="leave-title">Leave <span data-coname>SOC Threat Detection Co-op</span>?</h3>
+      <p>You can ask to leave. Here is what happens after you send the request.</p>
+      <ol class="m-steps">
+        <li><span class="n">1</span><div><b>Request</b>You send the request from this page.</div></li>
+        <li><span class="n">2</span><div><b>Processing <span class="st road">ROADMAP</span></b>What the model learned from your data is removed by unlearning. Retraining after unlearning: recommended when more than 50% is removed (example).</div></li>
+        <li><span class="n">3</span><div><b>Exit recorded on the ledger <span class="st plan">PLANNED</span></b>The ledger shows that you left and when.</div></li>
+      </ol>
+      <ul class="m-facts">
+        <li>This is not instant.</li>
+        <li>Deadline: TBD.</li>
+        <li>Payouts already settled are not changed. <span class="asm">ASSUMPTION</span></li>
+        <li>Contribution made before you leave still earns its share in that settlement period. Only revenue from contribution is shared.</li>
+      </ul>
+      <div class="m-ledger">The ledger records the exit. It does not do the unlearning.</div>
+      <label class="m-check"><input type="checkbox" id="leave-ok"> <span>I want to leave <b data-coname>SOC Threat Detection Co-op</b> and understand it is not instant.</span></label>
+    </div>
+    <div class="m-foot">
+      <button class="btn ghost" value="cancel" type="submit">CANCEL</button>
+      <button class="btn solid" type="button" id="leave-go" disabled>REQUEST TO LEAVE</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- 계정 삭제 확인 모달 -->
+<dialog class="modal" id="del" aria-labelledby="del-title">
+  <form method="dialog">
+    <div class="m-body">
+      <div class="layer-k" style="color:var(--danger)">DELETE ACCOUNT <span class="st design">IN DESIGN</span></div>
+      <h3 id="del-title">Delete your TRAVI account?</h3>
+      <p>Deleting your account is different from leaving a co-op. Data deletion is not instant.</p>
+      <div class="m-ledger">You are still in SOC Threat Detection Co-op. Whether deleting the account also starts leaving it is not decided yet.</div>
+      <label class="m-check"><input type="checkbox" id="del-ok"> I want to delete my TRAVI account.</label>
+    </div>
+    <div class="m-foot">
+      <button class="btn ghost" value="cancel" type="submit">CANCEL</button>
+      <button class="btn red" type="button" id="del-go" disabled>DELETE MY ACCOUNT</button>
+    </div>
+  </form>
+</dialog>
+
+<footer class="foot">
+  <div class="wrap">
+    <div class="foot-top">
+      <div>
+        <div class="eyebrow">CONTACT</div>
+        <h3>Contact TRAVI</h3>
+        <a class="mail" href="mailto:contact@travi.example">contact@travi.example <span class="todo">교체 필요</span></a>
+        <div class="social"><a href="#" aria-label="LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5C4.98 4.88 3.87 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.22 8h4.56v14H.22V8zm7.4 0h4.37v1.92h.06c.61-1.15 2.1-2.36 4.32-2.36 4.62 0 5.47 3.04 5.47 7V22h-4.56v-6.6c0-1.57-.03-3.6-2.2-3.6-2.2 0-2.530 1.72-2.53 3.49V22H7.62V8z"/></svg></a></div>
+      </div>
+      <a class="btn solid lg" href="mailto:contact@travi.example">CONTACT US</a>
+    </div>
+    <div class="foot-bottom"><span>© 2026 TRAVI</span><span>DINA Lab, Hongik University · Neouly</span></div>
+  </div>
+</footer>
+
+<script>
+/* 작은 상호작용만: 지급 상세 펼침, 탈퇴·삭제 모달. 드롭다운 열고 닫기는 app.js. 네트워크 전송 없음 */
+(function () {
+  // 메뉴 안 항목을 누른 뒤 메뉴를 닫는다(app.js는 메뉴 밖 클릭만 닫는다)
+  function closeMenu() {
+    document.querySelectorAll('.menu.open').forEach(function (m) { m.classList.remove('open'); });
+    document.querySelectorAll('[data-dd]').forEach(function (b) { b.setAttribute('aria-expanded', 'false'); });
+  }
+
+  // 정산 기간 상세 펼침
+  function setDetail(btn, open) {
+    var row = document.getElementById(btn.getAttribute('data-detail'));
+    row.hidden = !open;
+    btn.setAttribute('aria-expanded', String(open));
+    btn.textContent = open ? 'Payout detail ▴' : 'Payout detail ▾';
+  }
+  document.querySelectorAll('[data-detail]').forEach(function (btn) {
+    btn.addEventListener('click', function () { setDetail(btn, btn.getAttribute('aria-expanded') !== 'true'); });
+  });
+  // coop-manage.html의 정산 기간 행에서 넘어오면 같은 기간을 펼쳐 둔다
+  function fromHash() {
+    if (location.hash !== '#settlements') return;
+    setDetail(document.querySelector('[data-detail="sp1-detail"]'), true);
+    document.getElementById('sp1').classList.add('hl');
+  }
+  fromHash();
+  window.addEventListener('hashchange', fromHash);
+
+  function show(d) { if (d.showModal) d.showModal(); else d.setAttribute('open', ''); }
+  function hide(d) { if (d.close) d.close(); else d.removeAttribute('open'); }
+  function gate(box, go) { box.addEventListener('change', function () { go.disabled = !box.checked; }); }
+
+  // 탈퇴 요청: 모달 → 같은 행에 상태 칩, 안내 상자도 '요청됨'으로
+  var leave = document.getElementById('leave'), leaveOk = document.getElementById('leave-ok'), leaveGo = document.getElementById('leave-go'), target = null;
+  gate(leaveOk, leaveGo);
+  document.querySelectorAll('[data-leave]').forEach(function (mi) {
+    mi.addEventListener('click', function () {
+      closeMenu();
+      target = mi;
+      leave.querySelectorAll('[data-coname]').forEach(function (s) { s.textContent = mi.getAttribute('data-name'); });
+      leaveOk.checked = false; leaveGo.disabled = true;
+      show(leave);
+    });
+  });
+  leaveGo.addEventListener('click', function () {
+    var key = target.getAttribute('data-leave');
+    var slot = document.querySelector('#row-' + key + ' .leave-slot');
+    slot.innerHTML = '<span class="leave-chip">Leave requested · Received <i>Dec 3, 2026 (mock)</i></span>';
+    document.querySelectorAll('[data-leave="' + key + '"]').forEach(function (el) {
+      el.disabled = true;
+      if (el.classList.contains('mi')) el.innerHTML = '<span></span><span>Leave this co-op<small>Request received</small></span>';
+      else el.textContent = 'REQUEST SENT';
+    });
+    var box = document.querySelector('#leave-box p');
+    box.innerHTML = '<b class="done">Leave requested (mock). Nothing was sent.</b> Next: unlearning removes what the model learned from your site\'s data, then the exit is recorded on the ledger. Deadline: TBD.';
+    hide(leave);
+  });
+
+  // 계정 삭제 확인
+  var del = document.getElementById('del'), delOk = document.getElementById('del-ok'), delGo = document.getElementById('del-go');
+  gate(delOk, delGo);
+  document.getElementById('del-open').addEventListener('click', function () { delOk.checked = false; delGo.disabled = true; show(del); });
+  delGo.addEventListener('click', function () { document.getElementById('del-done').hidden = false; hide(del); });
+})();
+</script>
+<script src="app.js"></script>
+</body>
+</html>

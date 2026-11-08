@@ -1,0 +1,645 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TRAVI Co-ops</title>
+<script>document.documentElement.classList.add('js')</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="style.css">
+<style>
+
+/* 페이지 머리: 제목 + 회원 상태 */
+.app-head { display: grid; grid-template-columns: minmax(0, 1fr) 380px; gap: 20px 56px; align-items: start; padding: 24px 0 44px; }
+.head-top { grid-column: 1 / -1; display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+.head-top .st { margin-left: 0; font-size: 11px; padding: 5px 10px; }
+.asof { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); white-space: nowrap; }
+.app-head h1 { font-size: 48px; letter-spacing: -0.03em; line-height: 1.1; margin: 0 0 14px; }
+.app-head .sec-lead { font-size: 17px; }
+.status { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 20px 22px; }
+.status .line { font-size: 15px; font-weight: 600; line-height: 1.45; margin: 0 0 14px; }
+.status dl { display: grid; grid-template-columns: auto 1fr; gap: 8px 16px; margin: 0; padding-top: 14px; border-top: 1px solid var(--line); font-size: 13px; }
+.status dt { color: var(--faint); }
+.status dd { margin: 0; text-align: right; color: var(--text); }
+.status dd a { text-decoration: underline; text-underline-offset: 3px; }
+
+/* 구역 공통 */
+.blk { padding: 44px 0; border-top: 1px solid var(--line); scroll-margin-top: calc(var(--header-h) + 16px); }
+.blk-h { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px 24px; flex-wrap: wrap; margin-bottom: 20px; }
+.blk-h h2 { font-size: 26px; letter-spacing: -0.015em; margin: 8px 0 0; }
+.blk-h p { margin: 6px 0 0; color: var(--muted); font-size: 15px; }
+
+/* 코옵 목록: 카드 대신 리스트 */
+.filters { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.filters .lbl { font-size: 12px; font-weight: 600; color: var(--muted); margin-right: 4px; }
+.filters .lbl em { font-style: normal; color: var(--faint); font-weight: 400; }
+.fchip { font: inherit; font-size: 13px; padding: 7px 14px; border-radius: 999px; border: 1px solid var(--line-2); background: var(--card); color: var(--text); cursor: pointer; }
+.fchip:hover { border-color: var(--text); }
+.fchip[aria-pressed="true"] { background: var(--text); color: #fff; border-color: var(--text); }
+.colist { border: 1px solid var(--line); border-radius: 16px; background: var(--card); overflow: hidden; }
+.co-hd, .co-row { display: grid; grid-template-columns: minmax(0, 2.1fr) minmax(0, .9fr) minmax(0, 1.15fr) minmax(0, 1.15fr) minmax(0, 1.7fr) minmax(0, 1fr) 16px; gap: 20px; align-items: center; padding: 18px 22px; }
+.co-hd { padding-top: 12px; padding-bottom: 12px; background: var(--bg-2); font-size: 11px; letter-spacing: 0.14em; font-weight: 700; color: var(--faint); }
+.co-row { border-top: 1px solid var(--line); font-size: 14px; color: var(--muted); transition: background .15s; }
+.co-row:hover { background: #f7f8fb; }
+.co-row.sel { background: var(--accent-soft); box-shadow: inset 3px 0 0 var(--accent); }
+.co-row[hidden] { display: none; }
+.c-name b { display: block; color: var(--text); font-size: 15px; }
+.c-name small { font-size: 12px; color: var(--faint); }
+.c-state small { display: block; font-size: 12px; color: var(--faint); margin-top: 6px; }
+.c-mem .n { color: var(--text); font-variant-numeric: tabular-nums; }
+.mbar { display: block; height: 4px; background: var(--bg-2); border-radius: 99px; margin-top: 7px; overflow: hidden; max-width: 140px; }
+.mbar i { display: block; height: 100%; background: var(--text); border-radius: 99px; }
+.c-go { color: var(--faint); font-size: 16px; }
+.co-row:hover .c-go, .co-row.sel .c-go { color: var(--text); }
+.pill { display: inline-flex; align-items: center; gap: 7px; font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--line-2); background: var(--card); color: var(--muted); white-space: nowrap; }
+.pill::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+.pill.training { color: #1d7d52; border-color: #bfe3cf; background: #eef8f3; }
+.pill.open { color: var(--accent); border-color: #c8cdfb; background: var(--accent-soft); }
+.pill.forming { color: #586276; border-style: dashed; }
+.legend { display: flex; flex-wrap: wrap; gap: 8px 22px; margin-top: 14px; font-size: 13px; color: var(--faint); }
+.legend span { display: inline-flex; align-items: center; gap: 8px; }
+.legend .pill { font-size: 11px; padding: 2px 8px; }
+
+/* 코옵 상세 + 참여 요청 */
+.detail { border: 1px solid var(--line); border-radius: 18px; background: var(--card); scroll-margin-top: calc(var(--header-h) + 20px); overflow: hidden; }
+.d-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; flex-wrap: wrap; padding: 26px 30px; border-bottom: 1px solid var(--line); }
+.d-head h2 { font-size: 30px; letter-spacing: -0.02em; margin: 8px 0 6px; }
+.d-head .sub { font-size: 14px; color: var(--muted); }
+.d-body { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+.d-info { padding: 28px 30px 32px; border-right: 1px solid var(--line); }
+.d-join { padding: 28px 30px 32px; background: #fcfcfe; scroll-margin-top: calc(var(--header-h) + 20px); }
+.k { font-size: 11px; letter-spacing: 0.16em; font-weight: 700; color: var(--faint); }
+.facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.fact { border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; background: var(--card); }
+.fact.wide { grid-column: 1 / -1; }
+.fact .v { margin-top: 6px; font-size: 15px; font-weight: 600; line-height: 1.45; }
+.fact .v small { display: block; font-weight: 400; color: var(--muted); font-size: 13px; margin-top: 3px; }
+.dl-link { color: var(--accent); cursor: not-allowed; text-decoration: underline dotted; text-underline-offset: 3px; }
+.pay { margin-top: 22px; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+.pay-h { padding: 14px 18px; background: var(--bg-2); display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.pay-h b { font-size: 16px; }
+.pay ul { list-style: none; margin: 0; padding: 0; }
+.pay li { display: grid; grid-template-columns: 120px minmax(0, 1fr); gap: 14px; padding: 14px 18px; border-top: 1px solid var(--line); font-size: 14px; line-height: 1.6; color: #2c3446; }
+.pay li > span:first-child { font-weight: 600; color: var(--text); }
+.pay li .st { margin-left: 0; margin-right: 6px; }
+.pay li .cite { display: block; font-size: 12px; color: var(--faint); margin-top: 2px; }
+.leaving { margin-top: 14px; background: var(--bg-2); border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px; font-size: 14px; line-height: 1.6; color: var(--muted); }
+.leaving b { color: var(--text); }
+.leaving p { margin: 6px 0 0; }
+
+/* 참여 요청 양식: join.html의 .form/.fs/.field/.chips 결을 따른다 */
+.form h3 { font-size: 22px; margin: 8px 0 4px; letter-spacing: -0.01em; }
+.form .hint { color: var(--muted); font-size: 14px; margin: 0 0 20px; line-height: 1.55; }
+.fs { border: 0; padding: 0; margin: 0 0 22px; min-width: 0; }
+.fs legend { font-size: 11px; letter-spacing: 0.18em; font-weight: 700; color: var(--faint); margin-bottom: 12px; padding: 0; }
+.fs-all { border: 0; padding: 0; margin: 0; min-width: 0; }
+.row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.field { display: flex; flex-direction: column; gap: 7px; margin-bottom: 14px; min-width: 0; }
+.field label, .field .lab { font-size: 14px; font-weight: 600; }
+.field .opt { color: var(--faint); font-weight: 400; }
+.field input, .field textarea { font: inherit; font-size: 15px; padding: 11px 14px; border: 1px solid var(--line-2); border-radius: 10px; background: var(--bg); color: var(--text); min-width: 0; width: 100%; }
+.field input:focus, .field textarea:focus { outline: 2px solid var(--accent-soft); border-color: var(--accent); }
+.field input:disabled, .field textarea:disabled { color: var(--muted); background: var(--bg-2); }
+.field textarea { min-height: 88px; resize: vertical; }
+.field .help { font-size: 12px; color: var(--faint); }
+.field .help.bad { color: #b8443b; }
+.field .help.ok { color: #1d7d52; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { position: relative; }
+.chip input { position: absolute; opacity: 0; }
+.chip span { display: inline-block; padding: 9px 14px; border: 1px solid var(--line-2); border-radius: 999px; font-size: 14px; cursor: pointer; background: var(--card); }
+.chip span em { font-style: normal; font-size: 12px; color: var(--faint); margin-left: 4px; }
+.chip input:checked + span { background: var(--text); color: #fff; border-color: var(--text); }
+.chip input:checked + span em { color: #c9cfdb; }
+.chip input:focus-visible + span { outline: 2px solid var(--accent); }
+.chip input:disabled + span { cursor: default; opacity: .7; }
+.upload { border: 1px dashed var(--line-2); border-radius: 10px; padding: 14px; font-size: 13px; color: var(--faint); display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; background: var(--bg); }
+.upload button { font: inherit; font-size: 12px; padding: 6px 12px; border-radius: 999px; border: 1px solid var(--line-2); background: var(--card); color: var(--faint); cursor: not-allowed; }
+.consent { display: flex; gap: 10px; align-items: flex-start; font-size: 14px; color: var(--muted); line-height: 1.5; margin: 4px 0 18px; }
+.consent input { margin-top: 3px; }
+.submit { display: flex; justify-content: space-between; align-items: center; gap: 14px; flex-wrap: wrap; padding-top: 18px; border-top: 1px solid var(--line); }
+.submit .alt { font-size: 13px; color: var(--muted); max-width: 300px; line-height: 1.5; }
+.btn[disabled] { opacity: .45; cursor: not-allowed; }
+.sent { display: none; gap: 12px; align-items: flex-start; border: 1px solid #c8cdfb; background: var(--accent-soft); border-radius: 12px; padding: 14px 16px; margin-bottom: 20px; font-size: 14px; line-height: 1.55; }
+.sent.on { display: flex; }
+.sent b { display: block; }
+.sent a { text-decoration: underline; text-underline-offset: 3px; }
+.err { display: none; font-size: 13px; color: #b8443b; margin: -6px 0 14px; }
+.err.on { display: block; }
+/* 이미 참여 중인 코옵: 신청 양식 대신 */
+.member h3 { font-size: 22px; margin: 8px 0 4px; letter-spacing: -0.01em; }
+.member .hint { color: var(--muted); font-size: 14px; margin: 0 0 20px; line-height: 1.55; }
+.member dl { display: grid; grid-template-columns: auto 1fr; gap: 8px 16px; margin: 0 0 22px; padding: 14px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); font-size: 14px; }
+.member dt { color: var(--faint); }
+.member dd { margin: 0; text-align: right; }
+
+/* 내 참여 요청: 단계 표시 */
+.req { border: 1px solid var(--line); border-radius: 16px; background: var(--card); overflow: hidden; }
+.req + .req { margin-top: 14px; }
+.req-h { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; padding: 18px 24px; border-bottom: 1px solid var(--line); }
+.req-h b { font-size: 17px; }
+.req-h .meta { font-size: 13px; color: var(--muted); }
+.stepper { list-style: none; margin: 0; padding: 24px 24px 26px; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); }
+.stepper li { position: relative; padding-right: 18px; }
+.stepper li::after { content: ''; position: absolute; top: 10px; left: 26px; right: 4px; height: 2px; background: var(--line); }
+.stepper li:last-child::after { display: none; }
+.stepper li.done::after { background: var(--text); }
+.dot { position: relative; z-index: 1; width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--line-2); background: var(--card); display: grid; place-items: center; font-size: 11px; font-weight: 700; color: #fff; }
+.stepper li.done .dot { background: var(--text); border-color: var(--text); }
+.stepper li.cur .dot { border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent-soft); }
+.s-t { font-weight: 600; font-size: 14px; margin-top: 12px; }
+.s-s { font-size: 13px; color: var(--muted); margin-top: 2px; }
+.stepper li.cur .s-s { color: var(--accent); font-weight: 600; }
+.s-c { font-size: 12px; color: var(--faint); line-height: 1.5; margin-top: 6px; }
+.cur-detail { display: grid; grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); gap: 28px; padding: 24px; border-top: 1px solid var(--line); background: var(--bg); }
+.cur-detail h4 { font-size: 18px; margin: 8px 0 8px; }
+.cur-detail p { margin: 0 0 10px; font-size: 14px; line-height: 1.65; color: var(--muted); }
+.cur-detail .go { font-size: 14px; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+.cmd-wrap { min-width: 0; }
+.cmd-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; gap: 12px; }
+.copy { font: inherit; font-size: 12px; font-weight: 600; letter-spacing: 0.06em; padding: 6px 12px; border-radius: 999px; border: 1px solid var(--line-2); background: var(--card); cursor: pointer; color: var(--text); }
+.copy:hover { border-color: var(--text); }
+.cmd { margin: 0; background: #0d1220; color: #e3e7f2; border-radius: 12px; padding: 16px 18px; font-size: 13px; line-height: 1.75; overflow-x: auto; white-space: pre; }
+.cmd .c { color: #7f8aa3; }
+.conn { display: flex; flex-wrap: wrap; gap: 6px 14px; margin-top: 10px; font-size: 12px; color: var(--faint); }
+
+/* 새 코옵 제안 */
+.suggest { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; border: 1px dashed var(--line-2); border-radius: 14px; padding: 20px 24px; font-size: 15px; color: var(--muted); }
+.suggest b { color: var(--text); }
+
+/* 교수님 검토용 메모 */
+.review { margin: 8px 0 96px; border: 1px solid var(--line); border-radius: 16px; background: var(--card); }
+.review summary { cursor: pointer; padding: 18px 24px; font-weight: 600; display: flex; justify-content: space-between; align-items: center; gap: 12px; list-style: none; }
+.review summary::-webkit-details-marker { display: none; }
+.review summary::after { content: '+'; font-size: 20px; color: var(--faint); }
+.review[open] summary::after { content: '−'; }
+.review summary span { font-weight: 400; color: var(--faint); font-size: 13px; }
+.rv-body { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 32px; padding: 4px 24px 26px; border-top: 1px solid var(--line); }
+.rv-body h4 { font-size: 13px; letter-spacing: 0.14em; color: var(--faint); margin: 20px 0 10px; }
+.rv-body ol { margin: 0; padding-left: 20px; }
+.rv-body li { font-size: 14px; line-height: 1.6; color: #2c3446; margin-bottom: 12px; }
+.rv-body .src { display: block; font-size: 12px; color: var(--faint); margin-top: 2px; overflow-wrap: anywhere; }
+
+@media (max-width: 960px) {
+  .app-head { grid-template-columns: 1fr; }
+  .d-body, .cur-detail, .rv-body { grid-template-columns: 1fr; }
+  .d-info { border-right: 0; border-bottom: 1px solid var(--line); }
+  .co-hd { display: none; }
+  .co-row { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px 16px; }
+  .co-row .c-name { grid-column: 1 / -1; }
+  .co-row .c-need { grid-column: 1 / -1; }
+  .co-row .c-go { display: none; }
+  .co-row [data-k]::before { content: attr(data-k); display: block; font-size: 10px; letter-spacing: 0.14em; font-weight: 700; color: var(--faint); margin-bottom: 4px; }
+}
+@media (max-width: 760px) {
+  .app-head h1 { font-size: 34px; }
+  .blk { padding: 36px 0; }
+  .d-head, .d-info, .d-join { padding-left: 18px; padding-right: 18px; }
+  .facts, .row { grid-template-columns: 1fr; }
+  .pay li { grid-template-columns: 1fr; gap: 4px; }
+  .stepper { grid-template-columns: 1fr; padding: 20px 18px; }
+  .stepper li { display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 14px; padding: 0 0 18px; }
+  .stepper li::after { top: 24px; bottom: 2px; left: 10px; right: auto; width: 2px; height: auto; }
+  .s-t { margin-top: 1px; }
+  .req-h, .cur-detail { padding-left: 18px; padding-right: 18px; }
+  .review summary, .rv-body { padding-left: 18px; padding-right: 18px; }
+}
+</style>
+</head>
+<body>
+
+<!-- 앱 영역 헤더: 자리와 모양은 공통, 오른쪽 메뉴만 역할(Participant)에 맞춘다 -->
+<header class="topbar">
+  <div class="wrap">
+    <a class="brand" href="index.html">
+      <svg viewBox="0 0 32 32" aria-hidden="true">
+        <defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1aa3d9"/><stop offset=".55" stop-color="#5b4ce0"/><stop offset="1" stop-color="#e0675e"/></linearGradient></defs>
+        <circle cx="16" cy="16" r="12.5" fill="none" stroke="url(#lg)" stroke-width="2.4"/>
+        <path d="M6 22 C10 12, 14 22, 18 12 S 25 14, 26 8" fill="none" stroke="#0d1220" stroke-width="2" stroke-linecap="round"/>
+        <circle cx="6" cy="22" r="2.2" fill="#0d1220"/><circle cx="18" cy="12" r="2.2" fill="#0d1220"/><circle cx="26" cy="8" r="2.2" fill="#e0675e"/>
+      </svg>
+      TRAVI
+    </a>
+    <div class="spacer"></div>
+    <nav class="nav">
+      <a class="on hide-sm" href="coop.html" aria-current="page">CO-OPS</a>
+      <a class="hide-sm" href="mypage.html">MY PAGE</a>
+      <!-- 역할 전환: 이 계정이 가진 역할만. 같은 세션에서 화면 묶음만 바뀐다 -->
+      <div class="dd">
+        <button class="va" type="button" data-dd aria-haspopup="true" aria-expanded="false" aria-controls="m-role">
+          <span class="long">Viewing as: <b>Participant</b></span><span class="short"><b>P</b></span> ▾
+        </button>
+        <div class="menu" id="m-role" role="menu">
+          <div class="mh">VIEW TRAVI AS</div>
+          <a class="mi" role="menuitem" href="coop.html" aria-current="true"><span class="ck">✓</span><span>Participant<small>Browse co-ops, your requests, My page</small></span></a>
+          <a class="mi" role="menuitem" href="coop-manage.html"><span></span><span>Co-op leader<small>SOC Threat Detection Co-op · manage this one co-op</small></span></a>
+          <a class="mi" role="menuitem" href="admin.html"><span></span><span>Admin<small>Platform operations (granted in this mock)</small></span></a>
+          <div class="mf">Switching changes the screens you see. You stay signed in. Roles are listed per co-op. CO-OPS and MY PAGE open the Participant view.</div>
+        </div>
+      </div>
+      <div class="dd">
+        <button class="me" type="button" data-dd aria-haspopup="true" aria-expanded="false" aria-controls="m-me" aria-label="Account menu"><i>JK</i>▾</button>
+        <div class="menu sm" id="m-me" role="menu">
+          <div class="who"><b>Jane Kim</b><span>Org A · jane@org-a.example</span></div>
+          <a class="mi" role="menuitem" href="mypage.html"><span></span><span>My page</span></a>
+          <a class="mi" role="menuitem" href="index.html"><span></span><span>Log out</span></a>
+        </div>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="crumb"><a href="index.html">Home</a><span class="sep">›</span><span class="cur">Co-ops</span></div>
+
+  <!-- 머리: 코옵이 목적, 분산학습은 수단 -->
+  <section class="app-head" id="head">
+    <div class="head-top"><div class="eyebrow">CO-OPS</div><span class="asof"><span class="st ill">SAMPLE DATA</span> as of Dec 3, 2026</span></div>
+    <div>
+      <h1 class="sec-title">Find an AI co-op</h1>
+      <p class="sec-lead">A co-op is a group of organizations that build one AI model together and share the revenue it earns. Distributed learning is how they train it: raw data stays at each site.</p>
+    </div>
+    <aside class="status" aria-label="Your membership">
+      <p class="line">You are a Member of TRAVI and of one co-op. Co-ops joined: <span id="joined">1</span></p>
+      <dl>
+        <dt>Member of TRAVI</dt><dd>Since Sep 15, 2026</dd>
+        <dt>Member of a co-op</dt><dd><a href="mypage.html#my-coops">SOC Threat Detection Co-op</a> · since Oct 1</dd>
+        <dt>Join requests</dt><dd><a href="#requests"><span id="pending">1</span> pending</a></dd>
+      </dl>
+    </aside>
+  </section>
+
+  <!-- 코옵 목록 -->
+  <section class="blk" id="list">
+    <div class="blk-h">
+      <div>
+        <div class="eyebrow">CO-OP LIST <span class="st ill">SAMPLE DATA</span></div>
+        <h2>Co-ops you can join</h2>
+        <p>One list across domains. Open a co-op to see what data it needs and how pay works.</p>
+      </div>
+      <div class="filters" role="group" aria-label="Filter by domain">
+        <span class="lbl">Domain <em>(working term)</em></span>
+        <button class="fchip" type="button" data-f="all" aria-pressed="true">All</button>
+        <button class="fchip" type="button" data-f="Security" aria-pressed="false">Security</button>
+        <button class="fchip" type="button" data-f="Agriculture" aria-pressed="false">Agriculture</button>
+        <button class="fchip" type="button" data-f="Healthcare" aria-pressed="false">Healthcare</button>
+      </div>
+    </div>
+
+    <div class="colist" role="list">
+      <div class="co-hd" aria-hidden="true"><span>CO-OP</span><span>DOMAIN</span><span>STATE</span><span>MEMBERS</span><span>DATA IT NEEDS</span><span>NEXT ROUND</span><span></span></div>
+      <a class="co-row" role="listitem" href="#co=soc" data-id="soc" data-dom="Security">
+        <span class="c-name"><b>SOC Threat Detection Co-op</b><small><span class="mono">co-soc-01</span> · You're a member</small></span>
+        <span class="c-dom" data-k="DOMAIN">Security</span>
+        <span class="c-state" data-k="STATE"><span class="pill training">Training</span><small>Open for next round</small></span>
+        <span class="c-mem" data-k="MEMBERS"><span class="n">4 members</span> · threshold met<span class="mbar"><i style="width:100%"></i></span></span>
+        <span class="c-need" data-k="DATA IT NEEDS">Network flow logs (CICIDS-style)</span>
+        <span class="c-next" data-k="NEXT ROUND">Round 6 · Dec 15</span>
+        <span class="c-go" aria-hidden="true">›</span>
+      </a>
+      <a class="co-row" role="listitem" href="#co=farm" data-id="farm" data-dom="Agriculture">
+        <span class="c-name"><b>Smart Farm Yield Co-op</b><small><span class="mono">co-farm-01</span> · Your request is pending</small></span>
+        <span class="c-dom" data-k="DOMAIN">Agriculture</span>
+        <span class="c-state" data-k="STATE"><span class="pill forming">Forming</span></span>
+        <span class="c-mem" data-k="MEMBERS"><span class="n">2 of 5</span> needed to start<span class="mbar"><i style="width:40%"></i></span></span>
+        <span class="c-need" data-k="DATA IT NEEDS">Greenhouse sensor logs</span>
+        <span class="c-next" data-k="NEXT ROUND">After 5 members</span>
+        <span class="c-go" aria-hidden="true">›</span>
+      </a>
+      <a class="co-row" role="listitem" href="#co=clinic" data-id="clinic" data-dom="Healthcare">
+        <span class="c-name"><b>Clinical Notes Co-op</b><small class="mono">co-clinic-01</small></span>
+        <span class="c-dom" data-k="DOMAIN">Healthcare</span>
+        <span class="c-state" data-k="STATE"><span class="pill forming">Forming</span></span>
+        <span class="c-mem" data-k="MEMBERS"><span class="n">0 of 5</span> needed to start<span class="mbar"><i style="width:0%"></i></span></span>
+        <span class="c-need" data-k="DATA IT NEEDS">De-identified clinical notes</span>
+        <span class="c-next" data-k="NEXT ROUND">After 5 members</span>
+        <span class="c-go" aria-hidden="true">›</span>
+      </a>
+    </div>
+    <div class="legend">
+      <span><span class="pill forming">Forming</span> gathering members until the start threshold</span>
+      <span><span class="pill training">Training</span> training rounds are running</span>
+      <span><span class="pill open">Open for next round</span> new members join from the next training round</span>
+    </div>
+  </section>
+
+  <!-- 코옵 상세와 참여 요청. 선택한 코옵(#co=...)에 따라 채운다 -->
+  <section class="blk" id="detail-sec">
+    <article class="detail" id="detail" aria-live="polite">
+      <div class="d-head">
+        <div>
+          <div class="eyebrow">CO-OP DETAIL <span class="st ill">SAMPLE DATA</span></div>
+          <h2 id="d-name">Smart Farm Yield Co-op</h2>
+          <div class="sub" id="d-sub">Agriculture · co-farm-01</div>
+        </div>
+        <div id="d-state"><span class="pill forming">Forming</span></div>
+      </div>
+
+      <div class="d-body">
+        <div class="d-info">
+          <div class="facts">
+            <div class="fact wide"><div class="k">GOAL</div><div class="v" id="f-goal"></div></div>
+            <div class="fact"><div class="k">DATA TEMPLATE</div><div class="v" id="f-tpl"></div></div>
+            <div class="fact"><div class="k">TRAINING MODE</div><div class="v" id="f-mode"></div></div>
+            <div class="fact"><div class="k">MEMBERS</div><div class="v" id="f-mem"></div></div>
+            <div class="fact"><div class="k">CURRENT TRAINING ROUND</div><div class="v" id="f-round"></div></div>
+          </div>
+
+          <!-- 지급 설명: '비례'라고 단정하지 않는다. 학습 라운드와 정산 기간은 따로 센다 -->
+          <div class="pay">
+            <div class="pay-h"><b>How you get paid</b><span class="k">SAME FOR EVERY CO-OP</span></div>
+            <ul>
+              <li><span>Sharing rule</span><span><span class="st research">RESEARCH</span>Revenue is shared by the co-op's rule on each member's cumulative contribution: a power rule with α ≥ 1. How contribution is scored is still being researched.<span class="cite">Yoon, Kim &amp; Park, arXiv:2606.28217</span></span></li>
+              <li><span>Payout</span><span><span class="st plan">PLANNED</span>Paid on the Hedera network at the end of each settlement period. A settlement period can cover several training rounds. The two are counted separately.</span></li>
+              <li><span>What is shared</span><span>Only revenue from contribution is shared.</span></li>
+            </ul>
+          </div>
+          <div class="leaving">
+            <b>Leaving</b> <span class="st road">ROADMAP</span>
+            <p>You can ask to leave. Removing what the model learned from your data is done by unlearning or retraining, not by the ledger.</p>
+            <p>Once you are in a co-op, a request to leave starts from My page.</p>
+          </div>
+        </div>
+
+        <!-- 참여 요청. 시안이라 전송하지 않는다 -->
+        <div class="d-join" id="join">
+          <!-- 이미 참여 중인 코옵을 고르면 신청 양식 대신 보인다 -->
+          <div class="member" id="j-member" hidden>
+            <div class="eyebrow">YOUR MEMBERSHIP <span class="st ill">SAMPLE DATA</span></div>
+            <h3>You're already in this co-op</h3>
+            <p class="hint">Org A takes part in SOC Threat Detection Co-op as a Participant. There is nothing to request here.</p>
+            <dl>
+              <dt>Approved</dt><dd>Oct 1, 2026</dd>
+              <dt>Startup Kit received</dt><dd>Oct 2, 2026</dd>
+              <dt>Site</dt><dd class="mono">org-a-soc-01</dd>
+              <dt>Now</dt><dd>Round 5 of 6, Running</dd>
+            </dl>
+            <a class="btn solid lg" href="mypage.html#my-coops">OPEN MY PAGE →</a>
+          </div>
+
+          <form class="form" id="jform" novalidate>
+            <div class="eyebrow">REQUEST TO JOIN <span class="st ill">SAMPLE DATA</span></div>
+            <h3 id="j-title">Join Smart Farm Yield Co-op</h3>
+            <p class="hint">Each request is reviewed before you can take part. It is not instant. Signed in as Jane Kim, Org A.</p>
+
+            <div class="sent" id="j-sent" role="status">
+              <span class="pill open">Pending review</span>
+              <span><b id="j-sent-t">Request sent Nov 30, 2026</b>You can follow it in <a href="#requests">Your requests</a>. Mock only: nothing was sent anywhere.</span>
+            </div>
+
+            <fieldset class="fs-all" id="j-all">
+              <fieldset class="fs">
+                <legend>WHAT YOU'LL PROVIDE</legend>
+                <div class="chips">
+                  <label class="chip"><input type="checkbox" name="give" value="data" checked><span>Data</span></label>
+                  <label class="chip"><input type="checkbox" name="give" value="compute"><span>Compute <em>candidate</em></span></label>
+                  <label class="chip"><input type="checkbox" name="give" value="model"><span>Model <em>candidate</em></span></label>
+                </div>
+              </fieldset>
+
+              <fieldset class="fs">
+                <legend>YOUR SITE</legend>
+                <div class="row">
+                  <div class="field"><label for="j-org">Organization</label><input id="j-org" value="Org A" autocomplete="organization"></div>
+                  <div class="field"><label for="j-site">Site name</label><input id="j-site" class="mono" value="org-a-farm-01" spellcheck="false"><span class="help" id="j-site-h">Letters, numbers, - and _ only.</span></div>
+                </div>
+                <div class="field"><label for="j-mail">Contact email</label><input id="j-mail" type="email" value="jane@org-a.example" autocomplete="email"></div>
+                <div class="field"><span class="lab">Business verification</span>
+                  <div class="upload"><span>Business license or registration (PDF). Upload is not active in this mock.</span><button type="button" disabled>Choose file</button></div>
+                </div>
+              </fieldset>
+
+              <fieldset class="fs">
+                <legend>DATA YOU'LL BRING</legend>
+                <div class="field"><label for="j-data">Type and rough amount</label><textarea id="j-data"></textarea></div>
+              </fieldset>
+
+              <label class="consent"><input type="checkbox" id="j-ok"> I agree to take part in this co-op and to be paid by its sharing rule.</label>
+              <p class="err" id="j-err">Check the box above and use a valid site name to send the request.</p>
+            </fieldset>
+
+            <div class="submit">
+              <span class="alt">After you send it, the state is Pending review until someone approves it.</span>
+              <button class="btn solid lg" type="submit" id="j-btn">SEND REQUEST</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </article>
+  </section>
+
+  <!-- 내 참여 요청: SFR-005 완료 조건으로만 단계가 넘어간다 -->
+  <section class="blk" id="requests">
+    <div class="blk-h">
+      <div>
+        <div class="eyebrow">YOUR REQUESTS <span class="st ill">SAMPLE DATA</span> <span class="st design">IN DESIGN</span></div>
+        <h2>Your requests</h2>
+        <p>Each step is marked done only when its condition is met.</p>
+      </div>
+      <a class="btn ghost" href="mypage.html#my-coops">SEE IN MY PAGE →</a>
+    </div>
+
+    <div id="req-list">
+      <div class="req">
+        <div class="req-h"><b>Smart Farm Yield Co-op</b><span class="meta">Org A · <span class="mono">org-a-farm-01</span> · Provides data · Applied Nov 30, 2026</span></div>
+        <ol class="stepper">
+          <li class="done"><span class="dot">✓</span><div><div class="s-t">Applied</div><div class="s-s">Nov 30</div><div class="s-c">Request saved with site name, organization and contact email.</div></div></li>
+          <li class="cur"><span class="dot"></span><div><div class="s-t">Approved</div><div class="s-s">Pending review</div><div class="s-c">Done when the reviewer approves. Who reviews is still open.</div></div></li>
+          <li><span class="dot"></span><div><div class="s-t">Startup Kit received</div><div class="s-s">—</div><div class="s-c">Done when you download the kit and confirm its fingerprint.</div></div></li>
+          <li><span class="dot"></span><div><div class="s-t">Site connected</div><div class="s-s">—</div><div class="s-c">Done when your site reports Connected.</div></div></li>
+          <li><span class="dot"></span><div><div class="s-t">First training round</div><div class="s-s">—</div><div class="s-c">Done when your site takes part in a round. This co-op starts Round 1 when 5 members have joined.</div></div></li>
+        </ol>
+        <div class="cur-detail">
+          <div>
+            <div class="k">NOW · STEP 2 OF 5</div>
+            <h4>Waiting for review</h4>
+            <p>Once approved, you get a Startup Kit for <span class="mono">org-a-farm-01</span>. You install it on your own server with the site install command shown in this step. There is no redirect to another site.</p>
+            <a class="go" href="mypage.html#my-coops">See in My page</a>
+          </div>
+          <div class="cmd-wrap">
+            <div class="cmd-top"><span class="k">SITE INSTALL COMMAND · EXAMPLE</span><button class="copy" type="button" id="copy">COPY</button></div>
+<pre class="cmd mono" id="cmd"><span class="c"># Example only. Your real kit arrives after approval.</span>
+pip install "nvflare==2.5.*"
+unzip org-a-farm-01.zip -d ~/travi
+cd ~/travi/org-a-farm-01
+./startup/start.sh</pre>
+            <div class="conn"><span>Connection is shown as</span><span class="pill forming">Not connected</span><span class="pill training">Connected</span><span class="pill" style="color:#8a5a00;border-color:#f0d9a8;background:#fdf7ea">Delayed</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 새 코옵 제안: 링크 수준, 후보 -->
+  <section class="blk" id="suggest">
+    <div class="suggest">
+      <span><b>Don't see a co-op for your data?</b> Suggest one. <span class="st road">ROADMAP</span></span>
+      <button class="btn ghost" type="button" title="Not active in this mock">SUGGEST A CO-OP</button>
+    </div>
+  </section>
+
+  <!-- 교수님 온라인 검토용: 열린 질문과 가정 -->
+  <details class="review">
+    <summary>Review notes <span>6 open questions · 4 assumptions</span></summary>
+    <div class="rv-body">
+      <div>
+        <h4>OPEN QUESTIONS</h4>
+        <ol>
+          <li>How do members sign in: basic only, basic plus social, or social only (Google only, if social)? There is a concern about depending on Google. Should guests who are not signed in see this list at all?<span class="src">회의정리_1105_1106.md:126–127 · 11/5 회의.merged 1:03:44–1:04:06</span></li>
+          <li>Is someone a co-op member the moment they sign up, or a general user until they join a co-op? The status line at the top changes with the answer, which is why it shows "Member of TRAVI" and "Member of a co-op" separately.<span class="src">회의정리_1105_1106.md:140 · 11/6 다비드회의.merged 1:59:28 (student view)</span></li>
+          <li>Who approves a join request: the platform Admin (SFR-005 draft) or the co-op leader?<span class="src">요구사항_추가초안_1105.md:58, :112 (SER-009 approver TBD) · 1105목 발표.merged.txt 1:39:00</span></li>
+          <li>What term should replace "Domain"?<span class="src">회의정리_1105_1106.md:141</span></li>
+          <li>Should compute and model be accepted as ways to take part? One proposal shows "Model" only in co-ops that allow fine-tuning.<span class="src">11/6 다비드회의.merged 2:41:04–2:41:25 · 회의정리_1105_1106.md:151</span></li>
+          <li>Should a co-op where one company holds 75% or more of the data be treated as an exception, and marked in this list?<span class="src">회의정리_1105_1106.md:137</span></li>
+        </ol>
+      </div>
+      <div>
+        <h4>ASSUMPTIONS</h4>
+        <ol>
+          <li>The mock draws only the signed-in Member state. The guest view is covered by the co-op list on the Domain pages.<span class="src">회의정리_1105_1106.md:103 (domain = introduction + cohort list)</span></li>
+          <li>Co-op names, member counts, rounds and template names are invented. Member organizations are written as Org A–H, never as real organizations.<span class="src">Mock constraint (sample data) · index.html:314–317 (Org A–D)</span></li>
+          <li>The data template download and the business document upload are placeholders that do nothing.<span class="src">회의정리_1105_1106.md:117 ("UI only for now")</span></li>
+          <li>All four app screens show the same sample account on the same date, Dec 3, 2026. Org A is already in SOC Threat Detection Co-op (approved Oct 1) and has one pending request, to Smart Farm Yield Co-op (Nov 30). The Admin role is granted to this account only so the mock can show switching.<span class="src">Mock storyline across the four app screens</span></li>
+        </ol>
+        <h4>WHERE QUOTES COME FROM</h4>
+        <ol>
+          <li>Lines cited from "1105목 발표.merged.txt" are presumed to be the professor's review. Speaker attribution is not confirmed yet.<span class="src">SESSION_SYNC_2026-11-03.md:1089</span></li>
+        </ol>
+      </div>
+    </div>
+  </details>
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <div class="foot-top">
+      <div>
+        <div class="eyebrow">CONTACT</div>
+        <h3>Contact TRAVI</h3>
+        <a class="mail" href="mailto:contact@travi.example">contact@travi.example <span class="todo">교체 필요</span></a>
+        <div class="social"><a href="#" aria-label="LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5C4.98 4.88 3.87 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.22 8h4.56v14H.22V8zm7.4 0h4.37v1.92h.06c.61-1.15 2.1-2.36 4.32-2.36 4.62 0 5.47 3.04 5.47 7V22h-4.56v-6.6c0-1.57-.03-3.6-2.2-3.6-2.2 0-2.530 1.72-2.53 3.49V22H7.62V8z"/></svg></a></div>
+      </div>
+      <a class="btn solid lg" href="mailto:contact@travi.example">CONTACT US</a>
+    </div>
+    <div class="foot-bottom"><span>© 2026 TRAVI</span><span>DINA Lab, Hongik University · Neouly</span></div>
+  </div>
+</footer>
+
+<script src="common.js"></script>
+<script>
+/* 시안용 예시 데이터. 실제 코옵이 아니다 */
+var COOPS = {
+  soc: { name: 'SOC Threat Detection Co-op', code: 'co-soc-01', domain: 'Security', pill: '<span class="pill training">Training</span> <span class="pill open">Open for next round</span>',
+    goal: 'Earlier warning of attacks on Linux servers.', tpl: 'flow-log CSV v0.1', mode: 'Secure (default)',
+    mem: '4 members<small>Start threshold met</small>', round: 'Round 5 of 6<small>Running. If approved now, you join from Round 6.</small>',
+    site: 'org-a-soc-01', data: 'Firewall and web server logs from two sites, about 3 months', ph: '' },
+  farm: { name: 'Smart Farm Yield Co-op', code: 'co-farm-01', domain: 'Agriculture', pill: '<span class="pill forming">Forming</span>',
+    goal: 'Better yield forecasts for greenhouse crops.', tpl: 'greenhouse-sensor CSV v0.1', mode: 'Secure (default)',
+    mem: '2 of 5<small>3 more needed before training starts</small>', round: 'Not started<small>Round 1 starts when 5 members have joined.</small>',
+    site: 'org-a-farm-01', data: 'Temperature, humidity and yield logs from 3 greenhouses, about one season', ph: 'e.g. Temperature, humidity and yield logs from 3 greenhouses, about one season' },
+  clinic: { name: 'Clinical Notes Co-op', code: 'co-clinic-01', domain: 'Healthcare', pill: '<span class="pill forming">Forming</span>',
+    goal: 'To be set with the first members.', tpl: '', mode: 'Secure (default)',
+    mem: '0 of 5<small>5 more needed before training starts</small>', round: 'Not started<small>Round 1 starts when 5 members have joined.</small>',
+    site: 'org-a-clinic-01', data: '', ph: 'e.g. De-identified discharge notes, about 10,000 notes' }
+};
+var MEMBER = { soc: true };          // 이미 참여 중: 신청 양식 대신 My page 링크
+var SENT = { farm: 'Nov 30, 2026' }; // 대기 중인 요청
+var TODAY = 'Dec 3, 2026';           // 기준 데이터 시점
+var STEPS = ['Applied', 'Approved', 'Startup Kit received', 'Site connected', 'First training round'];
+var cur = 'farm';
+function $(s) { return document.querySelector(s); }
+var SITE_RE = /^[A-Za-z0-9_-]+$/;
+
+// 선택한 코옵으로 상세와 양식을 채운다
+function selectCo(id, scroll) {
+  var c = COOPS[id]; if (!c) return;
+  cur = id;
+  document.querySelectorAll('.co-row').forEach(function (r) { r.classList.toggle('sel', r.dataset.id === id); });
+  $('#d-name').textContent = c.name;
+  $('#d-sub').innerHTML = c.domain + ' · <span class="mono">' + c.code + '</span>';
+  $('#d-state').innerHTML = c.pill;
+  $('#f-goal').textContent = c.goal;
+  $('#f-tpl').innerHTML = c.tpl ? '<a class="dl-link" href="#" aria-disabled="true" onclick="return false">' + c.tpl + ' ↓</a><small>Example file name. Download is not active.</small>' : 'Not published yet<small>Set with the first members.</small>';
+  $('#f-mode').innerHTML = c.mode + '<small>Secure mode is on by default.</small>';
+  $('#f-mem').innerHTML = c.mem;
+  $('#f-round').innerHTML = c.round;
+  $('#j-title').textContent = 'Join ' + c.name;
+  $('#j-site').value = c.site;
+  $('#j-data').value = c.data;
+  $('#j-data').placeholder = c.ph;
+  $('#j-err').classList.remove('on');
+  checkSite();
+  var sent = SENT[id];
+  $('#j-sent').classList.toggle('on', !!sent);
+  if (sent) $('#j-sent-t').textContent = 'Request sent ' + sent;
+  $('#j-all').disabled = !!sent;
+  $('#j-ok').checked = !!sent;
+  $('#j-btn').disabled = !!sent;
+  $('#j-btn').textContent = sent ? 'REQUEST SENT' : 'SEND REQUEST';
+  var mem = !!MEMBER[id];
+  $('#j-member').hidden = !mem;
+  $('#jform').hidden = mem;
+  if (scroll) $('#detail').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function checkSite() {
+  var v = $('#j-site').value, h = $('#j-site-h'), ok = SITE_RE.test(v);
+  h.className = 'help ' + (v ? (ok ? 'ok' : 'bad') : '');
+  h.textContent = !v ? 'Letters, numbers, - and _ only.' : ok ? 'Looks fine.' : 'Use letters, numbers, - and _ only.';
+  return ok;
+}
+$('#j-site').addEventListener('input', checkSite);
+
+// 제출: 네트워크 없이 Pending review 상태만 만든다
+$('#jform').addEventListener('submit', function (e) {
+  e.preventDefault();
+  if (SENT[cur] || MEMBER[cur]) return;
+  if (!$('#j-ok').checked || !checkSite()) { $('#j-err').classList.add('on'); return; }
+  SENT[cur] = TODAY;
+  addRequest(COOPS[cur], $('#j-site').value);
+  $('#pending').textContent = Object.keys(SENT).length;
+  selectCo(cur, false);
+});
+
+function addRequest(c, site) {
+  var lis = STEPS.map(function (s, i) {
+    var cls = i === 0 ? 'done' : i === 1 ? 'cur' : '';
+    var st = i === 0 ? 'Dec 3' : i === 1 ? 'Pending review' : '—';
+    return '<li class="' + cls + '"><span class="dot">' + (i === 0 ? '✓' : '') + '</span><div><div class="s-t">' + s + '</div><div class="s-s">' + st + '</div></div></li>';
+  }).join('');
+  var div = document.createElement('div');
+  div.className = 'req';
+  div.innerHTML = '<div class="req-h"><b></b><span class="meta">Org A · <span class="mono"></span> · Applied ' + TODAY + ' · just now</span></div><ol class="stepper">' + lis + '</ol>';
+  div.querySelector('b').textContent = c.name;
+  div.querySelector('.meta .mono').textContent = site;
+  $('#req-list').appendChild(div);
+}
+
+// 도메인 필터
+document.querySelectorAll('.fchip').forEach(function (b) {
+  b.addEventListener('click', function () {
+    var f = b.dataset.f;
+    document.querySelectorAll('.fchip').forEach(function (x) { x.setAttribute('aria-pressed', String(x === b)); });
+    document.querySelectorAll('.co-row').forEach(function (r) { r.hidden = !(f === 'all' || r.dataset.dom === f); });
+  });
+});
+
+// 주소의 #co=... 로 상세를 연다 (domain 페이지 목록에서 들어올 때)
+function fromHash() { var m = location.hash.match(/co=([a-z]+)/); return m && COOPS[m[1]] ? m[1] : null; }
+window.addEventListener('hashchange', function () { var id = fromHash(); if (id) selectCo(id, true); });
+var first = fromHash();
+selectCo(first || 'farm', false);
+if (first) setTimeout(function () { $('#detail').scrollIntoView({ block: 'start' }); }, 60);
+
+// 설치 명령 복사
+$('#copy').addEventListener('click', function () {
+  var btn = this, text = $('#cmd').innerText;
+  function done(msg) { btn.textContent = msg; setTimeout(function () { btn.textContent = 'COPY'; }, 1600); }
+  function fallback() { var r = document.createRange(); r.selectNodeContents($('#cmd')); var s = getSelection(); s.removeAllRanges(); s.addRange(r); done('PRESS CTRL+C'); }
+  try { navigator.clipboard.writeText(text).then(function () { done('COPIED'); }, fallback); } catch (err) { fallback(); }
+});
+
+</script>
+<script src="app.js"></script>
+</body>
+</html>

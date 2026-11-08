@@ -65,13 +65,6 @@
 .step h4 { margin: 10px 0 8px; font-size: 20px; }
 .step p { margin: 0; color: var(--muted); font-size: 15px; line-height: 1.6; }
 
-/* 상태 배지: 구현 정도를 정직하게 표시한다 */
-.st { display: inline-block; vertical-align: 2px; margin-left: 8px; font-size: 10px; font-weight: 700; letter-spacing: 0.1em; padding: 3px 8px; border-radius: 999px; border: 1px solid; font-family: 'Pretendard Variable', Pretendard, system-ui, sans-serif; }
-.st.plan { color: #5b4ce0; border-color: #c9c2f5; background: #f3f1fe; }
-.st.design { color: #1683b0; border-color: #b8e1f2; background: #eef8fd; }
-.st.research { color: #8a5a00; border-color: #f0d9a8; background: #fdf7ea; }
-.st.road { color: #586276; border-color: var(--line-2); background: var(--bg-2); }
-.st.ill { color: #b8443b; border-color: #f2c6c2; background: #fdf1f0; }
 
 /* 정산 구역 */
 .flow { position: relative; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin-top: 56px; }
@@ -324,7 +317,7 @@
             <tr><td>node-04 · Org D</td><td>13.2%</td><td>132.00</td></tr>
           </tbody>
         </table>
-        <p class="r-note">Sharing rule shown with α = 1 (proportional). Payout unit to be decided.</p>
+        <p class="r-note">Shown with α = 1, the simplest setting of the sharing rule. Payout unit to be decided.</p>
         <!-- 기록(HCS 메시지)과 지급(송금 트랜잭션)은 서로 다른 트랜잭션이다. 지급 계정은 토픽과 다른 계정, valid start는 합의 시각보다 앞선다 -->
         <dl class="r-meta mono">
           <dt>record topic</dt><dd>0.0.4811023</dd>

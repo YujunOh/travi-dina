@@ -1,0 +1,703 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TRAVI Operations</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="style.css">
+<style>
+/* 페이지 머리 */
+.page-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; flex-wrap: wrap; padding: 28px 0 28px; }
+.page-head h1 { font-size: 48px; letter-spacing: -0.03em; margin: 12px 0 12px; line-height: 1.1; }
+.page-head .sec-lead { font-size: 17px; }
+.ph-side { align-self: flex-start; padding-top: 4px; display: flex; flex-direction: column; align-items: flex-end; gap: 10px; text-align: right; }
+.ph-side .st { margin-left: 0; }
+.asof-line { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--faint); }
+.asof-line .st { margin-left: 0; }
+.role-line { font-size: 13px; color: var(--muted); }
+.role-line b { color: var(--text); }
+.lofi { font-size: 12px; color: var(--faint); max-width: 300px; line-height: 1.5; }
+
+/* 요약 숫자 */
+.kpis { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); border: 1px solid var(--line); border-radius: 16px; background: var(--card); overflow: hidden; margin-bottom: 8px; }
+.kpi { padding: 20px 22px; display: block; }
+.kpi + .kpi { border-left: 1px solid var(--line); }
+.kpi:hover { background: var(--bg-2); }
+.kpi .k { font-size: 11px; letter-spacing: 0.14em; font-weight: 700; color: var(--faint); }
+.kpi .v { font-size: 32px; font-weight: 700; letter-spacing: -0.02em; margin-top: 8px; font-variant-numeric: tabular-nums; }
+.kpi .s { font-size: 13px; color: var(--muted); margin-top: 2px; }
+.kpi.attn .v { color: #b8443b; }
+
+/* 구역 바로가기 */
+.subnav { position: sticky; top: var(--header-h); z-index: 10; background: color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); margin-top: 32px; }
+.subnav ul { display: flex; gap: 28px; list-style: none; margin: 0; padding: 0; overflow-x: auto; scrollbar-width: none; }
+.subnav ul::-webkit-scrollbar { display: none; }
+.subnav a { display: flex; align-items: center; gap: 7px; padding: 15px 0 13px; font-size: 13px; font-weight: 600; color: var(--muted); white-space: nowrap; border-bottom: 2px solid transparent; }
+.subnav a:hover { color: var(--text); }
+.subnav a.on { color: var(--text); border-bottom-color: var(--text); }
+.subnav .c { font-size: 11px; padding: 1px 7px; border-radius: 999px; background: var(--bg-2); color: var(--muted); }
+
+/* 구역 */
+.panel { padding: 56px 0 8px; scroll-margin-top: calc(var(--header-h) + 56px); }
+.panel + .panel { border-top: 1px solid var(--line); margin-top: 48px; }
+.p-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px 24px; flex-wrap: wrap; margin-bottom: 22px; }
+.p-head h2 { font-size: 28px; letter-spacing: -0.02em; margin: 10px 0 8px; }
+.p-head p { margin: 0; color: var(--muted); font-size: 15px; line-height: 1.6; max-width: 720px; }
+.badges { display: flex; flex-wrap: wrap; gap: 6px; }
+.badges .st { margin-left: 0; }
+
+/* 표 */
+.tbl { background: var(--card); border: 1px solid var(--line); border-radius: 14px; overflow-x: auto; }
+.tbl table { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 860px; }
+.tbl.narrow table { min-width: 600px; }
+.tbl th { text-align: left; font-size: 11px; letter-spacing: 0.12em; color: var(--faint); font-weight: 700; padding: 14px 16px 10px; border-bottom: 1px solid var(--line); white-space: nowrap; background: var(--card); }
+.tbl td { padding: 13px 16px; border-bottom: 1px solid var(--line); vertical-align: middle; line-height: 1.45; }
+.tbl tr:last-child td { border-bottom: 0; }
+.tbl td.num { font-variant-numeric: tabular-nums; }
+.tbl td .sub { display: block; font-size: 12px; color: var(--faint); }
+.tbl tr.link { cursor: pointer; }
+.tbl tr.link:hover td { background: var(--bg); }
+.tbl .mono { font-size: 12.5px; }
+.go { font-size: 12px; font-weight: 600; letter-spacing: 0.06em; white-space: nowrap; }
+.muted { color: var(--faint); }
+
+/* 상태 알약 */
+.pill { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 999px; border: 1px solid var(--line); background: var(--bg); white-space: nowrap; }
+.pill::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.pill.ok { color: #1c7a4a; border-color: #bfe3cf; background: #f0faf4; }
+.pill.warn { color: #8a5a00; border-color: #f0d9a8; background: #fdf7ea; }
+.pill.bad { color: #b8443b; border-color: #f2c6c2; background: #fdf1f0; }
+.pill.mute { color: var(--muted); }
+.pill.info { color: var(--accent); border-color: #cdd2fb; background: var(--accent-soft); }
+
+/* 작은 버튼과 행 동작 */
+.btn.sm { padding: 6px 12px; font-size: 12px; letter-spacing: 0.04em; }
+.btn[disabled] { opacity: .42; cursor: not-allowed; }
+.acts { white-space: nowrap; }
+.acts > * + * { margin-left: 6px; }
+.btnrow .btn + .btn { margin-left: 0; }
+.tbl td.mono, .tbl td.num { white-space: nowrap; }
+.acts select, .acts input { font: inherit; font-size: 12px; padding: 6px 8px; border: 1px solid var(--line-2); border-radius: 8px; background: var(--bg); color: var(--text); }
+.acts input { width: 150px; }
+
+/* 탭과 거르기 칩 */
+.tabs { display: flex; gap: 6px; margin-bottom: 14px; flex-wrap: wrap; }
+.tabs button, .fchips button { font: inherit; font-size: 13px; font-weight: 600; padding: 8px 14px; border-radius: 999px; border: 1px solid var(--line-2); background: var(--card); color: var(--muted); cursor: pointer; }
+.tabs button[aria-selected="true"], .fchips button[aria-pressed="true"] { background: var(--text); border-color: var(--text); color: #fff; }
+.tabs .c { opacity: .7; margin-left: 4px; font-weight: 500; }
+.tabpane[hidden] { display: none; }
+.toolbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
+.fchips { display: flex; gap: 6px; flex-wrap: wrap; }
+
+/* 안내 줄 */
+.notes { display: flex; flex-direction: column; gap: 6px; margin-top: 14px; }
+.notes p { margin: 0; font-size: 13px; color: var(--muted); line-height: 1.55; padding-left: 14px; position: relative; }
+.notes p::before { content: ''; position: absolute; left: 0; top: 8px; width: 5px; height: 5px; border-radius: 50%; background: var(--line-2); }
+.fp { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4px 14px; align-items: baseline; margin-bottom: 14px; padding: 14px 18px; border: 1px dashed var(--line-2); border-radius: 12px; font-size: 12px; background: var(--card); }
+.fp dt { color: var(--faint); font-family: 'Pretendard Variable', Pretendard, system-ui, sans-serif; font-weight: 600; letter-spacing: 0.08em; font-size: 11px; }
+.fp dd { margin: 0; overflow-wrap: anywhere; color: var(--muted); }
+
+/* 카드 묶음 */
+.grid2 { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr); gap: 20px; margin-top: 20px; }
+.grid2.stack { grid-template-columns: minmax(0, 1fr); }
+#settlement-audit td.rec { white-space: normal; overflow-wrap: anywhere; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 22px 24px; }
+.card .ck { font-size: 11px; letter-spacing: 0.16em; font-weight: 700; color: var(--faint); display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.card .ck .st { margin-left: 0; }
+.card h3 { font-size: 18px; margin: 10px 0 8px; letter-spacing: -0.01em; }
+.card p { margin: 0 0 8px; color: var(--muted); font-size: 14px; line-height: 1.6; }
+.card.dashed { border-style: dashed; border-color: var(--line-2); }
+.card.quiet { background: var(--bg-2); }
+.btnrow { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 16px; }
+
+/* 모델 용량 막대 */
+.cap { display: grid; grid-template-columns: 90px minmax(0, 1fr) 48px; gap: 10px; align-items: center; margin-top: 18px; padding-bottom: 16px; font-size: 13px; }
+.cap .lb { color: var(--muted); }
+.cap .val { text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; }
+.meter { position: relative; height: 10px; border-radius: 999px; background: var(--bg-2); border: 1px solid var(--line); }
+.meter i { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 999px; background: var(--text); }
+.meter .mk { position: absolute; top: -5px; bottom: -5px; width: 2px; background: #c58a1a; }
+.meter .mk.hard { background: #b8443b; }
+.meter .mk span { position: absolute; top: 20px; left: 50%; transform: translateX(-50%); font-size: 10px; color: var(--faint); white-space: nowrap; }
+.card p.cap-warn { margin: 0 0 4px; font-size: 13px; color: #8a5a00; display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; }
+.cap-legend { margin-top: 12px; font-size: 12px; color: var(--faint); line-height: 1.55; }
+
+.rec { font-size: 12px; line-height: 1.5; }
+.hs { color: var(--faint); font-style: italic; font-size: 12px; white-space: nowrap; }
+
+/* 검토 메모 */
+details.review { margin: 72px 0 96px; border: 1px solid var(--line); border-radius: 16px; background: var(--card); }
+details.review > summary { padding: 20px 24px; cursor: pointer; font-weight: 700; font-size: 16px; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+details.review > summary span { font-size: 13px; color: var(--faint); font-weight: 500; }
+.rv { padding: 0 24px 24px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px; border-top: 1px solid var(--line); }
+.rv h3 { font-size: 12px; letter-spacing: 0.16em; color: var(--faint); margin: 22px 0 10px; }
+.rv ol { margin: 0; padding-left: 20px; }
+.rv li { font-size: 14px; line-height: 1.6; color: #2c3446; margin-bottom: 12px; }
+.rv .src { display: block; font-family: ui-monospace, 'SFMono-Regular', Consolas, monospace; font-size: 11.5px; color: var(--faint); margin-top: 2px; overflow-wrap: anywhere; }
+.rv .full { grid-column: 1 / -1; }
+
+@media (max-width: 960px) {
+  .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .kpi + .kpi { border-left: 0; }
+  .kpi { border-top: 1px solid var(--line); }
+  .kpi:nth-child(-n+2) { border-top: 0; }
+  .kpi:nth-child(even) { border-left: 1px solid var(--line); }
+  .kpi:last-child { grid-column: 1 / -1; }
+  .grid2, .rv { grid-template-columns: minmax(0, 1fr); }
+  .ph-side { align-items: flex-start; text-align: left; }
+}
+@media (max-width: 760px) {
+  /* 대기 신청 표: 좁은 화면에서는 행마다 카드로 펼쳐 Approve 버튼이 가로 스크롤 없이 보이게 */
+  #t-pending table { min-width: 0; }
+  #t-pending thead { display: none; }
+  #t-pending tr { display: flex; flex-direction: column; gap: 4px; padding: 14px 16px; border-bottom: 1px solid var(--line); }
+  #t-pending tr:last-child { border-bottom: 0; }
+  #t-pending td { display: flex; gap: 10px; padding: 0; border: 0; font-size: 13px; }
+  #t-pending td[data-l]::before { content: attr(data-l); flex: 0 0 104px; font-size: 11px; letter-spacing: 0.1em; font-weight: 700; color: var(--faint); padding-top: 2px; }
+  #t-pending td:first-child { display: block; font-size: 14px; margin-bottom: 4px; }
+  #t-pending td.acts { order: 1; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 8px; white-space: normal; }
+  #t-pending td.acts > * + * { margin-left: 0; }
+  #t-pending td.acts .pill + .sub { flex-basis: 100%; }
+  .page-head h1 { font-size: 36px; }
+  .p-head h2 { font-size: 24px; }
+  .kpi { padding: 16px; }
+  .kpi .v { font-size: 26px; }
+  .subnav ul { gap: 20px; }
+  .cap { grid-template-columns: 70px minmax(0, 1fr) 40px; }
+}
+</style>
+</head>
+<body>
+
+<!-- 앱 영역 헤더: 자리와 모양은 공통, 오른쪽 메뉴만 역할(Admin)에 맞춘다 -->
+<header class="topbar">
+  <div class="wrap">
+    <a class="brand" href="index.html">
+      <svg viewBox="0 0 32 32" aria-hidden="true">
+        <defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1aa3d9"/><stop offset=".55" stop-color="#5b4ce0"/><stop offset="1" stop-color="#e0675e"/></linearGradient></defs>
+        <circle cx="16" cy="16" r="12.5" fill="none" stroke="url(#lg)" stroke-width="2.4"/>
+        <path d="M6 22 C10 12, 14 22, 18 12 S 25 14, 26 8" fill="none" stroke="#0d1220" stroke-width="2" stroke-linecap="round"/>
+        <circle cx="6" cy="22" r="2.2" fill="#0d1220"/><circle cx="18" cy="12" r="2.2" fill="#0d1220"/><circle cx="26" cy="8" r="2.2" fill="#e0675e"/>
+      </svg>
+      TRAVI
+    </a>
+    <div class="spacer"></div>
+    <nav class="nav">
+      <a class="on hide-sm" href="admin.html" aria-current="page">OPERATIONS</a>
+      <a class="hide-sm" href="coop.html">CO-OPS</a>
+      <!-- 역할 전환: 이 계정이 가진 역할만. 같은 세션에서 화면 묶음만 바뀐다 -->
+      <div class="dd">
+        <button class="va" type="button" data-dd aria-haspopup="true" aria-expanded="false" aria-controls="m-role">
+          <span class="long">Viewing as: <b>Admin</b></span><span class="short"><b>A</b></span> ▾
+        </button>
+        <div class="menu" id="m-role" role="menu">
+          <div class="mh">VIEW TRAVI AS</div>
+          <a class="mi" role="menuitem" href="coop.html"><span></span><span>Participant<small>Browse co-ops, your requests, My page</small></span></a>
+          <a class="mi" role="menuitem" href="coop-manage.html"><span></span><span>Co-op leader<small>SOC Threat Detection Co-op · manage this one co-op</small></span></a>
+          <a class="mi" role="menuitem" href="admin.html" aria-current="true"><span class="ck">✓</span><span>Admin<small>Platform operations (granted in this mock)</small></span></a>
+          <div class="mf">Switching changes the screens you see. You stay signed in. Roles are listed per co-op. CO-OPS and MY PAGE open the Participant view.</div>
+        </div>
+      </div>
+      <div class="dd">
+        <button class="me" type="button" data-dd aria-haspopup="true" aria-expanded="false" aria-controls="m-me" aria-label="Account menu"><i>JK</i>▾</button>
+        <div class="menu sm" id="m-me" role="menu">
+          <div class="who"><b>Jane Kim</b><span>Org A · jane@org-a.example</span></div>
+          <a class="mi" role="menuitem" href="mypage.html"><span></span><span>My page</span></a>
+          <a class="mi" role="menuitem" href="index.html"><span></span><span>Log out</span></a>
+        </div>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="crumb"><a href="index.html">Home</a><span class="sep">›</span><span class="cur">Operations</span></div>
+
+  <div class="page-head">
+    <div>
+      <div class="eyebrow">OPERATIONS</div>
+      <h1>Operations</h1>
+      <p class="sec-lead">One place for the TRAVI platform admin: approve applications, look after organizations and their sites, see every co-op, follow unlearning requests, check settlement runs, and read the audit log.</p>
+    </div>
+    <div class="ph-side">
+      <div class="asof-line"><span class="st ill">SAMPLE DATA</span><span>as of Dec 3, 2026</span></div>
+      <div class="role-line">Viewing as <b>Admin</b> · TRAVI platform operations</div>
+      <div class="lofi">Lo-fi review screen. Admin screens are built after the Participant screens.</div>
+    </div>
+  </div>
+
+  <!-- 손볼 곳 요약. 숫자는 아래 표와 맞춘 예시다 -->
+  <div class="kpis">
+    <a class="kpi attn" href="#applications"><div class="k">PENDING APPLICATIONS</div><div class="v">4</div><div class="s">1 fails the name rule</div></a>
+    <a class="kpi attn" href="#orgs"><div class="k">SITES NEEDING A LOOK</div><div class="v">3</div><div class="s">1 offline (leaving) · 1 blocked · 1 not connected</div></a>
+    <a class="kpi" href="#orgs"><div class="k">CERTIFICATES TO RENEW</div><div class="v">1</div><div class="s">org-b-test-00 expired Nov 30 (blocked site)</div></a>
+    <a class="kpi attn" href="#unlearning"><div class="k">OPEN LEAVE REQUESTS</div><div class="v">1</div><div class="s">Org C · SOC · 52% removed</div></a>
+    <a class="kpi" href="#settlement-audit"><div class="k">OPEN SETTLEMENT PERIODS</div><div class="v">1</div><div class="s">#2 Dec 1–31 · not computed yet</div></a>
+  </div>
+
+  <nav class="subnav" aria-label="Sections">
+    <ul>
+      <li><a href="#applications">Applications <span class="c">4</span></a></li>
+      <li><a href="#orgs">Organizations and sites</a></li>
+      <li><a href="#coops">Co-ops <span class="c">3</span></a></li>
+      <li><a href="#unlearning">Unlearning and retraining <span class="c">1</span></a></li>
+      <li><a href="#settlement-audit">Settlement audit</a></li>
+      <li><a href="#audit">Audit log</a></li>
+    </ul>
+  </nav>
+
+  <!-- 1. 신청 승인: 승인하면 콘솔 역할 하나와 조직 하나를 지정한다 -->
+  <section class="panel" id="applications">
+    <div class="p-head">
+      <div>
+        <div class="eyebrow">01 · APPLICATIONS</div>
+        <h2>Applications and accounts</h2>
+        <p>Sign-ups and co-op join requests waiting for approval. Approving gives the applicant one console role and one organization. Every decision goes to the audit log.</p>
+      </div>
+      <div class="badges"><span class="st ill">SAMPLE DATA</span><span class="st design">IN DESIGN</span></div>
+    </div>
+
+    <div class="tabs" role="tablist">
+      <button role="tab" aria-selected="true" data-tab="t-pending">Pending<span class="c">4</span></button>
+      <button role="tab" aria-selected="false" data-tab="t-approved">Approved<span class="c">4</span></button>
+      <button role="tab" aria-selected="false" data-tab="t-rejected">Rejected<span class="c">1</span></button>
+    </div>
+
+    <div class="tabpane" id="t-pending" role="tabpanel">
+      <div class="tbl">
+        <table>
+          <thead><tr><th>Applicant</th><th>Type</th><th>Site name</th><th>Co-op</th><th>Requested role</th><th>Submitted</th><th>Name rule</th><th>Decision</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><b>Org E</b><span class="sub">eve@org-e.example</span></td><td data-l="TYPE">Co-op join</td><td data-l="SITE" class="mono">org-e-soc-01</td><td data-l="CO-OP">SOC Threat Detection Co-op</td><td data-l="ROLE">Participant</td><td data-l="SUBMITTED" class="num">Nov 28</td>
+              <td data-l="NAME RULE"><span class="pill ok">pass</span></td>
+              <td class="acts" data-org="Org E">
+                <select aria-label="Role to assign"><option>Participant</option><option>Co-op leader</option></select>
+                <button class="btn solid sm" data-act="approve">Approve</button>
+                <button class="btn ghost sm" data-act="reject">Reject</button>
+              </td>
+            </tr>
+            <tr>
+              <td><b>Org A</b><span class="sub">jane@org-a.example</span></td><td data-l="TYPE">Co-op join</td><td data-l="SITE" class="mono">org-a-farm-01</td><td data-l="CO-OP">Smart Farm Yield Co-op</td><td data-l="ROLE">Participant</td><td data-l="SUBMITTED" class="num">Nov 30</td>
+              <td data-l="NAME RULE"><span class="pill ok">pass</span></td>
+              <td class="acts" data-org="Org A">
+                <select aria-label="Role to assign"><option>Participant</option><option>Co-op leader</option></select>
+                <button class="btn solid sm" data-act="approve">Approve</button>
+                <button class="btn ghost sm" data-act="reject">Reject</button>
+              </td>
+            </tr>
+            <tr>
+              <td><b>Org F</b><span class="sub">kai@org-f.example</span></td><td data-l="TYPE">Sign-up + co-op join</td><td data-l="SITE" class="mono">org-f-farm-01</td><td data-l="CO-OP">Smart Farm Yield Co-op</td><td data-l="ROLE">Participant</td><td data-l="SUBMITTED" class="num">Dec 1</td>
+              <td data-l="NAME RULE"><span class="pill ok">pass</span></td>
+              <td class="acts" data-org="Org F">
+                <select aria-label="Role to assign"><option>Participant</option><option>Co-op leader</option></select>
+                <button class="btn solid sm" data-act="approve">Approve</button>
+                <button class="btn ghost sm" data-act="reject">Reject</button>
+              </td>
+            </tr>
+            <tr>
+              <td><b>Org G</b><span class="sub">min@org-g.example</span></td><td data-l="TYPE">Sign-up + co-op join</td><td data-l="SITE" class="mono">org g clinic</td><td data-l="CO-OP">Clinical Notes Co-op</td><td data-l="ROLE">Participant</td><td data-l="SUBMITTED" class="num">Dec 2</td>
+              <td data-l="NAME RULE"><span class="pill bad">fail</span><span class="sub">spaces not allowed</span></td>
+              <td class="acts" data-org="Org G">
+                <select aria-label="Role to assign" disabled><option>Participant</option></select>
+                <button class="btn solid sm" disabled title="Site name must use letters, numbers, - and _ only">Approve</button>
+                <button class="btn ghost sm" data-act="reject">Reject</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="tabpane" id="t-approved" role="tabpanel" hidden>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>Applicant</th><th>Site name</th><th>Co-op</th><th>Assigned role</th><th>Approved</th><th>By</th></tr></thead>
+          <tbody>
+            <tr><td><b>Org A</b><span class="sub">jane@org-a.example</span></td><td class="mono">org-a-soc-01</td><td>SOC Threat Detection Co-op</td><td>Participant · Co-op leader</td><td class="num">Oct 1</td><td>admin@travi.example</td></tr>
+            <tr><td><b>Org B</b><span class="sub">sam@org-b.example</span></td><td class="mono">org-b-soc-01</td><td>SOC Threat Detection Co-op</td><td>Participant</td><td class="num">Oct 1</td><td>admin@travi.example</td></tr>
+            <tr><td><b>Org C</b><span class="sub">ops@org-c.example</span></td><td class="mono">org-c-soc-01</td><td>SOC Threat Detection Co-op</td><td>Participant</td><td class="num">Oct 2</td><td>admin@travi.example</td></tr>
+            <tr><td><b>Org D</b><span class="sub">it@org-d.example</span></td><td class="mono">org-d-oc-01</td><td>SOC Threat Detection Co-op</td><td>Participant</td><td class="num">Oct 2</td><td>admin@travi.example</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="tabpane" id="t-rejected" role="tabpanel" hidden>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>Applicant</th><th>Site name</th><th>Requested role</th><th>Rejected</th><th>Reason</th></tr></thead>
+          <tbody>
+            <tr><td><b>Org H</b><span class="sub">hal@org-h.example</span></td><td class="mono">org-h-01</td><td>Admin</td><td class="num">Nov 8</td><td>Admin cannot be requested.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="notes">
+      <p>Roles you can assign: Participant, Co-op leader. Admin is never assignable here.</p>
+      <p>Approval result is shown on the applicant's request status. How the applicant is notified is TBD.</p>
+      <p>Signing in with an outside identity provider does not approve anyone by itself.</p>
+    </div>
+  </section>
+
+  <!-- 2. 기관과 사이트: 키트 전달, 인증서 만료, 접속 상태, 접속 차단 -->
+  <section class="panel" id="orgs">
+    <div class="p-head">
+      <div>
+        <div class="eyebrow">02 · ORGANIZATIONS</div>
+        <h2>Organizations and sites</h2>
+        <p>Registered organizations, when their Startup Kit was delivered, when the site certificate expires, and whether the site is connected. You can block one site's connection.</p>
+      </div>
+      <div class="badges"><span class="st ill">SAMPLE DATA</span><span class="st design">IN DESIGN</span></div>
+    </div>
+
+    <dl class="fp mono">
+      <dt>ROOT CA SHA-256</dt>
+      <dd>4F:9A:21:C7:5E:08:B3:D6:7A:11:E2:90:3C:4B:F5:68:0D:A7:52:19:CE:83:6B:F0:27:94:DA:1E:5C:B8:07:63 (example)</dd>
+      <dt>CERTIFICATE VALIDITY</dt>
+      <dd>360 days from issue</dd>
+    </dl>
+
+    <div class="tbl">
+      <table>
+        <thead><tr><th>Organization</th><th>Site</th><th>Kit delivered</th><th>Certificate expires</th><th>Connection</th><th>Last seen</th><th>Actions</th></tr></thead>
+        <tbody>
+          <tr><td>Org A</td><td class="mono">org-a-soc-01</td><td class="num">Oct 2, 2026</td><td class="num">Sep 27, 2027</td><td><span class="pill ok">Connected</span></td><td class="num">just now</td>
+            <td class="acts"><button class="btn ghost sm" data-act="block">Block site</button><button class="btn ghost sm" disabled title="TBD">Reissue</button></td></tr>
+          <tr><td>Org B</td><td class="mono">org-b-soc-01</td><td class="num">Oct 2, 2026</td><td class="num">Sep 27, 2027</td><td><span class="pill ok">Connected</span></td><td class="num">1 min ago</td>
+            <td class="acts"><button class="btn ghost sm" data-act="block">Block site</button><button class="btn ghost sm" disabled title="TBD">Reissue</button></td></tr>
+          <tr><td>Org B</td><td class="mono">org-b-test-00</td><td class="num">Dec 5, 2025</td><td class="num">Nov 30, 2026 <span class="pill bad">Expired</span></td><td><span class="pill bad">Blocked</span></td><td class="num">Oct 28</td>
+            <td class="acts"><button class="btn ghost sm" data-act="unblock">Unblock</button><button class="btn ghost sm" disabled title="TBD">Reissue</button></td></tr>
+          <tr><td>Org C</td><td class="mono">org-c-soc-01</td><td class="num">Oct 3, 2026</td><td class="num">Sep 28, 2027</td><td><span class="pill warn">Offline</span></td><td class="num">Offline since Nov 5<span class="sub">leaving</span></td>
+            <td class="acts"><button class="btn ghost sm" data-act="block">Block site</button><button class="btn ghost sm" disabled title="TBD">Reissue</button></td></tr>
+          <tr><td>Org D</td><td class="mono">org-d-oc-01</td><td class="num">Oct 3, 2026</td><td class="num">Sep 28, 2027</td><td><span class="pill ok">Connected</span></td><td class="num">4 min ago</td>
+            <td class="acts"><button class="btn ghost sm" data-act="block">Block site</button><button class="btn ghost sm" disabled title="TBD">Reissue</button></td></tr>
+          <tr><td>Org E</td><td class="mono">org-e-soc-01</td><td class="kit muted">Not delivered</td><td class="muted">Not issued</td><td><span class="pill mute">Not connected</span></td><td class="muted">—</td>
+            <td class="acts"><button class="btn ghost sm" data-act="kit">Mark kit delivered</button></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="notes">
+      <p>Block site uses FLARE <span class="mono">disable_client</span> and stays blocked after a server restart. Unblock uses <span class="mono">enable_client</span>.</p>
+      <p>Check the Root CA fingerprint with the organization before they start their site. Kit delivery time is recorded.</p>
+      <p>Connection: Connected, Delayed (no reply within the expected time), Offline, Not connected. Exact thresholds are TBD.</p>
+    </div>
+  </section>
+
+  <!-- 3. 전체 코옵 -->
+  <section class="panel" id="coops">
+    <div class="p-head">
+      <div>
+        <div class="eyebrow">03 · CO-OPS</div>
+        <h2>Co-ops</h2>
+        <p>Every co-op on the platform, so you can find the one that needs attention. Admin does not edit a co-op from here. To open a manage page you switch to the Co-op leader view, which this account has only for SOC Threat Detection Co-op.</p>
+      </div>
+      <div class="badges"><span class="st ill">SAMPLE DATA</span></div>
+    </div>
+    <div class="tbl">
+      <table>
+        <thead><tr><th>Co-op</th><th>Domain</th><th>State</th><th>Leader</th><th>Members</th><th>Current training round</th><th>Open leave requests</th><th></th></tr></thead>
+        <tbody>
+          <tr class="link" data-href="coop-manage.html"><td><a href="coop-manage.html"><b>SOC Threat Detection Co-op</b></a></td><td>Security</td><td><span class="pill info">Training</span></td><td>Org A</td><td class="num">4</td><td class="num">Round 5 of 6<span class="sub">Dec 1–14 · running</span></td><td class="num">1</td><td><a class="go" href="coop-manage.html">Switch to Co-op leader view →</a></td></tr>
+          <tr><td><b>Smart Farm Yield Co-op</b></td><td>Agriculture</td><td><span class="pill mute">Forming</span></td><td class="muted">—</td><td class="num">2 <span class="sub">of 5 needed</span></td><td class="muted">—</td><td class="num">0</td><td class="muted">No leader yet</td></tr>
+          <tr><td><b>Clinical Notes Co-op</b></td><td>Healthcare</td><td><span class="pill mute">Forming</span></td><td class="muted">—</td><td class="num">0 <span class="sub">of 5 needed</span></td><td class="muted">—</td><td class="num">0</td><td class="muted">No leader yet</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 4. 언러닝과 재학습 큐. 실행 버튼은 모두 비활성 -->
+  <section class="panel" id="unlearning">
+    <div class="p-head">
+      <div>
+        <div class="eyebrow">04 · UNLEARNING</div>
+        <h2>Unlearning and retraining</h2>
+        <p>Leave requests from every co-op in one queue, how each is processed, and how much each model has changed against the retraining limits of the tree-based module.</p>
+      </div>
+      <div class="badges"><span class="st ill">SAMPLE DATA</span><span class="st road">ROADMAP</span><span class="st research">RESEARCH</span></div>
+    </div>
+
+    <div class="tbl">
+      <table>
+        <thead><tr><th>Co-op</th><th>Organization</th><th>Requested</th><th>Method</th><th>State</th><th>Deadline</th><th>Ledger record <span class="st plan">PLANNED</span></th></tr></thead>
+        <tbody>
+          <tr><td>SOC Threat Detection Co-op</td><td>Org C</td><td class="num">Nov 5, 2026</td><td>Unlearning</td><td><span class="pill warn">Unlearning in progress</span><span class="sub">52% removed · retraining recommended</span></td><td class="muted">TBD (legal period being checked)</td><td class="muted">Pending (example)</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="notes">
+      <p>Steps: Received → Unlearning in progress (or retraining if resources allow) → Done → exit recorded on the ledger.</p>
+      <p>Ledger record follows processing. The ledger does not remove knowledge.</p>
+      <p>Org C still gets revenue from its November contribution (settlement #1). Only revenue from contribution is shared.</p>
+    </div>
+
+    <div class="grid2">
+      <div class="card">
+        <div class="ck">MODEL CAPACITY · SOC THREAT DETECTION CO-OP <span class="st research">RESEARCH</span></div>
+        <h3>Tree-based module only</h3>
+        <div class="cap">
+          <span class="lb">Removed</span>
+          <div class="meter" role="img" aria-label="Removed 52 percent, past the 50 percent mark"><i style="width:52%"></i><span class="mk" style="left:50%"><span>50%</span></span><span class="mk hard" style="left:75%"><span>75%</span></span></div>
+          <span class="val">52%</span>
+        </div>
+        <p class="cap-warn"><span class="pill warn">Over 50% removed</span> Org C's leave request has removed 52%. Retraining after unlearning is recommended (example).</p>
+        <div class="cap">
+          <span class="lb">Added</span>
+          <div class="meter" role="img" aria-label="Added 0 percent"><i style="width:0%"></i><span class="mk hard" style="left:99%"><span style="left:auto;right:0;transform:none">+100% limit</span></span></div>
+          <span class="val">0%</span>
+        </div>
+        <p class="cap-legend">Removed past 50%: retraining recommended. Past 75%: retraining needed, performance drops. Added data is limited to +100% of the first training size. These marks do not apply to TL++ (neural network) co-ops.</p>
+        <div class="btnrow">
+          <button class="btn solid sm" disabled>Start unlearning</button>
+          <button class="btn ghost sm" disabled>Schedule retraining</button>
+          <button class="btn ghost sm" disabled>Add new data round</button>
+        </div>
+      </div>
+      <div class="card quiet">
+        <div class="ck">OTHER CO-OPS</div>
+        <h3>No model yet</h3>
+        <p>Smart Farm Yield Co-op and Clinical Notes Co-op are still forming, so there is nothing to unlearn or retrain.</p>
+        <p>Run buttons stay disabled until the unlearning module is connected. Retraining after unlearning: recommended when more than 50% is removed (example).</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. 정산 감사: 읽기와 확인만. 기록(HCS)과 지급(송금)은 다른 트랜잭션 -->
+  <section class="panel" id="settlement-audit">
+    <div class="p-head">
+      <div>
+        <div class="eyebrow">05 · SETTLEMENT</div>
+        <h2>Settlement audit</h2>
+        <p>Every settlement run across co-ops: which settlement period, which rule, when TRAVI computed it, what was recorded, and whether it was paid. Read and check only.</p>
+      </div>
+      <div class="badges"><span class="st ill">SAMPLE DATA</span><span class="st ill">ILLUSTRATIVE</span><span class="st plan">PLANNED</span><span class="st research">RESEARCH</span></div>
+    </div>
+
+    <div class="tbl">
+      <table>
+        <thead><tr><th>Co-op</th><th>Settlement period</th><th>Training rounds</th><th>Computed</th><th>Record (HCS) <span class="st plan">PLANNED</span></th><th>Payout</th><th></th></tr></thead>
+        <tbody>
+          <tr>
+            <td><b>SOC Threat Detection Co-op</b></td>
+            <td>#1<span class="sub">Nov 1–30, 2026 · Closed Nov 30</span></td>
+            <td>Rounds 3–4</td>
+            <td>Computed by TRAVI (sharing rule α = 1)<span class="sub">Dec 1, 2026 00:00 UTC</span></td>
+            <td class="mono rec">topic 0.0.4811023<br>sequence_number 1247<span class="sub">consensus_timestamp 1796083512.384012001</span><span class="sub">Recorded Dec 1 00:05:12 UTC</span><span class="sub hs">View on HashScan (example, not a link)</span></td>
+            <td><span class="pill ok">Paid (example)</span> <span class="st plan">PLANNED</span><span class="sub">Payout submitted</span><span class="sub mono">0.0.4811001@1796083505.000000000</span></td>
+            <td><a class="go" href="coop-manage.html#settlement" title="Switch to Co-op leader view">Leader view →</a></td>
+          </tr>
+          <tr>
+            <td><b>SOC Threat Detection Co-op</b></td>
+            <td>#2<span class="sub">Dec 1–31, 2026 · Open</span></td>
+            <td>Rounds 5–6</td>
+            <td class="muted">Not computed yet<span class="sub">Preview after Round 5 ends Dec 14</span></td>
+            <td class="muted">—</td>
+            <td class="muted">—</td>
+            <td class="muted"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="grid2 stack">
+      <div>
+        <div class="tbl narrow">
+          <table>
+            <thead><tr><th>Organization</th><th>Cumulative contribution (raw)</th><th>Share (α = 1)</th><th>Payout · Unit TBD</th><th>Hedera payout account <span class="st plan">PLANNED</span></th></tr></thead>
+            <tbody>
+              <tr><td>Org A</td><td class="num">1.146</td><td class="num">38.2%</td><td class="num">382.00</td><td><span class="pill ok">Connected</span> <span class="mono muted">0.0.5120001</span><span class="sub">Nov 20, 2026</span></td></tr>
+              <tr><td>Org B</td><td class="num">0.825</td><td class="num">27.5%</td><td class="num">275.00</td><td><span class="pill ok">Connected</span><span class="sub">example</span></td></tr>
+              <tr><td>Org C<span class="sub">leaving · contribution revenue only</span></td><td class="num">0.633</td><td class="num">21.1%</td><td class="num">211.00</td><td><span class="pill ok">Connected</span><span class="sub">example</span></td></tr>
+              <tr><td>Org D</td><td class="num">0.396</td><td class="num">13.2%</td><td class="num">132.00</td><td><span class="pill ok">Connected</span><span class="sub">example</span></td></tr>
+              <tr><td><b>Total</b></td><td></td><td class="num">100%</td><td class="num"><b>1,000.00</b></td><td></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="cap-legend">Settlement #1. Share is what the sharing rule returns from the raw cumulative contribution, so the two columns are different numbers.</p>
+      </div>
+      <div class="card dashed">
+        <div class="ck">SHARING RULE <span class="st research">RESEARCH</span></div>
+        <h3>Power rule on cumulative contribution</h3>
+        <p>Each co-op shares by a power rule on members' cumulative contribution, α ≥ 1 (arXiv:2606.28217). This co-op uses α = 1 as an example.</p>
+        <p>Only revenue from contribution is shared.</p>
+        <p><b>Who executes payout is not decided.</b> Recording and paying are separate transactions.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. 감사 로그: 조직과 역할까지 남긴다 -->
+  <section class="panel" id="audit">
+    <div class="p-head">
+      <div>
+        <div class="eyebrow">06 · AUDIT LOG</div>
+        <h2>Audit log</h2>
+        <p>Who did what and when on the web console. Each entry keeps the actor's organization and role, which the console log does not record today.</p>
+      </div>
+      <div class="badges"><span class="st ill">SAMPLE DATA</span><span class="st design">IN DESIGN</span></div>
+    </div>
+
+    <div class="toolbar">
+      <div class="fchips" role="group" aria-label="Filter by kind">
+        <button aria-pressed="true" data-k="all">All</button>
+        <button aria-pressed="false" data-k="signin">Sign-in</button>
+        <button aria-pressed="false" data-k="approval">Approval</button>
+        <button aria-pressed="false" data-k="credential">Credential</button>
+        <button aria-pressed="false" data-k="settlement">Settlement</button>
+        <button aria-pressed="false" data-k="leave">Leave</button>
+      </div>
+      <button class="btn ghost sm" disabled>Export CSV</button>
+    </div>
+
+    <div class="tbl">
+      <table id="log">
+        <thead><tr><th>Time</th><th>Actor</th><th>Role</th><th>Organization</th><th>Action</th><th>Target</th></tr></thead>
+        <tbody>
+          <tr data-k="signin"><td class="num">Dec 3 09:31</td><td>jane@org-a.example</td><td>Admin</td><td>Org A</td><td>Signed in</td><td>Web console</td></tr>
+          <tr data-k="approval"><td class="num">Dec 2</td><td>min@org-g.example</td><td class="muted">— (not approved yet)</td><td>Org G</td><td>Sent sign-up and join request</td><td>Clinical Notes Co-op</td></tr>
+          <tr data-k="approval"><td class="num">Dec 1</td><td>kai@org-f.example</td><td class="muted">— (not approved yet)</td><td>Org F</td><td>Sent sign-up and join request</td><td>Smart Farm Yield Co-op</td></tr>
+          <tr data-k="settlement"><td class="num">Dec 1 00:05:12</td><td>TRAVI (system)</td><td class="muted">—</td><td>TRAVI</td><td>Recorded settlement #1 to HCS <span class="st plan">PLANNED</span></td><td class="mono">topic 0.0.4811023 · seq 1247</td></tr>
+          <tr data-k="settlement"><td class="num">Dec 1 00:05:05<span class="sub">tx valid start</span></td><td>TRAVI (system)</td><td class="muted">—</td><td>TRAVI</td><td>Submitted payout for settlement #1 <span class="st plan">PLANNED</span></td><td class="mono">0.0.4811001@1796083505.000000000</td></tr>
+          <tr data-k="settlement"><td class="num">Dec 1 00:00</td><td>TRAVI (system)</td><td class="muted">—</td><td>TRAVI</td><td>Computed settlement #1 (sharing rule α = 1)</td><td>SOC Threat Detection Co-op</td></tr>
+          <tr data-k="approval"><td class="num">Nov 30</td><td>jane@org-a.example</td><td>Participant</td><td>Org A</td><td>Sent join request</td><td>Smart Farm Yield Co-op</td></tr>
+          <tr data-k="approval"><td class="num">Nov 28</td><td>eve@org-e.example</td><td>Participant</td><td>Org E</td><td>Sent join request</td><td>SOC Threat Detection Co-op</td></tr>
+          <tr data-k="settlement"><td class="num">Nov 20</td><td>jane@org-a.example</td><td>Participant</td><td>Org A</td><td>Connected Hedera payout account <span class="st plan">PLANNED</span></td><td class="mono">0.0.5120001</td></tr>
+          <tr data-k="approval"><td class="num">Nov 8 10:12</td><td>admin@travi.example</td><td>Admin</td><td>TRAVI</td><td>Rejected application</td><td>Org H (asked for Admin)</td></tr>
+          <tr data-k="credential"><td class="num">Nov 7 11:05</td><td>admin@travi.example</td><td>Admin</td><td>TRAVI</td><td>Blocked site</td><td class="mono">org-b-test-00</td></tr>
+          <tr data-k="leave"><td class="num">Nov 5 14:31</td><td>ops@org-c.example</td><td>Participant</td><td>Org C</td><td>Requested to leave</td><td>SOC Threat Detection Co-op</td></tr>
+          <tr data-k="credential"><td class="num">Oct 3 10:02</td><td>admin@travi.example</td><td>Admin</td><td>TRAVI</td><td>Marked kit delivered</td><td class="mono">org-c-soc-01</td></tr>
+          <tr data-k="credential"><td class="num">Oct 2</td><td>admin@travi.example</td><td>Admin</td><td>TRAVI</td><td>Marked kit delivered</td><td class="mono">org-a-soc-01</td></tr>
+          <tr data-k="approval"><td class="num">Oct 1 15:20</td><td>admin@travi.example</td><td>Admin</td><td>TRAVI</td><td>Approved as Participant</td><td>Org A (org-a-soc-01)</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="notes">
+      <p>Web sign-ins, approvals and kit delivery are not in the FLARE audit log today, so this log keeps them with organization and role.</p>
+    </div>
+  </section>
+
+  <!-- 교수님 온라인 검토용: 미결 질문과 가정, 출처 -->
+  <details class="review">
+    <summary>Review notes <span>7 open questions · 3 assumptions · sources</span></summary>
+    <div class="rv">
+      <div>
+        <h3>OPEN QUESTIONS</h3>
+        <ol>
+          <li>Can every participant become an Admin? Who should see Admin in "Viewing as"?<span class="src">회의정리_1105_1106.md:128 · 11/5 회의.merged 2:20:40–2:20:56</span></li>
+          <li>Sign-in: basic only, basic + social, or social only. How is an admin told apart (Join vs Sign in)?<span class="src">회의정리_1105_1106.md:11, :104, :126–127</span></li>
+          <li>Who approves participation: the platform Admin alone (SFR-005 draft), or shared with the co-op leader?<span class="src">요구사항_추가초안_1105.md:58, :112 (SER-009 approver TBD)</span></li>
+          <li>Who executes settlement payout, and how is the platform's share (fee) shown?<span class="src">11/6 다비드회의.merged 2:46:30, 2:49:52–2:51:04 · 1105목 발표.merged.txt 1:01:10–1:01:46 (speaker presumed professor)</span></li>
+          <li>Should version 1 include a limit on how much can be unlearned and a warning modal for the performance drop? Proposed, not agreed.<span class="src">회의정리_1105_1106.md:218 · SESSION_SYNC_2026-11-03.md:1041</span></li>
+          <li>The TL++ (neural network) path has no unlearning method yet. What should this queue show for a TL++ co-op request?<span class="src">회의정리_1105_1106.md:138, :186</span></li>
+          <li>System scale: a few organizations or millions of devices? Paging of these lists depends on it.<span class="src">회의정리_1105_1106.md:131 · SESSION_SYNC_2026-11-03.md:1039</span></li>
+        </ol>
+      </div>
+      <div>
+        <h3>ASSUMPTIONS</h3>
+        <ol>
+          <li>Admin screens are low priority for the MVP, and a terminal would also do. This page is for lo-fi review only and is built after the Participant screens.<span class="src">1105목 발표.merged.txt 0:24:25, 0:28:37–0:29:01, 0:53:50–0:55:01 (speaker presumed professor)</span></li>
+          <li>Admin is one FLARE project_admin, following the SFR-005 / SER-001 drafts. Approve buttons exist only on this page.<span class="src">요구사항_추가초안_1105.md:281 · TLplusOS_usecase_v0.1_20261105.drawio</span></li>
+          <li>All unlearning and retraining run buttons are disabled. The unlearning module connects in about three months.<span class="src">회의정리_1105_1106.md:243</span></li>
+        </ol>
+        <h3>MOCK NOTES</h3>
+        <ol>
+          <li>The sample account (JK, Org A) is shown holding Admin so the "Viewing as" switch can be walked through. admin@travi.example in the log is a separate sample admin.</li>
+          <li>Org A's payout account 0.0.5120001 shows connected on Nov 20, 2026 to match My page. Other organizations' accounts are sample values. All names, numbers, IDs and dates are sample data as of Dec 3, 2026. HashScan text is not a link.</li>
+        </ol>
+      </div>
+    </div>
+  </details>
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <div class="foot-top">
+      <div>
+        <div class="eyebrow">CONTACT</div>
+        <h3>Contact TRAVI</h3>
+        <a class="mail" href="mailto:contact@travi.example">contact@travi.example <span class="todo">교체 필요</span></a>
+        <div class="social"><a href="#" aria-label="LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5C4.98 4.88 3.87 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.22 8h4.56v14H.22V8zm7.4 0h4.37v1.92h.06c.61-1.15 2.1-2.36 4.32-2.36 4.62 0 5.47 3.04 5.47 7V22h-4.56v-6.6c0-1.57-.03-3.6-2.2-3.6-2.2 0-2.530 1.72-2.53 3.49V22H7.62V8z"/></svg></a></div>
+      </div>
+      <a class="btn solid lg" href="mailto:contact@travi.example">CONTACT US</a>
+    </div>
+    <div class="foot-bottom"><span>© 2026 TRAVI</span><span>DINA Lab, Hongik University · Neouly</span></div>
+  </div>
+</footer>
+
+<script>
+// 시안용 작은 동작: 탭, 행 동작, 로그 거르기, 구역 표시. 헤더 드롭다운은 app.js. 네트워크 요청 없음
+(function () {
+  // 신청 탭
+  var tabs = document.querySelectorAll('.tabs [role=tab]');
+  tabs.forEach(function (t) {
+    t.addEventListener('click', function () {
+      tabs.forEach(function (o) {
+        o.setAttribute('aria-selected', o === t ? 'true' : 'false');
+        document.getElementById(o.dataset.tab).hidden = o !== t;
+      });
+    });
+  });
+
+  // 행 동작(가짜): 승인, 반려, 차단, 키트 전달
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest('button[data-act]');
+    if (!b) return;
+    var cell = b.closest('td'), row = b.closest('tr'), act = b.dataset.act;
+    if (act === 'approve') {
+      var role = cell.querySelector('select').value;
+      cell.innerHTML = '<span class="pill ok">Approved as ' + role + '</span><span class="sub">' + cell.dataset.org + ' · logged (mock)</span>';
+    } else if (act === 'reject') {
+      cell.innerHTML = '<input aria-label="Reason" placeholder="Reason (required)"><button class="btn solid sm" data-act="reject-ok">Reject</button>';
+      cell.querySelector('input').focus();
+    } else if (act === 'reject-ok') {
+      var why = cell.querySelector('input').value.trim();
+      if (!why) { cell.querySelector('input').focus(); return; }
+      cell.textContent = '';
+      var p = document.createElement('span'); p.className = 'pill bad'; p.textContent = 'Rejected';
+      var s = document.createElement('span'); s.className = 'sub'; s.textContent = why + ' · logged (mock)';
+      cell.append(p, s);
+    } else if (act === 'block' || act === 'unblock') {
+      var conn = row.cells[4].querySelector('.pill');
+      if (act === 'block') { conn.className = 'pill bad'; conn.textContent = 'Blocked'; b.textContent = 'Unblock'; b.dataset.act = 'unblock'; }
+      else { conn.className = 'pill mute'; conn.textContent = 'Not connected'; b.textContent = 'Block site'; b.dataset.act = 'block'; }
+    } else if (act === 'kit') {
+      var k = row.querySelector('.kit'); k.textContent = 'Dec 3, 2026 (mock)'; k.classList.remove('muted');
+      b.disabled = true; b.textContent = 'Kit delivered';
+    }
+  });
+
+  // 표 행 전체 클릭
+  document.querySelectorAll('tr.link').forEach(function (tr) {
+    tr.addEventListener('click', function (e) { if (!e.target.closest('a,button')) location.href = tr.dataset.href; });
+  });
+
+  // 감사 로그 거르기
+  var fb = document.querySelectorAll('.fchips button');
+  fb.forEach(function (b) {
+    b.addEventListener('click', function () {
+      fb.forEach(function (o) { o.setAttribute('aria-pressed', o === b ? 'true' : 'false'); });
+      document.querySelectorAll('#log tbody tr').forEach(function (r) {
+        r.hidden = b.dataset.k !== 'all' && r.dataset.k !== b.dataset.k;
+      });
+    });
+  });
+
+  // 지금 보이는 구역을 바로가기에 표시
+  if ('IntersectionObserver' in window) {
+    var links = {};
+    document.querySelectorAll('.subnav a').forEach(function (a) { links[a.getAttribute('href').slice(1)] = a; });
+    var io = new IntersectionObserver(function (es) {
+      es.forEach(function (en) {
+        if (en.isIntersecting) {
+          Object.keys(links).forEach(function (id) { links[id].classList.toggle('on', id === en.target.id); });
+        }
+      });
+    }, { rootMargin: '-140px 0px -60% 0px' });
+    document.querySelectorAll('.panel').forEach(function (p) { io.observe(p); });
+  }
+})();
+</script>
+<script src="app.js"></script>
+</body>
+</html>
