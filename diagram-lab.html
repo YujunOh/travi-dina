@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TRAVI Diagram Lab</title>
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+/* 메인 도식 실험실. 버전마다 따로 조절하고 평가한다. 평가는 이 브라우저에만 저장된다 */
+:root, :root[data-theme="light"] { --bg: #f6f7fa; --card: #ffffff; --line: #e3e7ef; --line2: #cfd5e1; --text: #0d1220; --muted: #586276; --faint: #8e97a9; --accent: #3f4ff0; --soft: #eceefe; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg: #0b0f1a; --card: #121828; --line: #232c40; --line2: #34405a; --text: #e8ecf5; --muted: #a3adc2; --faint: #6f7a92; --accent: #8b96ff; --soft: #1c2240; } }
+:root[data-theme="dark"] { --bg: #0b0f1a; --card: #121828; --line: #232c40; --line2: #34405a; --text: #e8ecf5; --muted: #a3adc2; --faint: #6f7a92; --accent: #8b96ff; --soft: #1c2240; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Pretendard Variable', Pretendard, system-ui, sans-serif; word-break: keep-all; }
+.wrap { max-width: 1320px; margin: 0 auto; padding: 0 24px; }
+header.top { position: sticky; top: 0; z-index: 10; background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
+header.top .wrap { display: flex; align-items: center; gap: 16px; height: 56px; }
+header.top b { letter-spacing: .2em; }
+.sp { flex: 1; }
+button, select, input { font: inherit; }
+.btn { border: 1px solid var(--line2); background: var(--card); color: var(--text); border-radius: 8px; padding: 7px 12px; font-size: 13px; cursor: pointer; }
+.btn:hover { border-color: var(--text); }
+.btn.dark { background: var(--text); color: var(--bg); border-color: var(--text); }
+.brief { padding: 28px 0 8px; }
+.brief h1 { font-size: 28px; margin: 0 0 10px; letter-spacing: -0.02em; }
+.brief ol { margin: 0; padding-left: 20px; color: var(--muted); line-height: 1.8; font-size: 15px; }
+.msgrow { display: flex; gap: 10px; align-items: center; margin: 18px 0 0; flex-wrap: wrap; }
+.msgrow label { font-size: 13px; color: var(--muted); }
+.msgrow input { flex: 1; min-width: 240px; padding: 9px 12px; border-radius: 8px; border: 1px solid var(--line2); background: var(--card); color: var(--text); }
+.sum { margin: 24px 0 8px; background: var(--card); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+.sum-h { display: flex; align-items: center; gap: 12px; padding: 14px 18px; border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+.sum-h h2 { font-size: 16px; margin: 0; }
+.sum-h #progress { font-size: 13px; color: var(--faint); }
+.tbl { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 760px; }
+th { text-align: left; font-size: 11px; letter-spacing: .08em; color: var(--faint); font-weight: 700; padding: 10px 12px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+td { padding: 9px 12px; border-bottom: 1px solid var(--line); }
+td a { color: var(--text); text-decoration: none; font-weight: 600; }
+td.n { text-align: center; font-variant-numeric: tabular-nums; width: 64px; }
+td.empty { color: var(--faint); }
+td.avg { font-weight: 800; }
+td.set { color: var(--faint); font-size: 12px; white-space: nowrap; }
+.tag { display: inline-block; margin-left: 8px; font-size: 10px; font-weight: 700; letter-spacing: .06em; padding: 2px 7px; border-radius: 999px; border: 1px solid var(--line2); color: var(--muted); vertical-align: 2px; }
+.tag.on { background: var(--soft); color: var(--accent); border-color: transparent; }
+#grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; padding: 16px 0 80px; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 18px; scroll-margin-top: 72px; }
+.card-head { display: flex; gap: 12px; align-items: baseline; }
+.num { font-size: 13px; font-weight: 800; color: var(--faint); font-variant-numeric: tabular-nums; }
+.ttl h3 { display: inline; font-size: 17px; margin: 0; }
+.idea { margin: 8px 0 14px; color: var(--muted); font-size: 14px; line-height: 1.6; min-height: 44px; }
+.stage { position: relative; aspect-ratio: 16 / 9; border-radius: 12px; overflow: hidden; border: 1px solid var(--line); }
+.stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.overlay { position: absolute; inset: 0; display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; pointer-events: none; padding: 0 8%; color: #0d1220; }
+.overlay.dark { color: #eef2f8; }
+.ov-eb { font-size: 10px; letter-spacing: .24em; font-weight: 700; opacity: .6; margin-bottom: 8px; }
+.ov-h { font-size: clamp(18px, 2.4vw, 30px); font-weight: 750; letter-spacing: -0.02em; line-height: 1.15; }
+.ctl { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 16px; margin: 14px 0 6px; }
+.grp { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.lbl { font-size: 12px; color: var(--faint); width: 40px; flex: none; }
+.seg { display: flex; flex-wrap: wrap; gap: 4px; }
+.seg button { border: 1px solid var(--line2); background: transparent; color: var(--muted); border-radius: 999px; padding: 3px 9px; font-size: 12px; cursor: pointer; }
+.seg button.on { background: var(--text); color: var(--bg); border-color: var(--text); }
+.grp input[type=range] { flex: 1; min-width: 60px; accent-color: var(--accent); }
+.val { font-size: 12px; color: var(--muted); width: 40px; text-align: right; font-variant-numeric: tabular-nums; }
+.chk { font-size: 13px; color: var(--muted); display: flex; align-items: center; gap: 6px; }
+.rate { border-top: 1px solid var(--line); margin-top: 12px; padding-top: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px 16px; }
+.rrow { display: flex; align-items: center; gap: 8px; }
+.rl { font-size: 13px; width: 86px; flex: none; cursor: help; }
+.stars { display: flex; gap: 4px; }
+.stars button { width: 28px; height: 28px; border-radius: 7px; border: 1px solid var(--line2); background: transparent; color: var(--faint); font-size: 12px; cursor: pointer; }
+.stars button.on { background: var(--accent); border-color: var(--accent); color: #fff; }
+.rate textarea { grid-column: 1 / -1; min-height: 56px; resize: vertical; border-radius: 8px; border: 1px solid var(--line2); background: var(--bg); color: var(--text); padding: 8px 10px; font-size: 13px; }
+@media (max-width: 1000px) { #grid { grid-template-columns: 1fr; } }
+@media (max-width: 560px) { .ctl, .rate { grid-template-columns: 1fr; } .wrap { padding: 0 16px; } }
+</style>
+<script>try { var t = localStorage.getItem('travi-lab-theme'); if (t) document.documentElement.setAttribute('data-theme', t); } catch (e) {}</script>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <b>TRAVI</b><span style="color:var(--faint);font-size:13px">Diagram Lab · 메인 도식 후보 비교</span>
+  <span class="sp"></span>
+  <button class="btn" id="themeBtn" type="button">어두운 화면</button>
+</div></header>
+
+<main class="wrap">
+  <section class="brief">
+    <h1>메인 도식 후보를 하나씩 보고 점수를 매겨 주세요</h1>
+    <ol>
+      <li>카드마다 팔레트, 배경, 채도, 속도를 따로 바꿔 보고, 마음에 드는 상태에서 점수(1~5)를 누르세요. 그때 설정이 같이 저장됩니다.</li>
+      <li>점수는 6가지입니다. 논리, 인상, 이미지 완성도, 색감, 채도, 보기 편함. 항목 이름에 마우스를 올리면 뜻이 나옵니다.</li>
+      <li>다 매기면 아래 표에서 평균순으로 정렬해 보고, "평가 결과 복사"로 Claude에게 붙여 주면 다음 버전에 반영합니다.</li>
+    </ol>
+    <div class="msgrow"><label for="msg">가운데 문구(겹쳐 보기용)</label><input id="msg" value="협력하는 AI, 함께 쌓는 가치"></div>
+  </section>
+
+  <section class="sum">
+    <div class="sum-h">
+      <h2>평가 요약</h2><span id="progress"></span><span class="sp"></span>
+      <select id="sortSel" class="btn"><option value="order">번호순</option><option value="avg">평균 높은 순</option></select>
+      <button class="btn dark" id="btnCopy" type="button">평가 결과 복사</button>
+      <button class="btn" id="btnReset" type="button">초기화</button>
+    </div>
+    <div class="tbl"><table>
+      <thead><tr><th>버전</th><th>논리</th><th>인상</th><th>완성도</th><th>색감</th><th>채도</th><th>편함</th><th>평균</th><th>평가할 때 설정</th></tr></thead>
+      <tbody id="sumBody"></tbody>
+    </table></div>
+  </section>
+
+  <section id="grid"></section>
+</main>
+
+<script src="lab/core.js"></script>
+<script src="lab/v-base.js"></script>
+<script src="lab/v-d2.js"></script>
+<script src="lab/v-d3.js"></script>
+<script src="lab/v-d4.js"></script>
+<script src="lab/v-d5.js"></script>
+<script src="lab/v-d6.js"></script>
+<script src="lab/v-d7.js"></script>
+<script>
+(function () {
+  var root = document.documentElement, b = document.getElementById('themeBtn');
+  function cur() { var t = root.getAttribute('data-theme'); if (t) return t; return matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'; }
+  function label() { b.textContent = cur() === 'dark' ? '밝은 화면' : '어두운 화면'; }
+  b.onclick = function () { var n = cur() === 'dark' ? 'light' : 'dark'; root.setAttribute('data-theme', n); try { localStorage.setItem('travi-lab-theme', n); } catch (e) {} label(); };
+  label();
+  LAB.boot();
+})();
+</script>
+</body>
+</html>
