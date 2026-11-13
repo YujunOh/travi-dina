@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TRAVI Hero Candidates</title>
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+/* 첫 화면 후보 미리보기. 실험실(diagram-lab.html)의 도식을 실제 메인 첫 화면 자리에 얹어 본다.
+   주소 뒤 값: v(후보), theme(light·dark), layout(center·left), pal(팔레트), speed, text(0이면 글 숨김), chrome(0이면 헤더 숨김), ui(0이면 조절 막대 숨김) */
+:root, :root[data-theme="light"] { --bg: #fbfbfd; --bg-2: #f2f4f8; --card: #ffffff; --line: #e3e7ef; --line-2: #cfd5e1; --text: #0d1220; --muted: #586276; --faint: #8e97a9; --btn-ink: #ffffff; --header-h: 64px; }
+:root[data-theme="dark"] { --bg: #0b0f1a; --bg-2: #101626; --card: #121828; --line: #232c40; --line-2: #34405a; --text: #e8ecf5; --muted: #a3adc2; --faint: #6f7a92; --btn-ink: #0b0f1a; }
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+html { overflow-x: clip; }
+body { background: var(--bg); color: var(--text); font-family: 'Pretendard Variable', Pretendard, system-ui, sans-serif; word-break: keep-all; -webkit-font-smoothing: antialiased; }
+a { color: inherit; text-decoration: none; }
+button, select, input { font: inherit; }
+
+.topbar { position: fixed; inset: 0 0 auto 0; z-index: 20; height: var(--header-h); background: color-mix(in srgb, var(--bg) 82%, transparent); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
+.topbar .in { height: 100%; display: flex; align-items: center; gap: 32px; padding: 0 40px; }
+.brand { display: flex; align-items: center; gap: 10px; font-weight: 700; letter-spacing: 0.3em; font-size: 16px; }
+.brand i { width: 22px; height: 22px; border-radius: 50%; border: 2.4px solid currentColor; }
+.sp { flex: 1; }
+.nav { display: flex; align-items: center; gap: 30px; font-size: 14px; font-weight: 500; color: var(--muted); }
+.nav a:hover { color: var(--text); }
+.btn { display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; padding: 10px 18px; border: 1px solid transparent; }
+.btn.solid { background: var(--text); color: var(--btn-ink); }
+.btn.ghost { border-color: var(--line-2); color: var(--text); background: color-mix(in srgb, var(--bg) 60%, transparent); }
+.btn.ghost:hover { border-color: var(--text); }
+.btn.lg { padding: 14px 24px; font-size: 15px; }
+
+.hero { position: relative; height: 100vh; min-height: 620px; overflow: hidden; }
+.hero canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.scrim { position: absolute; inset: 0; pointer-events: none; }
+.hero[data-layout="center"] .scrim { background: radial-gradient(ellipse 44% 36% at 50% 52%, color-mix(in srgb, var(--bg) 74%, transparent) 0%, color-mix(in srgb, var(--bg) 46%, transparent) 55%, transparent 100%); }
+.hero[data-layout="left"] .scrim { background: linear-gradient(90deg, color-mix(in srgb, var(--bg) 94%, transparent) 0%, color-mix(in srgb, var(--bg) 86%, transparent) 30%, transparent 64%); }
+.copy { position: absolute; z-index: 2; }
+.hero[data-layout="center"] .copy { left: 50%; top: 52%; transform: translate(-50%, -50%); width: min(92vw, 900px); text-align: center; }
+.hero[data-layout="left"] .copy { left: max(32px, 7vw); top: 54%; transform: translateY(-50%); width: min(86vw, 660px); text-align: left; }
+.eyebrow { font-size: 12px; letter-spacing: 0.22em; font-weight: 700; color: var(--muted); }
+.copy h1 { margin: 18px 0 20px; font-weight: 700; letter-spacing: -0.035em; line-height: 1.06; }
+.hero[data-layout="center"] .copy h1 { font-size: clamp(34px, 4vw, 58px); }
+.hero[data-layout="left"] .copy h1 { font-size: clamp(44px, 5.8vw, 86px); line-height: 1.0; }
+.copy .lead { font-size: 18px; line-height: 1.65; color: var(--muted); margin: 0 0 30px; }
+.hero[data-layout="center"] .copy .lead { max-width: 620px; margin-left: auto; margin-right: auto; }
+.hero[data-layout="left"] .copy .lead { max-width: 520px; }
+.ctas { display: flex; gap: 12px; flex-wrap: wrap; }
+.hero[data-layout="center"] .ctas { justify-content: center; }
+.cap { position: absolute; right: 40px; bottom: 28px; z-index: 2; font-family: ui-monospace, Consolas, monospace; font-size: 11px; letter-spacing: 0.08em; color: var(--faint); }
+
+/* 첫 화면 바로 아래가 어떻게 이어지는지 보는 자리 */
+.peek { border-top: 1px solid var(--line); padding: 88px 0 200px; }
+.peek .in { max-width: 1200px; margin: 0 auto; padding: 0 32px; }
+.peek h2 { font-size: 34px; letter-spacing: -0.025em; margin: 12px 0 10px; }
+.peek p { color: var(--muted); font-size: 17px; margin: 0 0 36px; }
+.doms { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+.dom { display: flex; flex-direction: column; gap: 14px; border: 1px solid var(--line); border-radius: 14px; background: var(--card); padding: 22px; color: var(--text); transition: border-color .15s; }
+.dom:hover { border-color: var(--text); }
+.dom .ic { width: 48px; height: 48px; color: var(--dc, var(--text)); }
+.dom .ic svg { width: 100%; height: 100%; display: block; }
+.dom b { font-size: 19px; letter-spacing: -0.01em; }
+.dom span { font-size: 14px; color: var(--muted); line-height: 1.5; }
+.dom small { font-size: 13px; color: var(--faint); }
+
+/* 조절 막대. 시안을 보는 사람만 쓰는 도구라 화면 아래에 띄운다 */
+.ctl { position: fixed; left: 50%; bottom: 14px; transform: translateX(-50%); z-index: 40; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; max-width: calc(100vw - 24px); padding: 10px 14px; border-radius: 12px; background: color-mix(in srgb, var(--card) 94%, transparent); backdrop-filter: blur(10px); border: 1px solid var(--line-2); box-shadow: 0 16px 40px -18px rgba(13, 18, 32, .45); font-size: 13px; color: var(--muted); }
+.ctl .g { display: flex; align-items: center; gap: 6px; }
+.ctl .l { font-size: 11px; letter-spacing: 0.04em; color: var(--faint); }
+.seg { display: flex; border: 1px solid var(--line-2); border-radius: 8px; overflow: hidden; }
+.seg button { border: 0; background: transparent; color: var(--muted); padding: 6px 10px; font-size: 13px; cursor: pointer; border-left: 1px solid var(--line-2); }
+.seg button:first-child { border-left: 0; }
+.seg button.on { background: var(--text); color: var(--btn-ink); }
+.ctl select, .ctl .act { border: 1px solid var(--line-2); background: var(--card); color: var(--text); border-radius: 8px; padding: 6px 8px; font-size: 13px; cursor: pointer; }
+.ctl input[type=range] { width: 84px; accent-color: var(--text); }
+.ctl label.c { display: flex; align-items: center; gap: 5px; cursor: pointer; }
+.no-ui .ctl, .no-ui .cap { display: none; }
+.no-chrome .topbar { display: none; }
+.no-text .copy, .no-text .scrim { display: none; }
+@media (max-width: 900px) { .nav a.h { display: none; } .doms { grid-template-columns: 1fr 1fr; } .topbar .in { padding: 0 16px; gap: 14px; } .cap { right: 16px; } }
+@media (max-width: 560px) { .peek .in { padding: 0 16px; } .ctl { font-size: 12px; } }
+</style>
+</head>
+<body>
+
+<header class="topbar"><div class="in">
+  <a class="brand" href="index.html"><i></i>TRAVI</a>
+  <span class="sp"></span>
+  <nav class="nav">
+    <a class="h" href="#doms">Cooperatives</a>
+    <a class="h" href="#">Dashboard</a>
+    <a class="h" href="#">Wallet</a>
+    <a class="h" href="whitepaper.html">Whitepaper</a>
+    <a href="#">Log in</a>
+    <a class="btn solid" href="join.html">Join TRAVI</a>
+  </nav>
+</div></header>
+
+<main class="hero" id="hero" data-layout="center">
+  <canvas id="cv" aria-hidden="true"></canvas>
+  <div class="scrim"></div>
+  <div class="copy">
+    <div class="eyebrow">AI COOPERATIVES FABRIC &amp; PLATFORM</div>
+    <h1 id="h1"></h1>
+    <p class="lead" id="lead"></p>
+    <div class="ctas">
+      <a class="btn solid lg" href="join.html">Join TRAVI</a>
+      <a class="btn ghost lg" href="#doms">Explore coops</a>
+    </div>
+  </div>
+  <div class="cap" id="cap"></div>
+</main>
+
+<section class="peek" id="doms"><div class="in">
+  <div class="eyebrow">COOPERATIVES</div>
+  <h2>Find a coop in your domain</h2>
+  <p>Pick a domain to see the coops that are open to join.</p>
+  <div class="doms">
+    <a class="dom" href="#" data-ic="security"><div class="ic"></div><b>Security</b><span>Intrusions, phishing, malware</span><small>2 open to join · 1 training</small></a>
+    <a class="dom" href="#" data-ic="economy"><div class="ic"></div><b>Economy</b><span>Fraud detection, credit scoring</span><small>1 open to join</small></a>
+    <a class="dom" href="#" data-ic="agriculture"><div class="ic"></div><b>Agriculture</b><span>Crop yield, pests, growth</span><small>1 open to join · 1 opening soon</small></a>
+    <a class="dom" href="#" data-ic="healthcare"><div class="ic"></div><b>Healthcare</b><span>Imaging, diagnostic support</span><small>1 training</small></a>
+  </div>
+</div></section>
+
+<aside class="ctl" id="ctl" aria-label="시안 조절">
+  <div class="g"><span class="l">후보</span><div class="seg" id="segV"></div><select id="selOld" title="실험실의 이전 버전"></select></div>
+  <div class="g"><span class="l">테마</span><div class="seg" id="segT"><button type="button" data-k="light">밝게</button><button type="button" data-k="dark">어둡게</button></div></div>
+  <div class="g"><span class="l">글 배치</span><div class="seg" id="segL"><button type="button" data-k="center">가운데</button><button type="button" data-k="left">왼쪽 크게</button></div></div>
+  <div class="g"><span class="l">팔레트</span><select id="selP"></select></div>
+  <div class="g"><span class="l">문구</span><select id="selC"></select></div>
+  <div class="g"><span class="l">속도</span><input type="range" id="rngS" min="40" max="200" step="5"><span id="valS"></span></div>
+  <label class="c"><input type="checkbox" id="chkT"> 글</label>
+  <button class="act" type="button" id="btnLink">이 상태 링크 복사</button>
+  <a class="act" href="diagram-lab.html">실험실</a>
+  <span class="l">H 키: 막대 숨김</span>
+</aside>
+
+<script src="lab/core.js"></script>
+<script src="lab/v-h1.js"></script>
+<script src="lab/v-h2.js"></script>
+<script src="lab/v-h3.js"></script>
+<script src="lab/v-h4.js"></script>
+<script src="lab/v-base.js"></script>
+<script src="lab/v-d2.js"></script>
+<script src="lab/v-d3.js"></script>
+<script src="lab/v-d4.js"></script>
+<script src="lab/v-d5.js"></script>
+<script src="lab/v-d6.js"></script>
+<script src="lab/v-d7.js"></script>
+<script src="icons/domain-icons.js"></script>
+<script>
+(function () {
+  var root = document.documentElement, hero = document.getElementById('hero'), cv = document.getElementById('cv');
+  var V = (window.LAB && LAB.variants) || [];
+  var HERO = V.filter(function (v) { return v.hero; });           // 이번 후보(h1~h4)
+  var OLD = V.filter(function (v) { return !v.hero; });           // 실험실의 이전 버전
+  var QUIET = { center: { x: 0.5, y: 0.52, rx: 0.31, ry: 0.27 }, left: { x: 0.27, y: 0.55, rx: 0.27, ry: 0.36 } };
+  /* 첫 화면 문구 후보. a는 지금 사이트 문구, b와 c는 mid-fi 영어 문구 제안에서 온 짧은 두 줄 안. 세로 막대(|)가 줄바꿈 자리 */
+  var LEAD_NEW = 'TRAVI is a platform for AI cooperatives, or coops. Organizations and individuals train one shared model while their data stays where it is.';
+  var COPY = {
+    a: { label: '지금 사이트 문구', center: 'Self-sovereign collaborative|intelligence.', left: 'Self-sovereign|collaborative|intelligence.', lead: 'TRAVI lets independent participants turn the data and capabilities they hold into shared AI value, while keeping control of their own resources.' },
+    b: { label: 'Train AI together', center: 'Train AI together.|Keep your data.', left: 'Train AI together.|Keep your data.', lead: LEAD_NEW },
+    c: { label: 'Your data stays yours', center: 'Your data stays yours.|The model is shared.', left: 'Your data stays yours.|The model is shared.', lead: LEAD_NEW }
+  };
+
+  var q = new URLSearchParams(location.search);
+  function byId(id) { for (var i = 0; i < V.length; i++) if (V[i].id === id) return V[i]; return null; }
+  var st = {
+    v: (byId(q.get('v')) || HERO[0] || V[0] || {}).id,
+    theme: q.get('theme') === 'dark' ? 'dark' : 'light',
+    layout: q.get('layout') === 'left' ? 'left' : 'center',
+    pal: q.get('pal') || '',
+    speed: Math.max(40, Math.min(200, +(q.get('speed') || 100))),
+    text: q.get('text') !== '0', chrome: q.get('chrome') !== '0', ui: q.get('ui') !== '0',
+    copy: COPY[q.get('copy')] ? q.get('copy') : 'a',
+    h: q.get('h') || ''
+  };
+
+  /* 후보마다 테마별 기본 팔레트를 정해 둘 수 있다(heroPal: { light, dark }) */
+  function palOf() {
+    if (st.pal && LAB.PALETTES[st.pal]) return st.pal;
+    var v = byId(st.v) || {};
+    return (v.heroPal && v.heroPal[st.theme]) || v.defaultPal || 'brand';
+  }
+
+  var ctx = null, W = 0, H = 0, P = null, state = null, tAcc = 0, last = 0;
+  var stats = { frames: 0, sumMs: 0, maxMs: 0, errors: [] };
+  window.__hero = { stats: stats, state: st };
+
+  function makeP() {
+    P = LAB.makeP(palOf(), st.theme);
+    P.layout = st.layout; P.quiet = QUIET[st.layout];
+    state = null; stats.frames = 0; stats.sumMs = 0; stats.maxMs = 0;
+  }
+  function fit() {
+    var dpr = Math.min(2, window.devicePixelRatio || 1), r = cv.getBoundingClientRect();
+    cv.width = Math.max(1, Math.round(r.width * dpr)); cv.height = Math.max(1, Math.round(r.height * dpr));
+    ctx = cv.getContext('2d'); ctx.setTransform(dpr, 0, 0, dpr, 0, 0); W = r.width; H = r.height; state = null;
+  }
+  function frame(dt) {
+    var v = byId(st.v); if (!v || !ctx) return;
+    tAcc += dt * (st.speed / 100);
+    if (!state) state = (v.init ? v.init(W, H, P) : null) || {};
+    var t0 = performance.now();
+    ctx.save(); ctx.fillStyle = P.bg; ctx.fillRect(0, 0, W, H);
+    try { v.draw(ctx, W, H, tAcc, P, state); } catch (err) { if (stats.errors.length < 5) stats.errors.push(String(err && err.stack || err)); }
+    ctx.restore();
+    var ms = performance.now() - t0; stats.frames++; stats.sumMs += ms; if (ms > stats.maxMs) stats.maxMs = ms;
+  }
+  var still = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function settle() { for (var i = 0; i < 240; i++) frame(16); } // 움직임을 줄이는 설정이면 4초쯤 돌린 장면에서 멈춘다
+  function loop(now) {
+    var dt = Math.max(0, Math.min(64, now - last)); last = now;
+    if (!still) frame(dt);
+    requestAnimationFrame(loop);
+  }
+
+  function seg(el, cur, onPick) {
+    Array.prototype.forEach.call(el.querySelectorAll('button'), function (b) {
+      b.classList.toggle('on', b.dataset.k === cur);
+      b.onclick = function () { onPick(b.dataset.k); };
+    });
+  }
+  function sync() {
+    var v = byId(st.v) || {};
+    root.setAttribute('data-theme', st.theme);
+    hero.setAttribute('data-layout', st.layout);
+    document.body.classList.toggle('no-ui', !st.ui);
+    document.body.classList.toggle('no-chrome', !st.chrome);
+    document.body.classList.toggle('no-text', !st.text);
+    document.getElementById('lead').textContent = COPY[st.copy].lead;
+    document.getElementById('selC').value = st.copy;
+    document.getElementById('h1').innerHTML = (st.h || COPY[st.copy][st.layout]).split('|').map(function (s) { return s.replace(/[&<>]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]; }); }).join('<br>');
+    var hi = HERO.indexOf(v);
+    document.getElementById('cap').textContent = (hi >= 0 ? 'CANDIDATE ' + (hi + 1) + ' OF ' + HERO.length + ' · ' : 'LAB · ') + (v.en || v.id || '');
+    seg(document.getElementById('segV'), st.v, function (k) { st.v = k; st.pal = ''; apply(); });
+    seg(document.getElementById('segT'), st.theme, function (k) { st.theme = k; st.pal = ''; apply(); });
+    seg(document.getElementById('segL'), st.layout, function (k) { st.layout = k; apply(); });
+    document.getElementById('selOld').value = hi >= 0 ? '' : st.v;
+    document.getElementById('selP').value = palOf();
+    document.getElementById('rngS').value = st.speed; document.getElementById('valS').textContent = st.speed + '%';
+    document.getElementById('chkT').checked = st.text;
+    /* 도메인 아이콘 색: 테마별로 정해 둔 단색(없으면 글자색) */
+    var icCol = (window.TRAVI_ICON_COLORS || {})[st.theme] || {};
+    Array.prototype.forEach.call(document.querySelectorAll('.dom'), function (a) { var c = icCol[a.getAttribute('data-ic')]; if (c) a.style.setProperty('--dc', c); else a.style.removeProperty('--dc'); });
+    var p = new URLSearchParams(); p.set('v', st.v); p.set('theme', st.theme); p.set('layout', st.layout);
+    if (st.pal) p.set('pal', st.pal); if (st.speed !== 100) p.set('speed', st.speed);
+    if (st.copy !== 'a') p.set('copy', st.copy);
+    if (!st.text) p.set('text', '0'); if (!st.chrome) p.set('chrome', '0'); if (!st.ui) p.set('ui', '0'); if (st.h) p.set('h', st.h);
+    try { history.replaceState(null, '', location.pathname + '?' + p.toString()); } catch (e) {}
+  }
+  function apply() { makeP(); sync(); if (still) settle(); }
+
+  /* 조절 막대 채우기 */
+  var segV = document.getElementById('segV');
+  HERO.forEach(function (v, i) { var b = document.createElement('button'); b.type = 'button'; b.dataset.k = v.id; b.textContent = (i + 1) + ' ' + (v.short || v.name); b.title = v.idea || ''; segV.appendChild(b); });
+  var selOld = document.getElementById('selOld');
+  selOld.innerHTML = '<option value="">이전 버전</option>' + OLD.map(function (v) { return '<option value="' + v.id + '">' + v.name + '</option>'; }).join('');
+  selOld.onchange = function () { if (selOld.value) { st.v = selOld.value; st.pal = ''; apply(); } };
+  var selP = document.getElementById('selP');
+  selP.innerHTML = Object.keys(LAB.PALETTES).map(function (k) { return '<option value="' + k + '">' + LAB.PALETTES[k].label + '</option>'; }).join('');
+  selP.onchange = function () { st.pal = selP.value; apply(); };
+  var selC = document.getElementById('selC');
+  selC.innerHTML = Object.keys(COPY).map(function (k) { return '<option value="' + k + '">' + COPY[k].label + '</option>'; }).join('');
+  selC.onchange = function () { st.copy = selC.value; st.h = ''; sync(); };
+  document.getElementById('rngS').oninput = function () { st.speed = +this.value; sync(); };
+  document.getElementById('chkT').onchange = function () { st.text = this.checked; sync(); };
+  document.getElementById('btnLink').onclick = function () {
+    var b = this, url = location.href;
+    function ok() { b.textContent = '복사됨'; setTimeout(function () { b.textContent = '이 상태 링크 복사'; }, 1500); }
+    try { navigator.clipboard.writeText(url).then(ok, function () { prompt('복사해 주세요', url); }); } catch (e) { prompt('복사해 주세요', url); }
+  };
+  document.addEventListener('keydown', function (e) {
+    if (e.target && /INPUT|SELECT|TEXTAREA/.test(e.target.tagName)) return;
+    if (e.key === 'h' || e.key === 'H') { st.ui = !st.ui; sync(); }
+  });
+
+  /* 도메인 아이콘(icons/domain-icons.js가 있으면 넣는다) */
+  var IC = window.TRAVI_ICONS || {};
+  Array.prototype.forEach.call(document.querySelectorAll('.dom'), function (a) {
+    var k = a.getAttribute('data-ic'), box = a.querySelector('.ic');
+    if (IC[k]) box.innerHTML = IC[k]; else box.style.display = 'none';
+  });
+
+  fit(); makeP(); sync();
+  window.addEventListener('resize', function () { fit(); if (still) settle(); });
+  if (still) settle();
+  last = performance.now(); requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>

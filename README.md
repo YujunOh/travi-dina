@@ -18,6 +18,10 @@ TRAVI(AI 협동조합 플랫폼) 소개 사이트의 화면 시안입니다. 빌
 | `coop-manage.html` | 로그인 뒤: 코옵 관리, 정산 기간과 분배 규칙 미리보기 (Co-op leader) |
 | `mypage.html` | 로그인 뒤: 내 역할, 내 코옵, 기여, 정산과 지급 내역 (Participant) |
 | `admin.html` | 로그인 뒤: 신청 승인, 사이트, 언러닝, 정산 감사, 감사 로그 (Admin) |
+| `hero.html` | 첫 화면 후보 미리보기. 도식 후보를 실제 첫 화면 자리에 얹어 보고 테마, 글 배치, 팔레트를 바꿔 본다 |
+| `diagram-lab.html` | 도식 실험실. 모든 도식 버전을 카드로 나란히 놓고 점수를 매긴다 |
+
+`hero.html`과 `diagram-lab.html`은 검토용 페이지라 검색에 잡히지 않게 해 두었습니다. 도식 코드는 `lab/`(공통 `core.js`, 버전별 `v-*.js`), 도메인 아이콘은 `icons/`에 있습니다. `hero.html` 주소 뒤에 `?v=h1-constellation&theme=dark&layout=left`처럼 붙이면 그 상태로 열리고, `ui=0`은 조절 막대를, `text=0`은 글을 숨깁니다.
 
 로그인 뒤 화면 4개는 모두 같은 예시 데이터(as of Dec 3, 2026)를 쓰고, 헤더의 "Viewing as"로 역할을 바꿔 가며 볼 수 있습니다. 각 화면 맨 아래 Review notes에 미결 사항과 가정을 출처와 함께 적었습니다.
 

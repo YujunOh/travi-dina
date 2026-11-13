@@ -6,7 +6,9 @@
     brand: { label: '브랜드',   stops: [[26, 163, 217], [91, 76, 224], [224, 103, 94]] },
     cool:  { label: '차가운',   stops: [[37, 99, 235], [8, 145, 178], [16, 185, 129]] },
     warm:  { label: '따뜻한',   stops: [[245, 158, 11], [239, 68, 68], [219, 39, 119]] },
-    soft:  { label: '저채도',   stops: [[120, 150, 168], [150, 140, 190], [196, 150, 140]] }
+    soft:  { label: '저채도',   stops: [[120, 150, 168], [150, 140, 190], [196, 150, 140]] },
+    dawn:  { label: '따뜻한 저채도', stops: [[224, 150, 112], [212, 106, 98], [178, 96, 130]] },
+    indigo: { label: '남색 계열', stops: [[92, 118, 214], [91, 92, 224], [128, 108, 228]] }
   };
   var BGS = { light: { label: '밝은 배경', bg: '#fbfbfd', ink: [13, 18, 32] }, dark: { label: '어두운 배경', bg: '#0b0f1a', ink: [226, 232, 244] } };
 
@@ -20,7 +22,8 @@
       return 'rgba(' + Math.round(c0[0] + (c1[0] - c0[0]) * k) + ',' + Math.round(c0[1] + (c1[1] - c0[1]) * k) + ',' + Math.round(c0[2] + (c1[2] - c0[2]) * k) + ',' + (a == null ? 1 : a) + ')';
     }
     function ink(a) { return 'rgba(' + b.ink.join(',') + ',' + (a == null ? 1 : a) + ')'; }
-    return { pal: pal, bgKey: bgKey, dark: bgKey === 'dark', bg: b.bg, c: c, ink: ink, stops: stops };
+    /* quiet: 글이 놓이는 조용한 타원(화면 비율 좌표). layout: 'center' 또는 'left'. 첫 화면 미리보기(hero.html)가 글 배치에 맞춰 바꿔 넣는다 */
+    return { pal: pal, bgKey: bgKey, dark: bgKey === 'dark', bg: b.bg, c: c, ink: ink, stops: stops, layout: 'center', quiet: { x: 0.5, y: 0.5, rx: 0.31, ry: 0.26 } };
   }
 
   var CRITERIA = [
@@ -37,7 +40,7 @@
   function save() { try { localStorage.setItem(KEY, JSON.stringify(store)); } catch (e) {} renderSummary(); }
 
   var variants = [], cards = [];
-  var LAB = window.LAB = { register: function (v) { variants.push(v); }, PALETTES: PALETTES, BGS: BGS, makeP: makeP, CRITERIA: CRITERIA };
+  var LAB = window.LAB = { register: function (v) { variants.push(v); }, variants: variants, PALETTES: PALETTES, BGS: BGS, makeP: makeP, CRITERIA: CRITERIA };
 
   function el(tag, cls, html) { var e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; }
   function rec(id) { if (!store[id]) store[id] = { scores: {}, memo: '', settings: null }; return store[id]; }
