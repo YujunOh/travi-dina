@@ -105,8 +105,8 @@ button, select, input { font: inherit; }
     <h1 id="h1"></h1>
     <p class="lead" id="lead"></p>
     <div class="ctas">
-      <a class="btn solid lg" href="join.html">Join TRAVI</a>
-      <a class="btn ghost lg" href="#doms">Explore Coops</a>
+      <a class="btn solid lg" id="cta1" href="#doms">Explore AI Cooperatives</a>
+      <a class="btn ghost lg" id="cta2" href="#doms">How it works</a>
     </div>
   </div>
   <div class="cap" id="cap"></div>
@@ -160,6 +160,7 @@ button, select, input { font: inherit; }
   /* 첫 화면 문구 후보. a는 지금 사이트 문구, b와 c는 mid-fi 영어 문구 제안에서 온 짧은 두 줄 안. 세로 막대(|)가 줄바꿈 자리 */
   var LEAD_NEW = 'TRAVI is a platform for AI cooperatives, or Coops. Organizations and individuals train one shared model while their data stays where it is.';
   var COPY = {
+    d: { label: 'Build AI together (팀이 쓴 문구)', center: 'Build AI Together.|Share the Value.', left: 'Build AI Together.|Share the Value.', lead: 'Turn independent resources into collaborative intelligence, while retaining control of what you own.', cta: ['Explore AI Cooperatives', 'How it works'] },
     a: { label: '지금 사이트 문구', center: 'Self-sovereign collaborative|intelligence.', left: 'Self-sovereign|collaborative|intelligence.', lead: 'TRAVI lets independent participants turn the data and capabilities they hold into shared AI value, while keeping control of their own resources.' },
     b: { label: 'Train AI together', center: 'Train AI together.|Keep your data.', left: 'Train AI together.|Keep your data.', lead: LEAD_NEW },
     c: { label: 'Your data stays yours', center: 'Your data stays yours.|The model is shared.', left: 'Your data stays yours.|The model is shared.', lead: LEAD_NEW }
@@ -174,7 +175,7 @@ button, select, input { font: inherit; }
     pal: q.get('pal') || '',
     speed: Math.max(40, Math.min(200, +(q.get('speed') || 100))),
     text: q.get('text') !== '0', chrome: q.get('chrome') !== '0', ui: q.get('ui') !== '0',
-    copy: COPY[q.get('copy')] ? q.get('copy') : 'a',
+    copy: COPY[q.get('copy')] ? q.get('copy') : 'd',
     h: q.get('h') || ''
   };
 
@@ -231,6 +232,8 @@ button, select, input { font: inherit; }
     document.body.classList.toggle('no-chrome', !st.chrome);
     document.body.classList.toggle('no-text', !st.text);
     document.getElementById('lead').textContent = COPY[st.copy].lead;
+    var cta = COPY[st.copy].cta || ['Join TRAVI', 'Explore Coops'];
+    document.getElementById('cta1').textContent = cta[0]; document.getElementById('cta2').textContent = cta[1];
     document.getElementById('selC').value = st.copy;
     document.getElementById('h1').innerHTML = (st.h || COPY[st.copy][st.layout]).split('|').map(function (s) { return s.replace(/[&<>]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]; }); }).join('<br>');
     var hi = HERO.indexOf(v);
@@ -247,7 +250,7 @@ button, select, input { font: inherit; }
     Array.prototype.forEach.call(document.querySelectorAll('.dom'), function (a) { var c = icCol[a.getAttribute('data-ic')]; if (c) a.style.setProperty('--dc', c); else a.style.removeProperty('--dc'); });
     var p = new URLSearchParams(); p.set('v', st.v); p.set('theme', st.theme); p.set('layout', st.layout);
     if (st.pal) p.set('pal', st.pal); if (st.speed !== 100) p.set('speed', st.speed);
-    if (st.copy !== 'a') p.set('copy', st.copy);
+    if (st.copy !== 'd') p.set('copy', st.copy);
     if (!st.text) p.set('text', '0'); if (!st.chrome) p.set('chrome', '0'); if (!st.ui) p.set('ui', '0'); if (st.h) p.set('h', st.h);
     try { history.replaceState(null, '', location.pathname + '?' + p.toString()); } catch (e) {}
   }
