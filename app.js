@@ -49,7 +49,7 @@
       leader: 'Org B', contact: 'soc-coop@org-b.example'
     },
     botnet: {
-      id: 'botnet', name: 'Botnet Traffic Detection Coop', domain: 'Security', status: 'Training',
+      id: 'botnet', name: 'Botnet Traffic Detection Coop', domain: 'Security', status: 'In training',
       round: 'Round 6 of 12', members: '5 members'
     }
   };

@@ -144,7 +144,7 @@
           <button class="fchip" type="button" data-v="coming" aria-pressed="false">Coming soon <span class="n"></span></button>
           <button class="fchip" type="button" data-v="open" aria-pressed="false">Open to join <span class="n"></span></button>
           <button class="fchip" type="button" data-v="full" aria-pressed="false">Full <span class="n"></span></button>
-          <button class="fchip" type="button" data-v="training" aria-pressed="false">Training <span class="n"></span></button>
+          <button class="fchip" type="button" data-v="training" aria-pressed="false">In training <span class="n"></span></button>
           <button class="fchip" type="button" data-v="ended" aria-pressed="false">Ended <span class="n"></span></button>
         </div>
         <label class="sort">Sort:
@@ -176,7 +176,7 @@
         <h3>미결</h3>
         <ol>
           <li>Create a Coop 폼(MF 10)은 이 시안에 아직 없다. 게스트가 누르면 가입 안내 팝업이 뜨고, 회원이 누르면 아직 만들지 않았다는 안내만 뜬다.</li>
-          <li>상태어 Training은 대체어를 다시 정하는 중이라 그대로 두었다. 정해지면 칩과 필터 이름을 함께 바꾼다.</li>
+          <li>상태 이름은 Coming soon, Open to join, Full, In training, Ended 다섯 개로 정했다. 단계 이름 Training과 동사 train은 그대로 쓴다.</li>
           <li>보상 방식 필터는 넣지 않았다. 보상이 포인트 하나라 고를 값이 없다.</li>
           <li>Coming soon 코옵이 Open to join으로 바뀌는 지지 기관 수 기준이 아직 없다.</li>
         </ol>
@@ -298,7 +298,7 @@
 (function () {
   'use strict';
   /* 시안용 예시 데이터. 실제 코옵이 아니다. 예시 기준일 Nov 20, 2026 */
-  var CHIP = { coming: 'Coming soon', open: 'Open to join', full: 'Full', training: 'Training', ended: 'Ended' };
+  var CHIP = { coming: 'Coming soon', open: 'Open to join', full: 'Full', training: 'In training', ended: 'Ended' };
   var DOM = { security: 'Security', finance: 'Finance', agriculture: 'Agriculture', healthcare: 'Healthcare' };
   var ICON = { security: 'security', finance: 'economy', agriculture: 'agriculture', healthcare: 'healthcare' };
   var NO_SEATS = 'No seats left';
@@ -329,7 +329,7 @@
       name: 'Botnet Traffic Detection Coop', dom: 'security', status: 'training',
       pop: 85, seats: 0, mem: 5, closeIn: Infinity,
       line: 'Members train one botnet traffic classifier together, each on its own network flow records.',
-      card: ['Training · Round 6 of 12', '5 members'],
+      card: ['In training · Round 6 of 12', '5 members'],
       badge: 'Sample data based on the CIC-IDS dataset',
       goal: 'Botnet traffic hides inside ordinary flows, and each network sees only part of it. In this Coop, members train one classifier together from their own network flow records, so each member can recognize a wider range of botnet traffic.',
       task: 'Classify network flows as benign or botnet traffic',
@@ -342,7 +342,7 @@
       ],
       members: [['Org D', 'Leader'], ['University A Security Lab', 'Data provider'], ['Org B', 'Data provider']],
       more: '2 more members', memNote: 'Members are named only if they agreed to be listed. This Coop has 5 seats.',
-      membersLine: '5 members', round: 'Training · Round 6 of 12',
+      membersLine: '5 members', round: 'In training · Round 6 of 12',
       range: '120 to 190 pts',
       assume: ['· Members flag botnet hosts earlier than with their own rules alone', '· 3 to 6 organizations use the finished model', '· This range is an estimate and depends on how well the model performs.']
     },
