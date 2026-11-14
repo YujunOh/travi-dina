@@ -15,7 +15,7 @@ TRAVI(AI 협동조합 플랫폼) 소개 사이트의 화면 시안입니다. 빌
 | `whitepaper.html` | 논문과 글 목록 |
 | `join.html` | 참여 신청 양식 (전송 기능 없음) |
 | `coop.html` | 로그인 뒤: 코옵 둘러보기와 참여 신청 (Participant) |
-| `coop-manage.html` | 로그인 뒤: 코옵 관리, 정산 기간과 분배 규칙 미리보기 (Co-op leader) |
+| `coop-manage.html` | 로그인 뒤: 코옵 관리, 정산 기간과 분배 규칙 미리보기 (Coop leader) |
 | `mypage.html` | 로그인 뒤: 내 역할, 내 코옵, 기여, 정산과 지급 내역 (Participant) |
 | `admin.html` | 로그인 뒤: 신청 승인, 사이트, 언러닝, 정산 감사, 감사 로그 (Admin) |
 | `hero.html` | 첫 화면 후보 미리보기. 도식 후보를 실제 첫 화면 자리에 얹어 보고 테마, 글 배치, 팔레트를 바꿔 본다 |

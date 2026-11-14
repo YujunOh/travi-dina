@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Manage Co-op · TRAVI</title>
+<title>Manage Coop · TRAVI</title>
 <script>document.documentElement.classList.add('js')</script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <link rel="stylesheet" href="style.css">
@@ -175,7 +175,7 @@
 </head>
 <body>
 
-<!-- 앱 영역 헤더: 자리와 모양은 공개 페이지와 같고 메뉴 구성만 Co-op leader용이다 -->
+<!-- 앱 영역 헤더: 자리와 모양은 공개 페이지와 같고 메뉴 구성만 Coop leader용이다 -->
 <header class="topbar">
   <div class="wrap">
     <a class="brand" href="index.html">
@@ -189,20 +189,20 @@
     </a>
     <div class="spacer"></div>
     <nav class="nav">
-      <a class="hide-sm" href="coop.html">CO-OPS</a>
-      <a class="on hide-sm" href="coop-manage.html" aria-current="page">MANAGE CO-OP</a>
+      <a class="hide-sm" href="coop.html">COOPS</a>
+      <a class="on hide-sm" href="coop-manage.html" aria-current="page">MANAGE COOP</a>
       <a class="hide-sm" href="mypage.html">MY PAGE</a>
       <!-- 역할 전환: 이 계정이 가진 역할만. 같은 세션에서 화면 묶음만 바뀐다 -->
       <div class="dd">
         <button class="va" type="button" data-dd aria-haspopup="true" aria-expanded="false" aria-controls="m-role">
-          <span class="long">Viewing as: <b>Co-op leader</b></span><span class="short"><b>L</b></span> ▾
+          <span class="long">Viewing as: <b>Coop leader</b></span><span class="short"><b>L</b></span> ▾
         </button>
         <div class="menu" id="m-role" role="menu">
           <div class="mh">VIEW TRAVI AS</div>
-          <a class="mi" role="menuitem" href="coop.html"><span></span><span>Participant<small>Browse co-ops, your requests, My page</small></span></a>
-          <a class="mi" role="menuitem" href="coop-manage.html" aria-current="true"><span class="ck">✓</span><span>Co-op leader<small>SOC Threat Detection Co-op · manage this one co-op</small></span></a>
+          <a class="mi" role="menuitem" href="coop.html"><span></span><span>Participant<small>Browse Coops, your requests, My page</small></span></a>
+          <a class="mi" role="menuitem" href="coop-manage.html" aria-current="true"><span class="ck">✓</span><span>Coop leader<small>SOC Threat Detection Coop · manage this one Coop</small></span></a>
           <a class="mi" role="menuitem" href="admin.html"><span></span><span>Admin<small>Platform operations (granted in this mock)</small></span></a>
-          <div class="mf">Switching changes the screens you see. You stay signed in. Roles are listed per co-op. CO-OPS and MY PAGE open the Participant view.</div>
+          <div class="mf">Switching changes the screens you see. You stay signed in. Roles are listed per Coop. COOPS and MY PAGE open the Participant view.</div>
         </div>
       </div>
       <div class="dd">
@@ -219,14 +219,14 @@
 
 <main>
   <div class="wrap">
-    <div class="crumb"><a href="index.html">Home</a><span class="sep">›</span><a href="coop.html">Co-ops</a><span class="sep">›</span><a href="coop.html#co=soc">SOC Threat Detection Co-op</a><span class="sep">›</span><span class="cur">Manage</span></div>
+    <div class="crumb"><a href="index.html">Home</a><span class="sep">›</span><a href="coop.html">Coops</a><span class="sep">›</span><a href="coop.html#co=soc">SOC Threat Detection Coop</a><span class="sep">›</span><span class="cur">Manage</span></div>
 
     <!-- 개요 -->
     <section id="overview">
       <div class="m-head">
         <div>
-          <div class="eyebrow">MANAGE CO-OP</div>
-          <h1>SOC Threat Detection Co-op</h1>
+          <div class="eyebrow">MANAGE COOP</div>
+          <h1>SOC Threat Detection Coop</h1>
           <p class="sub">Security · Earlier warning of attacks on Linux servers</p>
         </div>
         <div class="m-tag">
@@ -238,11 +238,11 @@
       <div class="facts4">
         <div class="f4"><div class="k">MEMBERS</div><div class="v">4</div><div class="s">1 join request pending</div></div>
         <div class="f4"><div class="k">CURRENT TRAINING ROUND</div><div class="v">Round 5 of 6</div><div class="s">Running · Dec 1–14</div></div>
-        <div class="f4"><div class="k">TRAINING MODE</div><div class="v">Secure mode on</div><div class="s">Default for every co-op</div></div>
+        <div class="f4"><div class="k">TRAINING MODE</div><div class="v">Secure mode on</div><div class="s">Default for every Coop</div></div>
         <div class="f4"><div class="k">SETTLEMENT PERIOD</div><div class="v">Dec 1 – Dec 31, 2026</div><div class="s">Period #2 · Open · separate from rounds</div></div>
       </div>
 
-      <p class="as-note"><span class="tag lead" style="margin-left:0">Co-op leader</span><span>You are viewing as <b>Co-op leader</b>. Your Participant view is in <a href="mypage.html">My page</a>.</span></p>
+      <p class="as-note"><span class="tag lead" style="margin-left:0">Coop leader</span><span>You are viewing as <b>Coop leader</b>. Your Participant view is in <a href="mypage.html">My page</a>.</span></p>
     </section>
   </div>
 
@@ -264,15 +264,15 @@
         <div>
           <div class="k-sm">01 · MEMBERS</div>
           <h2>Members and sites</h2>
-          <p>Who is in the co-op, what each one provides, and whether its site is connected. Training role (Node / OC) and co-op role are separate.</p>
+          <p>Who is in the Coop, what each one provides, and whether its site is connected. Training role (Node / OC) and Coop role are separate.</p>
         </div>
         <div class="badges"><span class="st ill">SAMPLE DATA</span><span class="st design">IN DESIGN</span></div>
       </div>
       <div class="tbl-wrap">
         <table class="tbl">
-          <thead><tr><th>Organization</th><th>Provides</th><th>Training role</th><th>Co-op role</th><th>Site</th><th>Connection</th><th>Last seen</th></tr></thead>
+          <thead><tr><th>Organization</th><th>Provides</th><th>Training role</th><th>Coop role</th><th>Site</th><th>Connection</th><th>Last seen</th></tr></thead>
           <tbody>
-            <tr><td class="org">Org A</td><td>Data</td><td>Node</td><td>Participant <span class="tag lead">Co-op leader</span></td><td class="mono">org-a-soc-01</td><td><span class="pill ok">Connected</span></td><td class="dim">Just now</td></tr>
+            <tr><td class="org">Org A</td><td>Data</td><td>Node</td><td>Participant <span class="tag lead">Coop leader</span></td><td class="mono">org-a-soc-01</td><td><span class="pill ok">Connected</span></td><td class="dim">Just now</td></tr>
             <tr><td class="org">Org B</td><td>Data</td><td>Node</td><td>Participant</td><td class="mono">org-b-soc-01</td><td><span class="pill ok">Connected</span></td><td class="dim">1 min ago</td></tr>
             <tr><td class="org">Org C <span class="tag">Leave requested Nov 5</span></td><td>Data</td><td>Node</td><td>Participant</td><td class="mono">org-c-soc-01</td><td><span class="pill">Offline</span></td><td class="dim">Offline since Nov 5 (leaving)</td></tr>
             <tr><td class="org">Org D</td><td>Compute</td><td>OC</td><td>Participant</td><td class="mono">org-d-oc-01</td><td><span class="pill ok">Connected</span></td><td class="dim">4 min ago</td></tr>
@@ -290,7 +290,7 @@
           </tbody>
         </table>
       </div>
-      <p class="note box">Approval is handled by TRAVI operations for now. Who approves join requests (TRAVI admin or co-op leader) is not decided.</p>
+      <p class="note box">Approval is handled by TRAVI operations for now. Who approves join requests (TRAVI admin or Coop leader) is not decided.</p>
     </section>
 
     <!-- 학습 라운드와 모델 알림. 정산은 넣지 않는다 -->
@@ -352,7 +352,7 @@
         <div>
           <div class="k-sm">03 · SETTLEMENT</div>
           <h2>Settlement periods</h2>
-          <p>Prepare a settlement period from members' cumulative contribution with this co-op's sharing rule, and preview each member's share. Payout on Hedera is planned.</p>
+          <p>Prepare a settlement period from members' cumulative contribution with this Coop's sharing rule, and preview each member's share. Payout on Hedera is planned.</p>
         </div>
         <div class="badges"><span class="st ill">SAMPLE DATA</span><span class="st ill">ILLUSTRATIVE</span><span class="st research">RESEARCH</span><span class="st plan">PLANNED</span></div>
       </div>
@@ -362,7 +362,7 @@
           <div class="rule">
             <div class="k-sm">SHARING RULE <span class="st research">RESEARCH</span></div>
             <div class="f">Power rule on cumulative contribution, <span class="mono" style="white-space:nowrap">α ≥ 1</span></div>
-            <div style="font-size:14px;color:var(--muted);line-height:1.6">arXiv:2606.28217. This co-op's setting: <b class="mono" style="color:var(--text);white-space:nowrap">α = 1</b> (example).</div>
+            <div style="font-size:14px;color:var(--muted);line-height:1.6">arXiv:2606.28217. This Coop's setting: <b class="mono" style="color:var(--text);white-space:nowrap">α = 1</b> (example).</div>
           </div>
           <p class="fixed-note">Only revenue from contribution is shared. Not a severance payment. Org C has asked to leave but still receives its share for November (contribution revenue only).</p>
 
@@ -391,15 +391,15 @@
               <tfoot><tr><td>Total</td><td class="c-raw"></td><td class="num" id="pv-sh">100%</td><td class="num">1,000.00</td></tr></tfoot>
             </table>
           </div>
-          <p class="pv-msg" style="margin-top:8px">Payout unit TBD. Share comes from the sharing rule with this co-op's setting α = 1, not from contribution alone.</p>
+          <p class="pv-msg" style="margin-top:8px">Payout unit TBD. Share comes from the sharing rule with this Coop's setting α = 1, not from contribution alone.</p>
           <div class="pv-ctl">
             <label>What-if
-              <select id="alpha"><option value="1">α = 1 (this co-op's setting)</option><option value="1.5">α = 1.5 (what-if)</option><option value="2">α = 2 (what-if)</option></select>
+              <select id="alpha"><option value="1">α = 1 (this Coop's setting)</option><option value="1.5">α = 1.5 (what-if)</option><option value="2">α = 2 (what-if)</option></select>
             </label>
             <button class="btn ghost sm" type="button" id="compute">Compute preview</button>
             <span><span class="pill ok">Paid (example)</span> <span class="st plan" style="margin-left:2px">PLANNED</span></span>
           </div>
-          <p class="pv-msg" id="pvmsg">Shown with this co-op's setting α = 1 on sample data. Not the real scoring method.</p>
+          <p class="pv-msg" id="pvmsg">Shown with this Coop's setting α = 1 on sample data. Not the real scoring method.</p>
           <!-- 기록(HCS)과 지급(송금)은 다른 트랜잭션. 모두 예시 -->
           <dl class="rec mono">
             <dt>closed</dt><dd>Nov 30, 2026</dd>
@@ -421,7 +421,7 @@
         <div>
           <div class="k-sm">04 · LEAVING</div>
           <h2>Leave requests</h2>
-          <p>Members' requests to leave this co-op. Leaving is not instant: it is requested, processed by unlearning (or retraining if resources allow), then recorded. Leaders can follow requests but cannot approve or deny them.</p>
+          <p>Members' requests to leave this Coop. Leaving is not instant: it is requested, processed by unlearning (or retraining if resources allow), then recorded. Leaders can follow requests but cannot approve or deny them.</p>
         </div>
         <div class="badges"><span class="st ill">SAMPLE DATA</span><span class="st road">ROADMAP</span><span class="st plan">PLANNED</span></div>
       </div>
@@ -461,11 +461,11 @@
         <div>
           <h3>OPEN QUESTIONS</h3>
           <ol>
-            <li>Two role layers: does each organization need its own manager role apart from the Co-op leader? Is "Co-op leader" the final name?</li>
-            <li>Who executes the settlement payout: the co-op leader, TRAVI admin, or the OC?</li>
+            <li>Two role layers: does each organization need its own manager role apart from the Coop leader? Is "Coop leader" the final name?</li>
+            <li>Who executes the settlement payout: the Coop leader, TRAVI admin, or the OC?</li>
             <li>Who receives the retraining notice, and who decides to retrain?</li>
             <li>Can a company that stays refuse unlearning on its own local model? Is the model deployed to nodes, or kept only on the orchestrator?</li>
-            <li>Should a co-op where one company holds 75% or more of the data be treated as an exception?</li>
+            <li>Should a Coop where one company holds 75% or more of the data be treated as an exception?</li>
             <li>Does the professor confirm Hedera as the settlement payout method? What is the payout unit (token or fiat)?</li>
             <li>Accuracy baseline: same as one pooled (monolithic) model, or just better than the local model?</li>
           </ol>
@@ -538,8 +538,8 @@ document.getElementById('compute').onclick = function () {
   var a = parseFloat(document.getElementById('alpha').value);
   render(a);
   document.getElementById('pvmsg').textContent = a === 1
-    ? 'Shown with this co-op\'s setting α = 1 on sample data. Not the real scoring method.'
-    : 'What-if only: α = ' + a + '. Period #1 was paid with this co-op\'s setting α = 1. Not the real scoring method.';
+    ? 'Shown with this Coop\'s setting α = 1 on sample data. Not the real scoring method.'
+    : 'What-if only: α = ' + a + '. Period #1 was paid with this Coop\'s setting α = 1. Not the real scoring method.';
 };
 </script>
 <script src="app.js"></script>

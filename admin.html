@@ -185,7 +185,7 @@ details.review > summary span { font-size: 13px; color: var(--faint); font-weigh
     <div class="spacer"></div>
     <nav class="nav">
       <a class="on hide-sm" href="admin.html" aria-current="page">OPERATIONS</a>
-      <a class="hide-sm" href="coop.html">CO-OPS</a>
+      <a class="hide-sm" href="coop.html">COOPS</a>
       <!-- 역할 전환: 이 계정이 가진 역할만. 같은 세션에서 화면 묶음만 바뀐다 -->
       <div class="dd">
         <button class="va" type="button" data-dd aria-haspopup="true" aria-expanded="false" aria-controls="m-role">
@@ -193,10 +193,10 @@ details.review > summary span { font-size: 13px; color: var(--faint); font-weigh
         </button>
         <div class="menu" id="m-role" role="menu">
           <div class="mh">VIEW TRAVI AS</div>
-          <a class="mi" role="menuitem" href="coop.html"><span></span><span>Participant<small>Browse co-ops, your requests, My page</small></span></a>
-          <a class="mi" role="menuitem" href="coop-manage.html"><span></span><span>Co-op leader<small>SOC Threat Detection Co-op · manage this one co-op</small></span></a>
+          <a class="mi" role="menuitem" href="coop.html"><span></span><span>Participant<small>Browse Coops, your requests, My page</small></span></a>
+          <a class="mi" role="menuitem" href="coop-manage.html"><span></span><span>Coop leader<small>SOC Threat Detection Coop · manage this one Coop</small></span></a>
           <a class="mi" role="menuitem" href="admin.html" aria-current="true"><span class="ck">✓</span><span>Admin<small>Platform operations (granted in this mock)</small></span></a>
-          <div class="mf">Switching changes the screens you see. You stay signed in. Roles are listed per co-op. CO-OPS and MY PAGE open the Participant view.</div>
+          <div class="mf">Switching changes the screens you see. You stay signed in. Roles are listed per Coop. COOPS and MY PAGE open the Participant view.</div>
         </div>
       </div>
       <div class="dd">
@@ -218,7 +218,7 @@ details.review > summary span { font-size: 13px; color: var(--faint); font-weigh
     <div>
       <div class="eyebrow">OPERATIONS</div>
       <h1>Operations</h1>
-      <p class="sec-lead">One place for the TRAVI platform admin: approve applications, look after organizations and their sites, see every co-op, follow unlearning requests, check settlement runs, and read the audit log.</p>
+      <p class="sec-lead">One place for the TRAVI platform admin: approve applications, look after organizations and their sites, see every Coop, follow unlearning requests, check settlement runs, and read the audit log.</p>
     </div>
     <div class="ph-side">
       <div class="asof-line"><span class="st ill">SAMPLE DATA</span><span>as of Dec 3, 2026</span><span class="st road">LOWER PRIORITY · NOT IN MVP</span></div>
@@ -240,7 +240,7 @@ details.review > summary span { font-size: 13px; color: var(--faint); font-weigh
     <ul>
       <li><a href="#applications">Applications <span class="c">4</span></a></li>
       <li><a href="#orgs">Organizations and sites</a></li>
-      <li><a href="#coops">Co-ops <span class="c">3</span></a></li>
+      <li><a href="#coops">Coops <span class="c">3</span></a></li>
       <li><a href="#unlearning">Unlearning and retraining <span class="c">1</span></a></li>
       <li><a href="#settlement-audit">Settlement audit</a></li>
       <li><a href="#audit">Audit log</a></li>
@@ -253,7 +253,7 @@ details.review > summary span { font-size: 13px; color: var(--faint); font-weigh
       <div>
         <div class="eyebrow">01 · APPLICATIONS</div>
         <h2>Applications and accounts</h2>
-        <p>Sign-ups and co-op join requests waiting for approval. Approving gives the applicant one console role and one organization. Every decision goes to the audit log.</p>
+        <p>Sign-ups and Coop join requests waiting for approval. Approving gives the applicant one console role and one organization. Every decision goes to the audit log.</p>
       </div>
       <div class="badges"><span class="st ill">SAMPLE DATA</span><span class="st design">IN DESIGN</span></div>
     </div>
@@ -267,37 +267,37 @@ details.review > summary span { font-size: 13px; color: var(--faint); font-weigh
     <div class="tabpane" id="t-pending" role="tabpanel">
       <div class="tbl">
         <table>
-          <thead><tr><th>Applicant</th><th>Type</th><th>Site name</th><th>Co-op</th><th>Requested role</th><th>Submitted</th><th>Name rule</th><th>Decision</th></tr></thead>
+          <thead><tr><th>Applicant</th><th>Type</th><th>Site name</th><th>Coop</th><th>Requested role</th><th>Submitted</th><th>Name rule</th><th>Decision</th></tr></thead>
           <tbody>
             <tr>
-              <td><b>Org E</b><span class="sub">eve@org-e.example</span></td><td data-l="TYPE">Co-op join</td><td data-l="SITE" class="mono">org-e-soc-01</td><td data-l="CO-OP">SOC Threat Detection Co-op</td><td data-l="ROLE">Participant</td><td data-l="SUBMITTED" class="num">Nov 28</td>
+              <td><b>Org E</b><span class="sub">eve@org-e.example</span></td><td data-l="TYPE">Coop join</td><td data-l="SITE" class="mono">org-e-soc-01</td><td data-l="COOP">SOC Threat Detection Coop</td><td data-l="ROLE">Participant</td><td data-l="SUBMITTED" class="num">Nov 28</td>
               <td data-l="NAME RULE"><span class="pill ok">pass</span></td>
               <td class="acts" data-org="Org E">
-                <select aria-label="Role to assign"><option>Participant</option><option>Co-op leader</option></select>
+                <select aria-label="Role to assign"><option>Participant</option><option>Coop leader</option></select>
                 <button class="btn solid sm" data-act="approve">Approve</button>
                 <button class="btn ghost sm" data-act="reject">Reject</button>
               </td>
             </tr>
             <tr>
-              <td><b>Org A</b><span class="sub">jane@org-a.example</span></td><td data-l="TYPE">Co-op join</td><td data-l="SITE" class="mono">org-a-farm-01</td><td data-l="CO-OP">Smart Farm Yield Co-op</td><td data-l="ROLE">Participant</td><td data-l="SUBMITTED" class="num">Nov 30</td>
+              <td><b>Org A</b><span class="sub">jane@org-a.example</span></td><td data-l="TYPE">Coop join</td><td data-l="SITE" class="mono">org-a-farm-01</td><td data-l="COOP">Smart Farm Yield Coop</td><td data-l="ROLE">Participant</td><td data-l="SUBMITTED" class="num">Nov 30</td>
               <td data-l="NAME RULE"><span class="pill ok">pass</span></td>
               <td class="acts" data-org="Org A">
-                <select aria-label="Role to assign"><option>Participant</option><option>Co-op leader</option></select>
+                <select aria-label="Role to assign"><option>Participant</option><option>Coop leader</option></select>
                 <button class="btn solid sm" data-act="approve">Approve</button>
                 <button class="btn ghost sm" data-act="reject">Reject</button>
               </td>
             </tr>
             <tr>
-              <td><b>Org F</b><span class="sub">kai@org-f.example</span></td><td data-l="TYPE">Sign-up + co-op join</td><td data-l="SITE" class="mono">org-f-farm-01</td><td data-l="CO-OP">Smart Farm Yield Co-op</td><td data-l="ROLE">Participant</td><td data-l="SUBMITTED" class="num">Dec 1</td>
+              <td><b>Org F</b><span class="sub">kai@org-f.example</span></td><td data-l="TYPE">Sign-up + Coop join</td><td data-l="SITE" class="mono">org-f-farm-01</td><td data-l="COOP">Smart Farm Yield Coop</td><td data-l="ROLE">Participant</td><td data-l="SUBMITTED" class="num">Dec 1</td>
               <td data-l="NAME RULE"><span class="pill ok">pass</span></td>
               <td class="acts" data-org="Org F">
-                <select aria-label="Role to assign"><option>Participant</option><option>Co-op leader</option></select>
+                <select aria-label="Role to assign"><option>Participant</option><option>Coop leader</option></select>
                 <button class="btn solid sm" data-act="approve">Approve</button>
                 <button class="btn ghost sm" data-act="reject">Reject</button>
               </td>
             </tr>
             <tr>
-              <td><b>Org G</b><span class="sub">min@org-g.example</span></td><td data-l="TYPE">Sign-up + co-op join</td><td data-l="SITE" class="mono">org g clinic</td><td data-l="CO-OP">Clinical Notes Co-op</td><td data-l="ROLE">Participant</td><td data-l="SUBMITTED" class="num">Dec 2</td>
+              <td><b>Org G</b><span class="sub">min@org-g.example</span></td><td data-l="TYPE">Sign-up + Coop join</td><td data-l="SITE" class="mono">org g clinic</td><td data-l="COOP">Clinical Notes Coop</td><td data-l="ROLE">Participant</td><td data-l="SUBMITTED" class="num">Dec 2</td>
               <td data-l="NAME RULE"><span class="pill bad">fail</span><span class="sub">spaces not allowed</span></td>
               <td class="acts" data-org="Org G">
                 <select aria-label="Role to assign" disabled><option>Participant</option></select>
@@ -313,12 +313,12 @@ details.review > summary span { font-size: 13px; color: var(--faint); font-weigh
     <div class="tabpane" id="t-approved" role="tabpanel" hidden>
       <div class="tbl">
         <table>
-          <thead><tr><th>Applicant</th><th>Site name</th><th>Co-op</th><th>Assigned role</th><th>Approved</th><th>By</th></tr></thead>
+          <thead><tr><th>Applicant</th><th>Site name</th><th>Coop</th><th>Assigned role</th><th>Approved</th><th>By</th></tr></thead>
           <tbody>
-            <tr><td><b>Org A</b><span class="sub">jane@org-a.example</span></td><td class="mono">org-a-soc-01</td><td>SOC Threat Detection Co-op</td><td>Participant · Co-op leader</td><td class="num">Oct 1</td><td>admin@travi.example</td></tr>
-            <tr><td><b>Org B</b><span class="sub">sam@org-b.example</span></td><td class="mono">org-b-soc-01</td><td>SOC Threat Detection Co-op</td><td>Participant</td><td class="num">Oct 1</td><td>admin@travi.example</td></tr>
-            <tr><td><b>Org C</b><span class="sub">ops@org-c.example</span></td><td class="mono">org-c-soc-01</td><td>SOC Threat Detection Co-op</td><td>Participant</td><td class="num">Oct 2</td><td>admin@travi.example</td></tr>
-            <tr><td><b>Org D</b><span class="sub">it@org-d.example</span></td><td class="mono">org-d-oc-01</td><td>SOC Threat Detection Co-op</td><td>Participant</td><td class="num">Oct 2</td><td>admin@travi.example</td></tr>
+            <tr><td><b>Org A</b><span class="sub">jane@org-a.example</span></td><td class="mono">org-a-soc-01</td><td>SOC Threat Detection Coop</td><td>Participant · Coop leader</td><td class="num">Oct 1</td><td>admin@travi.example</td></tr>
+            <tr><td><b>Org B</b><span class="sub">sam@org-b.example</span></td><td class="mono">org-b-soc-01</td><td>SOC Threat Detection Coop</td><td>Participant</td><td class="num">Oct 1</td><td>admin@travi.example</td></tr>
+            <tr><td><b>Org C</b><span class="sub">ops@org-c.example</span></td><td class="mono">org-c-soc-01</td><td>SOC Threat Detection Coop</td><td>Participant</td><td class="num">Oct 2</td><td>admin@travi.example</td></tr>
+            <tr><td><b>Org D</b><span class="sub">it@org-d.example</span></td><td class="mono">org-d-oc-01</td><td>SOC Threat Detection Coop</td><td>Participant</td><td class="num">Oct 2</td><td>admin@travi.example</td></tr>
           </tbody>
         </table>
       </div>
@@ -336,7 +336,7 @@ details.review > summary span { font-size: 13px; color: var(--faint); font-weigh
     </div>
 
     <div class="notes">
-      <p>Roles you can assign: Participant, Co-op leader. Admin is never assignable here.</p>
+      <p>Roles you can assign: Participant, Coop leader. Admin is never assignable here.</p>
       <p>Approval result is shown on the applicant's request status. How the applicant is notified is TBD.</p>
       <p>Signing in with an outside identity provider does not approve anyone by itself.</p>
     </div>
@@ -390,19 +390,19 @@ details.review > summary span { font-size: 13px; color: var(--faint); font-weigh
   <section class="panel" id="coops">
     <div class="p-head">
       <div>
-        <div class="eyebrow">03 · CO-OPS</div>
-        <h2>Co-ops</h2>
-        <p>Every co-op on the platform, so you can find the one that needs attention. Admin does not edit a co-op from here. To open a manage page you switch to the Co-op leader view, which this account has only for SOC Threat Detection Co-op.</p>
+        <div class="eyebrow">03 · COOPS</div>
+        <h2>Coops</h2>
+        <p>Every Coop on the platform, so you can find the one that needs attention. Admin does not edit a Coop from here. To open a manage page you switch to the Coop leader view, which this account has only for SOC Threat Detection Coop.</p>
       </div>
       <div class="badges"><span class="st ill">SAMPLE DATA</span></div>
     </div>
     <div class="tbl">
       <table>
-        <thead><tr><th>Co-op</th><th>Domain</th><th>State</th><th>Leader</th><th>Members</th><th>Current training round</th><th>Open leave requests</th><th></th></tr></thead>
+        <thead><tr><th>Coop</th><th>Domain</th><th>State</th><th>Leader</th><th>Members</th><th>Current training round</th><th>Open leave requests</th><th></th></tr></thead>
         <tbody>
-          <tr class="link" data-href="coop-manage.html"><td><a href="coop-manage.html"><b>SOC Threat Detection Co-op</b></a></td><td>Security</td><td><span class="pill info">Training</span></td><td>Org A</td><td class="num">4</td><td class="num">Round 5 of 6<span class="sub">Dec 1–14 · running</span></td><td class="num">1</td><td><a class="go" href="coop-manage.html">Switch to Co-op leader view →</a></td></tr>
-          <tr><td><b>Smart Farm Yield Co-op</b></td><td>Agriculture</td><td><span class="pill mute">Forming</span></td><td class="muted">—</td><td class="num">2 <span class="sub">of 5 needed</span></td><td class="muted">—</td><td class="num">0</td><td class="muted">No leader yet</td></tr>
-          <tr><td><b>Clinical Notes Co-op</b></td><td>Healthcare</td><td><span class="pill mute">Forming</span></td><td class="muted">—</td><td class="num">0 <span class="sub">of 5 needed</span></td><td class="muted">—</td><td class="num">0</td><td class="muted">No leader yet</td></tr>
+          <tr class="link" data-href="coop-manage.html"><td><a href="coop-manage.html"><b>SOC Threat Detection Coop</b></a></td><td>Security</td><td><span class="pill info">Training</span></td><td>Org A</td><td class="num">4</td><td class="num">Round 5 of 6<span class="sub">Dec 1–14 · running</span></td><td class="num">1</td><td><a class="go" href="coop-manage.html">Switch to Coop leader view →</a></td></tr>
+          <tr><td><b>Smart Farm Yield Coop</b></td><td>Agriculture</td><td><span class="pill mute">Forming</span></td><td class="muted">—</td><td class="num">2 <span class="sub">of 5 needed</span></td><td class="muted">—</td><td class="num">0</td><td class="muted">No leader yet</td></tr>
+          <tr><td><b>Clinical Notes Coop</b></td><td>Healthcare</td><td><span class="pill mute">Forming</span></td><td class="muted">—</td><td class="num">0 <span class="sub">of 5 needed</span></td><td class="muted">—</td><td class="num">0</td><td class="muted">No leader yet</td></tr>
         </tbody>
       </table>
     </div>
@@ -414,16 +414,16 @@ details.review > summary span { font-size: 13px; color: var(--faint); font-weigh
       <div>
         <div class="eyebrow">04 · UNLEARNING</div>
         <h2>Unlearning and retraining</h2>
-        <p>Leave requests from every co-op in one queue, how each is processed, and how much each model has changed against the retraining limits of the tree-based module.</p>
+        <p>Leave requests from every Coop in one queue, how each is processed, and how much each model has changed against the retraining limits of the tree-based module.</p>
       </div>
       <div class="badges"><span class="st ill">SAMPLE DATA</span><span class="st road">ROADMAP</span><span class="st research">RESEARCH</span></div>
     </div>
 
     <div class="tbl">
       <table>
-        <thead><tr><th>Co-op</th><th>Organization</th><th>Requested</th><th>Method</th><th>State</th><th>Deadline</th><th>Ledger record <span class="st plan">PLANNED</span></th></tr></thead>
+        <thead><tr><th>Coop</th><th>Organization</th><th>Requested</th><th>Method</th><th>State</th><th>Deadline</th><th>Ledger record <span class="st plan">PLANNED</span></th></tr></thead>
         <tbody>
-          <tr><td>SOC Threat Detection Co-op</td><td>Org C</td><td class="num">Nov 5, 2026</td><td>Unlearning</td><td><span class="pill warn">Unlearning in progress</span><span class="sub">52% removed · retraining recommended</span></td><td class="muted">TBD (legal period being checked)</td><td class="muted">Pending (example)</td></tr>
+          <tr><td>SOC Threat Detection Coop</td><td>Org C</td><td class="num">Nov 5, 2026</td><td>Unlearning</td><td><span class="pill warn">Unlearning in progress</span><span class="sub">52% removed · retraining recommended</span></td><td class="muted">TBD (legal period being checked)</td><td class="muted">Pending (example)</td></tr>
         </tbody>
       </table>
     </div>
@@ -435,7 +435,7 @@ details.review > summary span { font-size: 13px; color: var(--faint); font-weigh
 
     <div class="grid2">
       <div class="card">
-        <div class="ck">MODEL CAPACITY · SOC THREAT DETECTION CO-OP <span class="st research">RESEARCH</span></div>
+        <div class="ck">MODEL CAPACITY · SOC THREAT DETECTION COOP <span class="st research">RESEARCH</span></div>
         <h3>Tree-based module only</h3>
         <div class="cap">
           <span class="lb">Removed</span>
@@ -448,7 +448,7 @@ details.review > summary span { font-size: 13px; color: var(--faint); font-weigh
           <div class="meter" role="img" aria-label="Added 0 percent"><i style="width:0%"></i><span class="mk hard" style="left:99%"><span style="left:auto;right:0;transform:none">+100% limit</span></span></div>
           <span class="val">0%</span>
         </div>
-        <p class="cap-legend">Removed past 50%: retraining recommended. Past 75%: retraining needed, performance drops. Added data is limited to +100% of the first training size. These marks do not apply to TL++ (neural network) co-ops.</p>
+        <p class="cap-legend">Removed past 50%: retraining recommended. Past 75%: retraining needed, performance drops. Added data is limited to +100% of the first training size. These marks do not apply to TL++ (neural network) Coops.</p>
         <div class="btnrow">
           <button class="btn solid sm" disabled>Start unlearning</button>
           <button class="btn ghost sm" disabled>Schedule retraining</button>
@@ -456,9 +456,9 @@ details.review > summary span { font-size: 13px; color: var(--faint); font-weigh
         </div>
       </div>
       <div class="card quiet">
-        <div class="ck">OTHER CO-OPS</div>
+        <div class="ck">OTHER COOPS</div>
         <h3>No model yet</h3>
-        <p>Smart Farm Yield Co-op and Clinical Notes Co-op are still forming, so there is nothing to unlearn or retrain.</p>
+        <p>Smart Farm Yield Coop and Clinical Notes Coop are still forming, so there is nothing to unlearn or retrain.</p>
         <p>Run buttons stay disabled until the unlearning module is connected. Retraining after unlearning: recommended when more than 50% is removed (example).</p>
       </div>
     </div>
@@ -470,26 +470,26 @@ details.review > summary span { font-size: 13px; color: var(--faint); font-weigh
       <div>
         <div class="eyebrow">05 · SETTLEMENT</div>
         <h2>Settlement audit</h2>
-        <p>Every settlement run across co-ops: which settlement period, which rule, when TRAVI computed it, what was recorded, and whether it was paid. Read and check only.</p>
+        <p>Every settlement run across Coops: which settlement period, which rule, when TRAVI computed it, what was recorded, and whether it was paid. Read and check only.</p>
       </div>
       <div class="badges"><span class="st ill">SAMPLE DATA</span><span class="st ill">ILLUSTRATIVE</span><span class="st plan">PLANNED</span><span class="st research">RESEARCH</span></div>
     </div>
 
     <div class="tbl">
       <table>
-        <thead><tr><th>Co-op</th><th>Settlement period</th><th>Training rounds</th><th>Computed</th><th>Record (HCS) <span class="st plan">PLANNED</span></th><th>Payout</th><th></th></tr></thead>
+        <thead><tr><th>Coop</th><th>Settlement period</th><th>Training rounds</th><th>Computed</th><th>Record (HCS) <span class="st plan">PLANNED</span></th><th>Payout</th><th></th></tr></thead>
         <tbody>
           <tr>
-            <td><b>SOC Threat Detection Co-op</b></td>
+            <td><b>SOC Threat Detection Coop</b></td>
             <td>#1<span class="sub">Nov 1–30, 2026 · Closed Nov 30</span></td>
             <td>Rounds 3–4</td>
             <td>Computed by TRAVI (sharing rule α = 1)<span class="sub">Dec 1, 2026 00:00 UTC</span></td>
             <td class="mono rec">topic 0.0.4811023<br>sequence_number 1247<span class="sub">consensus_timestamp 1796083512.384012001</span><span class="sub">Recorded Dec 1 00:05:12 UTC</span><span class="sub hs">View on HashScan (example, not a link)</span></td>
             <td><span class="pill ok">Paid (example)</span> <span class="st plan">PLANNED</span><span class="sub">Payout submitted</span><span class="sub mono">0.0.4811001@1796083505.000000000</span></td>
-            <td><a class="go" href="coop-manage.html#settlement" title="Switch to Co-op leader view">Leader view →</a></td>
+            <td><a class="go" href="coop-manage.html#settlement" title="Switch to Coop leader view">Leader view →</a></td>
           </tr>
           <tr>
-            <td><b>SOC Threat Detection Co-op</b></td>
+            <td><b>SOC Threat Detection Coop</b></td>
             <td>#2<span class="sub">Dec 1–31, 2026 · Open</span></td>
             <td>Rounds 5–6</td>
             <td class="muted">Not computed yet<span class="sub">Preview after Round 5 ends Dec 14</span></td>
@@ -520,7 +520,7 @@ details.review > summary span { font-size: 13px; color: var(--faint); font-weigh
       <div class="card dashed">
         <div class="ck">SHARING RULE <span class="st research">RESEARCH</span></div>
         <h3>Power rule on cumulative contribution</h3>
-        <p>Each co-op shares by a power rule on members' cumulative contribution, α ≥ 1 (arXiv:2606.28217). This co-op uses α = 1 as an example.</p>
+        <p>Each Coop shares by a power rule on members' cumulative contribution, α ≥ 1 (arXiv:2606.28217). This Coop uses α = 1 as an example.</p>
         <p>Only revenue from contribution is shared.</p>
         <p><b>Who executes payout is not decided.</b> Recording and paying are separate transactions.</p>
       </div>
@@ -555,17 +555,17 @@ details.review > summary span { font-size: 13px; color: var(--faint); font-weigh
         <thead><tr><th>Time</th><th>Actor</th><th>Role</th><th>Organization</th><th>Action</th><th>Target</th></tr></thead>
         <tbody>
           <tr data-k="signin"><td class="num">Dec 3 09:31</td><td>jane@org-a.example</td><td>Admin</td><td>Org A</td><td>Signed in</td><td>Web console</td></tr>
-          <tr data-k="approval"><td class="num">Dec 2</td><td>min@org-g.example</td><td class="muted">— (not approved yet)</td><td>Org G</td><td>Sent sign-up and join request</td><td>Clinical Notes Co-op</td></tr>
-          <tr data-k="approval"><td class="num">Dec 1</td><td>kai@org-f.example</td><td class="muted">— (not approved yet)</td><td>Org F</td><td>Sent sign-up and join request</td><td>Smart Farm Yield Co-op</td></tr>
+          <tr data-k="approval"><td class="num">Dec 2</td><td>min@org-g.example</td><td class="muted">— (not approved yet)</td><td>Org G</td><td>Sent sign-up and join request</td><td>Clinical Notes Coop</td></tr>
+          <tr data-k="approval"><td class="num">Dec 1</td><td>kai@org-f.example</td><td class="muted">— (not approved yet)</td><td>Org F</td><td>Sent sign-up and join request</td><td>Smart Farm Yield Coop</td></tr>
           <tr data-k="settlement"><td class="num">Dec 1 00:05:12</td><td>TRAVI (system)</td><td class="muted">—</td><td>TRAVI</td><td>Recorded settlement #1 to HCS <span class="st plan">PLANNED</span></td><td class="mono">topic 0.0.4811023 · seq 1247</td></tr>
           <tr data-k="settlement"><td class="num">Dec 1 00:05:05<span class="sub">tx valid start</span></td><td>TRAVI (system)</td><td class="muted">—</td><td>TRAVI</td><td>Submitted payout for settlement #1 <span class="st plan">PLANNED</span></td><td class="mono">0.0.4811001@1796083505.000000000</td></tr>
-          <tr data-k="settlement"><td class="num">Dec 1 00:00</td><td>TRAVI (system)</td><td class="muted">—</td><td>TRAVI</td><td>Computed settlement #1 (sharing rule α = 1)</td><td>SOC Threat Detection Co-op</td></tr>
-          <tr data-k="approval"><td class="num">Nov 30</td><td>jane@org-a.example</td><td>Participant</td><td>Org A</td><td>Sent join request</td><td>Smart Farm Yield Co-op</td></tr>
-          <tr data-k="approval"><td class="num">Nov 28</td><td>eve@org-e.example</td><td>Participant</td><td>Org E</td><td>Sent join request</td><td>SOC Threat Detection Co-op</td></tr>
+          <tr data-k="settlement"><td class="num">Dec 1 00:00</td><td>TRAVI (system)</td><td class="muted">—</td><td>TRAVI</td><td>Computed settlement #1 (sharing rule α = 1)</td><td>SOC Threat Detection Coop</td></tr>
+          <tr data-k="approval"><td class="num">Nov 30</td><td>jane@org-a.example</td><td>Participant</td><td>Org A</td><td>Sent join request</td><td>Smart Farm Yield Coop</td></tr>
+          <tr data-k="approval"><td class="num">Nov 28</td><td>eve@org-e.example</td><td>Participant</td><td>Org E</td><td>Sent join request</td><td>SOC Threat Detection Coop</td></tr>
           <tr data-k="settlement"><td class="num">Nov 20</td><td>jane@org-a.example</td><td>Participant</td><td>Org A</td><td>Connected Hedera payout account <span class="st plan">PLANNED</span></td><td class="mono">0.0.5120001</td></tr>
           <tr data-k="approval"><td class="num">Nov 8 10:12</td><td>admin@travi.example</td><td>Admin</td><td>TRAVI</td><td>Rejected application</td><td>Org H (asked for Admin)</td></tr>
           <tr data-k="credential"><td class="num">Nov 7 11:05</td><td>admin@travi.example</td><td>Admin</td><td>TRAVI</td><td>Blocked site</td><td class="mono">org-b-test-00</td></tr>
-          <tr data-k="leave"><td class="num">Nov 5 14:31</td><td>ops@org-c.example</td><td>Participant</td><td>Org C</td><td>Requested to leave</td><td>SOC Threat Detection Co-op</td></tr>
+          <tr data-k="leave"><td class="num">Nov 5 14:31</td><td>ops@org-c.example</td><td>Participant</td><td>Org C</td><td>Requested to leave</td><td>SOC Threat Detection Coop</td></tr>
           <tr data-k="credential"><td class="num">Oct 3 10:02</td><td>admin@travi.example</td><td>Admin</td><td>TRAVI</td><td>Marked kit delivered</td><td class="mono">org-c-soc-01</td></tr>
           <tr data-k="credential"><td class="num">Oct 2</td><td>admin@travi.example</td><td>Admin</td><td>TRAVI</td><td>Marked kit delivered</td><td class="mono">org-a-soc-01</td></tr>
           <tr data-k="approval"><td class="num">Oct 1 15:20</td><td>admin@travi.example</td><td>Admin</td><td>TRAVI</td><td>Approved as Participant</td><td>Org A (org-a-soc-01)</td></tr>
@@ -587,10 +587,10 @@ details.review > summary span { font-size: 13px; color: var(--faint); font-weigh
           <li>Priority: the MVP covers normal-user screens only, so this operations screen is kept as a later-stage draft.</li>
           <li>Can every participant become an Admin? Who should see Admin in "Viewing as"?</li>
           <li>Sign-in: basic only, basic + social, or social only. How is an admin told apart (Join vs Sign in)?</li>
-          <li>Who approves participation: the platform Admin alone (SFR-005 draft), or shared with the co-op leader?</li>
+          <li>Who approves participation: the platform Admin alone (SFR-005 draft), or shared with the Coop leader?</li>
           <li>Who executes settlement payout, and how is the platform's share (fee) shown?</li>
           <li>Should version 1 include a limit on how much can be unlearned and a warning modal for the performance drop? Proposed, not agreed.</li>
-          <li>The TL++ (neural network) path has no unlearning method yet. What should this queue show for a TL++ co-op request?</li>
+          <li>The TL++ (neural network) path has no unlearning method yet. What should this queue show for a TL++ Coop request?</li>
           <li>System scale: a few organizations or millions of devices? Paging of these lists depends on it.</li>
         </ol>
       </div>
