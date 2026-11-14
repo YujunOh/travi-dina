@@ -3,78 +3,62 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>TRAVI Agriculture</title>
+<title>Agriculture · TRAVI</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <link rel="stylesheet" href="style.css">
+<style>
+/* 옛 분야 페이지 자리: 이 분야의 Coop 목록으로 안내만 한다 */
+.moved { max-width: 720px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.moved .dicon { width: 36px; height: 36px; border-radius: 10px; background: #f4f5f9; display: grid; place-items: center; }
+.moved .dicon svg { width: 24px; height: 24px; display: block; }
+.moved p { flex: 1; min-width: 200px; margin: 0; }
+</style>
 </head>
 <body>
 
-<header class="topbar">
-  <div class="wrap">
-    <a class="brand" href="index.html">
-      <svg viewBox="0 0 32 32" aria-hidden="true">
-        <defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1aa3d9"/><stop offset=".55" stop-color="#5b4ce0"/><stop offset="1" stop-color="#e0675e"/></linearGradient></defs>
-        <circle cx="16" cy="16" r="12.5" fill="none" stroke="url(#lg)" stroke-width="2.4"/>
-        <path d="M6 22 C10 12, 14 22, 18 12 S 25 14, 26 8" fill="none" stroke="#0d1220" stroke-width="2" stroke-linecap="round"/>
-        <circle cx="6" cy="22" r="2.2" fill="#0d1220"/><circle cx="18" cy="12" r="2.2" fill="#0d1220"/><circle cx="26" cy="8" r="2.2" fill="#e0675e"/>
-      </svg>
-      TRAVI
-    </a>
-    <div class="spacer"></div>
-    <nav class="nav">
-      <a class="on" href="domain.html">DOMAIN</a>
-      <a class="hide-sm" href="whitepaper.html">WHITEPAPER</a>
-      <a class="btn solid" href="join.html">JOIN TRAVI</a>
-    </nav>
-  </div>
-</header>
+<header data-travi-header data-active="cooperatives"></header>
 
-<div class="wrap">
-  <div class="crumb"><a href="index.html">Home</a><span class="sep">›</span><a href="domain.html">Domain</a><span class="sep">›</span><span class="cur">Agriculture</span></div>
+<main class="wrap tv-main">
+  <div class="crumb"><a href="index.html">Home</a><span class="sep">›</span><a href="coop.html">Cooperatives</a><span class="sep">›</span><span class="cur">Agriculture</span></div>
 
-  <div class="docs">
-    <aside class="side">
-      <p class="grp">AGRICULTURE</p>
-      <ul>
-        <li><a class="on" href="#introduction">Introduction</a></li>
-        <li class="off"><a href="#introduction">Participants &amp; output</a></li>
-        <li class="off"><a href="#introduction">How cohorts form</a></li>
-        <li class="off"><a href="#introduction">Value alignment</a></li>
-        <li class="off"><a href="#introduction">In practice</a></li>
-      </ul>
-      <p class="grp">OTHER DOMAINS</p>
-      <ul>
-        <li><a href="domain-security.html">Security</a></li>
-        <li class="off"><a href="domain-healthcare.html">Healthcare</a></li>
-      </ul>
-    </aside>
-
-    <article class="doc">
-      <div class="eyebrow">DOMAIN · COMING SOON</div>
-      <h1 id="introduction">Agriculture</h1>
-      <p class="lede">Cooperative models across farms and regional cooperatives. This page follows the same structure as the Security case.</p>
-      <div class="ph" style="margin-top:32px">Content in preparation. Sections: participants &amp; output, how cohorts form, value alignment, in practice.</div>
-      <div class="pager">
-        <a href="domain-security.html">← Security</a>
-        <a href="domain-healthcare.html">Healthcare →</a>
-      </div>
-    </article>
-  </div>
-</div>
-
-<footer class="foot">
-  <div class="wrap">
-    <div class="foot-top">
-      <div>
-        <div class="eyebrow">CONTACT</div>
-        <h3>Contact TRAVI</h3>
-        <a class="mail" href="mailto:contact@travi.example">contact@travi.example <span class="todo">교체 필요</span></a>
-        <div class="social"><a href="#" aria-label="LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5C4.98 4.88 3.87 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.22 8h4.56v14H.22V8zm7.4 0h4.37v1.92h.06c.61-1.15 2.1-2.36 4.32-2.36 4.62 0 5.47 3.04 5.47 7V22h-4.56v-6.6c0-1.57-.03-3.6-2.2-3.6-2.2 0-2.53 1.72-2.53 3.49V22H7.62V8z"/></svg></a></div>
-      </div>
-      <a class="btn solid lg" href="mailto:contact@travi.example">CONTACT US</a>
+  <div class="tv-head">
+    <div>
+      <h1 class="tv-h1">Agriculture</h1>
+      <p class="tv-lead">No Coops yet in Agriculture.</p>
     </div>
-    <div class="foot-bottom"><span>© 2026 TRAVI</span><span>DINA Lab, Hongik University · Neouly</span></div>
   </div>
-</footer>
+
+  <div class="tv-card moved">
+    <span class="dicon" data-icon="agriculture"></span>
+    <p>Every Coop is in one list on Cooperatives.</p>
+    <a class="btn solid" href="coop.html?domain=agriculture">Explore Coops</a>
+  </div>
+
+  <details class="tv-review">
+    <summary>Review notes <span>0 open questions</span></summary>
+    <div class="tv-review-body">
+      <h3>가정</h3>
+      <ol>
+        <li>분야별 페이지는 Cooperatives 목록의 도메인 필터로 바뀌었다. 옛 주소로 들어오는 사람을 위해 이 파일은 안내만 남긴다.</li>
+        <li>코옵 상태어와 겹치지 않게 Coming soon 같은 말은 쓰지 않는다.</li>
+      </ol>
+    </div>
+  </details>
+</main>
+
+<footer data-travi-footer></footer>
+
+<script src="icons/domain-icons.js"></script>
+<script src="app.js"></script>
+<script>
+(function () {
+  var el = document.querySelector('[data-icon]');
+  var k = el && el.getAttribute('data-icon');
+  if (el && window.TRAVI_ICONS && window.TRAVI_ICONS[k]) {
+    el.innerHTML = window.TRAVI_ICONS[k];
+    if (window.TRAVI_ICON_COLORS) el.style.color = window.TRAVI_ICON_COLORS.light[k];
+  }
+})();
+</script>
 </body>
 </html>

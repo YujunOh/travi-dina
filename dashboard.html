@@ -1,0 +1,366 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dashboard · TRAVI</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="style.css">
+<style>
+/* Dashboard 전용. 공통 부품(tv-)에 없는 것만 둔다 */
+:root { --s-train: #e0675e; --s-val: #3f4ff0; }
+
+/* 코옵 줄: 선택, 상태, 예시 배지, 오른쪽에 Manage와 더보기 */
+.d-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 12px; margin: 0 0 24px; }
+.d-pick { display: flex; align-items: center; gap: 10px; }
+.d-pick label { font-size: 14px; font-weight: 600; }
+.d-pick select { min-width: 0; max-width: 100%; padding: 9px 36px 9px 14px; border: 1px solid var(--line-2); border-radius: 10px; background: var(--card); font: inherit; font-size: 15px; font-weight: 600; color: var(--text); }
+.d-pick select:focus { outline: 2px solid var(--accent-soft); border-color: var(--accent); }
+.d-bar-r { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+.d-more { width: 36px; height: 36px; padding: 0; justify-content: center; font-size: 18px; letter-spacing: 0; color: var(--muted); }
+.menu button.mi { width: 100%; background: none; border: 0; font: inherit; text-align: left; cursor: pointer; }
+.menu button.mi:hover { background: var(--bg-2); }
+
+/* 지표 4칸 */
+.d-kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border: 1px solid var(--line); border-radius: 16px; background: var(--card); overflow: hidden; }
+.d-kpi { padding: 20px 22px; }
+.d-kpi + .d-kpi { border-left: 1px solid var(--line); }
+.d-kpi .tv-v { font-size: 26px; font-variant-numeric: tabular-nums; }
+
+/* 그래프 2개 */
+.d-charts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-top: 16px; }
+.d-charts .tv-card + .tv-card { margin-top: 0; }
+.d-ch-head { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 6px 14px; margin-bottom: 8px; }
+.d-ch-head h2 { margin: 0; }
+.d-legend { display: flex; gap: 14px; margin: 0; padding: 0; list-style: none; font-size: 12px; color: var(--muted); }
+.d-legend li { display: flex; align-items: center; gap: 6px; }
+.d-legend i { width: 14px; height: 2px; border-radius: 2px; }
+.d-chart { position: relative; height: 230px; }
+.d-chart svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.d-chart .grid { stroke: var(--line); stroke-width: 1; }
+.d-chart .tick { fill: var(--faint); font-size: 11px; font-family: inherit; }
+.d-chart .ax { fill: var(--faint); font-size: 11px; font-family: inherit; }
+.d-chart .lbl { fill: var(--text); font-size: 12px; font-weight: 600; font-family: inherit; }
+.d-chart .ln { fill: none; stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+.d-chart .pt { stroke: var(--card); stroke-width: 2; }
+.d-chart .cross { stroke: var(--line-2); stroke-width: 1; }
+.d-tip { position: absolute; top: 4px; z-index: 2; min-width: 132px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 10px; background: var(--card); box-shadow: 0 10px 24px -14px rgba(13, 18, 32, .35); font-size: 12px; line-height: 1.5; color: var(--muted); pointer-events: none; }
+.d-tip b { display: block; color: var(--text); }
+.d-tip span { display: flex; align-items: center; gap: 6px; }
+.d-tip i { width: 8px; height: 8px; border-radius: 50%; }
+.d-tip em { margin-left: auto; font-style: normal; font-weight: 600; color: var(--text); font-variant-numeric: tabular-nums; }
+.d-tb { display: inline-block; margin-top: 14px; font-size: 13px; font-weight: 600; color: var(--faint); cursor: not-allowed; }
+
+/* Members 표 */
+.d-members { margin-top: 16px; }
+.d-members .tv-tbl { min-width: 560px; }
+.d-members .tv-chip[title] { cursor: help; }
+.d-you { color: var(--faint); font-weight: 400; }
+
+/* 리더 화면과 빈 상태 */
+.d-lead { margin-top: 16px; }
+.d-facts { display: flex; flex-wrap: wrap; gap: 16px 40px; }
+.d-empty { padding: 56px 24px; text-align: center; }
+.d-empty h2 { font-size: 22px; }
+.d-empty p { margin: 0 auto 20px; max-width: 420px; }
+
+/* 탈퇴 팝업 안 펼침 */
+.d-unlearn { margin: 4px 0 0; padding: 14px 16px; border-radius: 12px; background: var(--bg-2); }
+.d-unlearn p { margin: 0 0 10px; font-size: 14px; line-height: 1.55; color: var(--muted); }
+.d-unlearn p:last-child { margin-bottom: 0; }
+.d-unlearn .tv-sample { margin-left: 4px; }
+
+@media (max-width: 960px) {
+  .d-charts { grid-template-columns: 1fr; }
+}
+@media (max-width: 760px) {
+  .d-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .d-kpi:nth-child(3) { border-left: 0; }
+  .d-kpi:nth-child(n+3) { border-top: 1px solid var(--line); }
+  .d-pick { flex: 1 1 100%; }
+  .d-pick select { flex: 1; }
+  .d-bar-r { margin-left: 0; }
+}
+</style>
+</head>
+<body data-auth="required" data-auth-gate="dashboard">
+<header data-travi-header data-active="dashboard"></header>
+
+<main class="wrap tv-main">
+  <div class="crumb"><a href="index.html">Home</a><span class="sep">›</span><span class="cur">Dashboard</span></div>
+  <div class="tv-head">
+    <div>
+      <h1 class="tv-h1">Dashboard</h1>
+      <p class="tv-lead">Track training progress across your Coops.</p>
+    </div>
+  </div>
+
+  <div id="dash" class="only-signed">
+    <!-- 코옵 줄 -->
+    <div class="d-bar" id="d-bar">
+      <div class="d-pick">
+        <label for="coop-pick">Coop</label>
+        <select id="coop-pick">
+          <option value="botnet">Botnet Traffic Detection Coop</option>
+        </select>
+      </div>
+      <span class="tv-chip training" id="coop-chip">Training · Round 6 of 12</span>
+      <span class="tv-sample">Sample data</span>
+      <span class="d-bar-r">
+        <a class="btn ghost only-leader" id="d-manage" href="coop-manage.html?coop=soc">Manage Coop</a>
+        <span class="dd only-member">
+          <button class="btn ghost d-more" type="button" data-dd aria-haspopup="true" aria-expanded="false" aria-controls="coop-more" aria-label="More options" title="More options">⋯</button>
+          <span class="menu sm" id="coop-more" role="menu">
+            <button class="mi" type="button" role="menuitem" data-modal-open="leave-modal"><span></span><span>Leave Coop</span></button>
+          </span>
+        </span>
+      </span>
+    </div>
+
+    <!-- 참여자(member): Botnet Traffic Detection Coop 학습 지표 -->
+    <section class="only-member" id="d-member" aria-label="Training progress">
+      <div class="d-kpis">
+        <div class="d-kpi"><div class="tv-k">Round</div><div class="tv-v">6 of 12</div></div>
+        <div class="d-kpi"><div class="tv-k">Accuracy</div><div class="tv-v">94.1%</div></div>
+        <div class="d-kpi"><div class="tv-k">Validation loss</div><div class="tv-v">0.183</div></div>
+        <div class="d-kpi"><div class="tv-k">Members online</div><div class="tv-v">4 of 5</div></div>
+      </div>
+
+      <div class="d-charts">
+        <div class="tv-card">
+          <div class="d-ch-head">
+            <h2 id="ch-acc-h">Accuracy by round</h2>
+            <ul class="d-legend" aria-label="Legend"><li><i style="background:var(--s-train)"></i>Training</li><li><i style="background:var(--s-val)"></i>Validation</li></ul>
+          </div>
+          <div class="d-chart" id="ch-acc" role="img" aria-labelledby="ch-acc-h" aria-describedby="ch-acc-d"></div>
+          <p class="tv-help" id="ch-acc-d" hidden>Validation accuracy rises from 68.0% in round 1 to 94.1% in round 6.</p>
+          <span class="d-tb" aria-disabled="true" title="Not connected in this mock">Open in TensorBoard</span>
+        </div>
+        <div class="tv-card">
+          <div class="d-ch-head">
+            <h2 id="ch-loss-h">Loss by round</h2>
+            <ul class="d-legend" aria-label="Legend"><li><i style="background:var(--s-train)"></i>Training</li><li><i style="background:var(--s-val)"></i>Validation</li></ul>
+          </div>
+          <div class="d-chart" id="ch-loss" role="img" aria-labelledby="ch-loss-h" aria-describedby="ch-loss-d"></div>
+          <p class="tv-help" id="ch-loss-d" hidden>Validation loss falls from 0.880 in round 1 to 0.183 in round 6.</p>
+          <span class="d-tb" aria-disabled="true" title="Not connected in this mock">Open in TensorBoard</span>
+        </div>
+      </div>
+
+      <div class="tv-card d-members">
+        <h2>Members</h2>
+        <div class="tv-tbl-wrap">
+          <table class="tv-tbl">
+            <thead><tr><th scope="col">Member</th><th scope="col">Role</th><th scope="col">Status</th><th scope="col">Last round</th></tr></thead>
+            <tbody>
+              <tr><td><b>University A Security Lab</b> <span class="d-you">(You)</span></td><td>Data provider</td><td><span class="tv-chip ok">Online</span></td><td>Round 6</td></tr>
+              <tr><td><b>Org B</b></td><td>Data provider</td><td><span class="tv-chip ok">Online</span></td><td>Round 6</td></tr>
+              <tr><td><b>Org C</b></td><td>Data provider</td><td><span class="tv-chip waiting" tabindex="0" title="This member didn't respond in time. It rejoins from the next round.">Skipped this round</span></td><td>Round 5</td></tr>
+              <tr><td><b>Org D</b></td><td>Compute provider (Leader)</td><td><span class="tv-chip ok">Online</span></td><td>Round 6</td></tr>
+              <tr><td><b>Org E</b></td><td>Data provider</td><td><span class="tv-chip ended">Offline</span></td><td>Round 5</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- 리더(leader): SOC Threat Detection Coop, 아직 학습 전 -->
+    <section class="only-leader" id="d-leader" aria-label="Coop status">
+      <div class="tv-banner wait">Training hasn't started yet. Round 1 starts after TRAVI approves it.</div>
+      <div class="tv-card d-lead">
+        <div class="d-facts">
+          <div><div class="tv-k">Members</div><div class="tv-v">12 of 20 members</div></div>
+          <div><div class="tv-k">Joining</div><div class="tv-v">Joining closes Dec 2</div></div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- 빈 상태 (dashboard.html?empty=1) -->
+  <section class="tv-card d-empty" id="d-empty" hidden>
+    <h2>You're not in a Coop yet</h2>
+    <p>Join a Coop and its training progress shows up here.</p>
+    <a class="btn solid" href="coop.html">Explore Coops</a>
+  </section>
+
+  <details class="tv-review">
+    <summary>Review notes <span>5 open questions</span></summary>
+    <div class="tv-review-body">
+      <h3>미결</h3>
+      <ol>
+        <li>Round를 FLARE 라운드로 볼지 팀 확인이 필요하다.</li>
+        <li>그래프 두 개는 1차로 TensorBoard 임베드로 바꿔도 된다. 지금 Open in TensorBoard 링크는 연결하지 않았다.</li>
+        <li>참여 요청 상태(Verification needed)를 Dashboard에 다시 둘지 정하지 않았다. 지금은 알림과 인증 화면에서만 보인다.</li>
+        <li>언러닝 차감 문장은 학생끼리 합의한 안이고 교수님 확인 전이라 팝업에 임시 표시를 달았다.</li>
+        <li>탈퇴 전용 페이지(MF 11)는 보류했다. 지금은 Leave Coop 팝업 하나로 안내한다.</li>
+      </ol>
+      <h3>가정</h3>
+      <ol>
+        <li>숫자는 Botnet Traffic Detection Coop 더미판 하나로 맞췄다. 예시 기준일은 Nov 20, 2026이다.</li>
+        <li>Members online 4 of 5는 Skipped this round 기관도 접속 중으로 센 값이다. Offline은 Org E 하나다.</li>
+        <li>Leave Coop 메뉴는 참여자에게만 둔다. 리더가 자기 Coop을 나가는 흐름은 아직 없다.</li>
+        <li>리더 보기는 아직 학습 전인 SOC Threat Detection Coop을 보여 준다. Manage 버튼은 리더에게만 보인다.</li>
+        <li>Botnet Traffic Detection Coop의 Coop leader는 Org D로 맞췄다. 코옵 상세와 운영 화면도 같은 값을 쓴다.</li>
+      </ol>
+    </div>
+  </details>
+</main>
+
+<!-- Leave Coop 팝업 -->
+<dialog class="tv-modal" id="leave-modal" aria-labelledby="leave-h">
+  <div class="tv-modal-box">
+    <h2 class="tv-modal-title" id="leave-h">Leave Botnet Traffic Detection Coop?</h2>
+    <p class="tv-modal-body">You stop taking part from the next round. Your contribution record and the points already credited stay with you.</p>
+    <label class="tv-check"><input type="checkbox" id="unlearn" aria-controls="unlearn-more" aria-expanded="false"> Also remove my contribution from the model (unlearning)</label>
+    <div class="d-unlearn" id="unlearn-more" hidden>
+      <p>Unlearning removes what the model learned from your data. The Coop leader reviews the request, and the model may be retrained.</p>
+      <p>Unlearning has a cost. Your contribution score in this Coop goes down, and so do the points you earn from it. <span class="tv-sample">Draft wording</span></p>
+      <p><a class="tv-link" href="coop.html?coop=botnet#value">View Coop rules</a></p>
+    </div>
+    <p class="tv-modal-note">You can cancel until the Coop leader starts processing your request.</p>
+    <div class="tv-modal-actions">
+      <button class="btn ghost" type="button" data-modal-close>Cancel</button>
+      <button class="btn solid" type="button" id="leave-go">Leave Coop</button>
+    </div>
+  </div>
+</dialog>
+
+<footer data-travi-footer></footer>
+<script src="app.js"></script>
+<script>
+(function () {
+  'use strict';
+  var T = window.TRAVI;
+
+  /* 빈 상태 */
+  if (T.param('empty') === '1') {
+    document.getElementById('dash').hidden = true;
+    document.getElementById('d-empty').hidden = false;
+  }
+
+  /* 리더 보기: 선택 목록과 상태 칩을 SOC Threat Detection Coop으로 */
+  if (T.isLeader) {
+    var soc = T.coops.soc;
+    var pick = document.getElementById('coop-pick');
+    pick.innerHTML = '';
+    pick.appendChild(new Option(soc.name, 'soc'));
+    var chip = document.getElementById('coop-chip');
+    chip.className = 'tv-chip open';
+    chip.textContent = soc.status;
+    // 학습 전이라 지표 대신 Manage를 주 버튼으로 강조한다
+    document.getElementById('d-manage').className = 'btn solid only-leader';
+  }
+
+  /* 그래프: 라운드 1~6 예시 값 */
+  var R = [1, 2, 3, 4, 5, 6];
+  var CH = [
+    {
+      id: 'ch-acc', min: 0.6, max: 1, ticks: [0.6, 0.7, 0.8, 0.9, 1],
+      fmt: function (v) { return (v * 100).toFixed(1) + '%'; },
+      tickFmt: function (v) { return Math.round(v * 100) + '%'; },
+      series: [
+        { name: 'Training', color: 'var(--s-train)', v: [0.712, 0.826, 0.874, 0.905, 0.931, 0.952] },
+        { name: 'Validation', color: 'var(--s-val)', v: [0.680, 0.794, 0.851, 0.889, 0.918, 0.941] }
+      ]
+    },
+    {
+      id: 'ch-loss', min: 0, max: 1, ticks: [0, 0.25, 0.5, 0.75, 1],
+      fmt: function (v) { return v.toFixed(3); },
+      tickFmt: function (v) { return v.toFixed(2); },
+      series: [
+        { name: 'Training', color: 'var(--s-train)', v: [0.824, 0.512, 0.361, 0.268, 0.204, 0.152] },
+        { name: 'Validation', color: 'var(--s-val)', v: [0.880, 0.583, 0.412, 0.309, 0.231, 0.183] }
+      ]
+    }
+  ];
+  var NS = 'http://www.w3.org/2000/svg';
+  function mk(tag, attrs, parent) {
+    var e = document.createElementNS(NS, tag);
+    for (var k in attrs) e.setAttribute(k, attrs[k]);
+    if (parent) parent.appendChild(e);
+    return e;
+  }
+
+  function draw(c) {
+    var box = document.getElementById(c.id);
+    if (!box || !box.clientWidth) return;
+    box.innerHTML = '';
+    var w = box.clientWidth, h = box.clientHeight;
+    var pl = 42, pr = 52, pt = 10, pb = 40;
+    var n = R.length;
+    function x(i) { return pl + i * (w - pl - pr) / (n - 1); }
+    function y(v) { return pt + (1 - (v - c.min) / (c.max - c.min)) * (h - pt - pb); }
+    var svg = mk('svg', { width: w, height: h, 'aria-hidden': 'true', focusable: 'false' }, box);
+
+    c.ticks.forEach(function (t) {
+      mk('line', { 'class': 'grid', x1: pl, x2: w - pr, y1: y(t), y2: y(t) }, svg);
+      mk('text', { 'class': 'tick', x: pl - 8, y: y(t) + 4, 'text-anchor': 'end' }, svg).textContent = c.tickFmt(t);
+    });
+    R.forEach(function (r, i) {
+      mk('text', { 'class': 'tick', x: x(i), y: h - pb + 18, 'text-anchor': 'middle' }, svg).textContent = r;
+    });
+    mk('text', { 'class': 'ax', x: pl + (w - pl - pr) / 2, y: h - 4, 'text-anchor': 'middle' }, svg).textContent = 'Round';
+
+    var cross = mk('line', { 'class': 'cross', y1: pt, y2: h - pb, x1: -10, x2: -10, visibility: 'hidden' }, svg);
+    c.series.forEach(function (s) {
+      var d = s.v.map(function (v, i) { return (i ? 'L' : 'M') + x(i).toFixed(1) + ' ' + y(v).toFixed(1); }).join(' ');
+      mk('path', { 'class': 'ln', d: d, style: 'stroke:' + s.color }, svg);
+      s.v.forEach(function (v, i) {
+        mk('circle', { 'class': 'pt', cx: x(i), cy: y(v), r: i === n - 1 ? 4.5 : 3.5, style: 'fill:' + s.color }, svg);
+      });
+    });
+    // 마지막 Validation 값만 직접 표시
+    var val = c.series[1], last = val.v[n - 1];
+    mk('text', { 'class': 'lbl', x: x(n - 1) + 9, y: y(last) + (c.id === 'ch-acc' ? 12 : 4) }, svg).textContent = c.fmt(last);
+
+    // 마우스를 올리면 라운드별 값
+    var tip = document.createElement('div');
+    tip.className = 'd-tip';
+    tip.hidden = true;
+    box.appendChild(tip);
+    var hit = mk('rect', { x: pl - 16, y: pt, width: w - pl - pr + 32, height: h - pt - pb, fill: 'transparent' }, svg);
+    function show(evt) {
+      var r = box.getBoundingClientRect();
+      var px = evt.clientX - r.left;
+      var i = Math.max(0, Math.min(n - 1, Math.round((px - pl) / ((w - pl - pr) / (n - 1)))));
+      cross.setAttribute('x1', x(i)); cross.setAttribute('x2', x(i)); cross.setAttribute('visibility', 'visible');
+      tip.innerHTML = '<b>Round ' + R[i] + '</b>' + c.series.map(function (s) {
+        return '<span><i style="background:' + s.color + '"></i>' + s.name + '<em>' + c.fmt(s.v[i]) + '</em></span>';
+      }).join('');
+      tip.hidden = false;
+      var tw = tip.offsetWidth;
+      var left = x(i) + 12;
+      if (left + tw > w) left = x(i) - tw - 12;
+      tip.style.left = Math.max(0, left) + 'px';
+    }
+    hit.addEventListener('pointermove', show);
+    hit.addEventListener('pointerdown', show);
+    hit.addEventListener('pointerleave', function () { tip.hidden = true; cross.setAttribute('visibility', 'hidden'); });
+  }
+  function drawAll() { CH.forEach(draw); }
+  if (!T.isLeader && !T.isGuest) {
+    drawAll();
+    var rt;
+    window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(drawAll, 120); });
+  }
+
+  /* Leave Coop 팝업 */
+  var ck = document.getElementById('unlearn');
+  var more = document.getElementById('unlearn-more');
+  var go = document.getElementById('leave-go');
+  var dlg = document.getElementById('leave-modal');
+  function sync() {
+    more.hidden = !ck.checked;
+    ck.setAttribute('aria-expanded', String(ck.checked));
+    go.textContent = ck.checked ? 'Leave and unlearn' : 'Leave Coop';
+  }
+  ck.addEventListener('change', sync);
+  dlg.addEventListener('close', function () { ck.checked = false; sync(); });
+  go.addEventListener('click', function () {
+    T.closeModal('leave-modal');
+    T.toast("Leave request sent. We'll notify you when it's processed.");
+  });
+})();
+</script>
+</body>
+</html>

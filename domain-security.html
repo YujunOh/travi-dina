@@ -3,42 +3,23 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>TRAVI Security</title>
-<script>document.documentElement.classList.add('js')</script>
+<title>Security case · TRAVI</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<header class="topbar">
-  <div class="wrap">
-    <a class="brand" href="index.html">
-      <svg viewBox="0 0 32 32" aria-hidden="true">
-        <defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1aa3d9"/><stop offset=".55" stop-color="#5b4ce0"/><stop offset="1" stop-color="#e0675e"/></linearGradient></defs>
-        <circle cx="16" cy="16" r="12.5" fill="none" stroke="url(#lg)" stroke-width="2.4"/>
-        <path d="M6 22 C10 12, 14 22, 18 12 S 25 14, 26 8" fill="none" stroke="#0d1220" stroke-width="2" stroke-linecap="round"/>
-        <circle cx="6" cy="22" r="2.2" fill="#0d1220"/><circle cx="18" cy="12" r="2.2" fill="#0d1220"/><circle cx="26" cy="8" r="2.2" fill="#e0675e"/>
-      </svg>
-      TRAVI
-    </a>
-    <div class="spacer"></div>
-    <nav class="nav">
-      <a class="on" href="domain.html">DOMAIN</a>
-      <a class="hide-sm" href="whitepaper.html">WHITEPAPER</a>
-      <a class="btn solid" href="join.html">JOIN TRAVI</a>
-    </nav>
-  </div>
-</header>
+<header data-travi-header data-active="whitepaper"></header>
 
-<div class="wrap">
-  <div class="crumb"><a href="index.html">Home</a><span class="sep">›</span><a href="domain.html">Domain</a><span class="sep">›</span><span class="cur">Security</span></div>
+<main class="wrap">
+  <div class="crumb"><a href="index.html">Home</a><span class="sep">›</span><a href="whitepaper.html">Whitepaper</a><span class="sep">›</span><span class="cur">Security case</span></div>
 
   <div class="docs">
     <aside class="side">
-      <p class="grp">SECURITY</p>
+      <p class="grp">SECURITY CASE</p>
       <ul>
         <li><a class="on" href="#introduction">Introduction</a></li>
-        <li><a href="#participants">Participants &amp; output</a></li>
+        <li><a href="#members">Members &amp; output</a></li>
         <li><a href="#context">Context</a></li>
         <li><a href="#cohorts">How cohorts form</a></li>
         <li><a href="#alignment">Value alignment</a></li>
@@ -46,22 +27,22 @@
         <li><a href="#practice">In practice: ACA &amp; CMAE</a></li>
         <li><a href="#references">References</a></li>
       </ul>
-      <p class="grp">OTHER DOMAINS</p>
+      <p class="grp">SEE ALSO</p>
       <ul>
-        <li class="off"><a href="domain-agriculture.html">Agriculture</a></li>
-        <li class="off"><a href="domain-healthcare.html">Healthcare</a></li>
+        <li><a href="whitepaper.html">Whitepaper</a></li>
+        <li><a href="coop.html?domain=security">Security Coops</a></li>
       </ul>
     </aside>
 
     <article class="doc">
-      <div class="eyebrow">DOMAIN · CASE STUDY</div>
+      <div class="eyebrow">CASE STUDY</div>
       <h1 id="introduction">AI Cooperative in action: Cybersecurity</h1>
-      <p class="lede">Small and medium businesses rarely have a security operations team, and none of them sees enough attacks alone to train a strong model. A security cooperative lets them learn from each other's attack data without handing it over.</p>
+      <p class="lede">Small and medium businesses rarely have a security operations team, and none of them sees enough attacks alone to train a strong model. In a security Coop, they train one model together, each on its own attack data.</p>
 
-      <h2 id="participants">Participants &amp; output</h2>
+      <h2 id="members">Members &amp; output</h2>
       <div class="facts">
-        <div class="fact"><div class="k">PARTICIPANTS</div><div class="v">Small and medium-sized businesses (SMBs) with no security operations team</div></div>
-        <div class="fact"><div class="k">OUTPUT</div><div class="v">A cohort-based cooperative attack-prediction model</div></div>
+        <div class="fact"><div class="k">MEMBERS</div><div class="v">Small and medium-sized businesses (SMBs) with no security operations team</div></div>
+        <div class="fact"><div class="k">OUTPUT</div><div class="v">A shared attack-prediction model, trained in cohorts</div></div>
       </div>
 
       <h2 id="context">Context</h2>
@@ -87,7 +68,7 @@
 
       <h2 id="practice">In practice: ACA &amp; CMAE</h2>
       <div class="callout">
-        <div class="eyebrow">HOW DATA ENTERS THE COOPERATIVE</div>
+        <div class="eyebrow">WHERE THE DATA COMES FROM</div>
         <p style="margin:0">Our Autonomous Cybersecurity Agent (ACA) screens incoming payloads with CMAE, a classification model we built. Real attack data accumulates per organization, and each contribution is recorded sample by sample. That record is the input Traversal Learning learns from.</p>
       </div>
 
@@ -98,33 +79,37 @@
       </ul>
 
       <div class="callout">
-        <div class="eyebrow">COOP IN THIS DOMAIN</div>
-        <p style="margin:0">SOC Threat Detection Coop is the first security Coop on TRAVI. <a href="coop.html#co=soc" style="text-decoration:underline">See the Coop and request to join →</a> (sample data)</p>
+        <div class="eyebrow">ON TRAVI</div>
+        <p style="margin:0">SOC Threat Detection Coop is open to join on TRAVI. <a href="coop.html?coop=soc" style="text-decoration:underline">See the Coop and request to join →</a> <span class="tv-sample">Sample data</span></p>
       </div>
 
       <div class="pager">
-        <a href="domain.html">← All domains</a>
-        <a href="domain-agriculture.html">Agriculture →</a>
+        <a href="whitepaper.html">← Whitepaper</a>
+        <a href="coop.html?domain=security">Explore Coops →</a>
       </div>
+
+      <details class="tv-review">
+        <summary>Review notes <span>1 open question</span></summary>
+        <div class="tv-review-body">
+          <h3>미결</h3>
+          <ol>
+            <li>이 사례 문서를 Whitepaper 아래에 둘지, 메인의 TRAVI 성과(PoC) 사례로 옮길지 정해야 한다.</li>
+          </ol>
+          <h3>가정</h3>
+          <ol>
+            <li>Domain 메뉴가 없어져 보안 사례는 Whitepaper 쪽 문서로 남긴다.</li>
+            <li>첫 문단은 데이터를 넘기지 않는다는 보장 대신 각자 자기 데이터로 같은 모델을 학습한다는 사실만 적었다.</li>
+            <li>문장 속 참여 기관은 member로 통일했다. 역할 이름 Participant를 살릴지는 아직 정하지 않았다.</li>
+          </ol>
+        </div>
+      </details>
     </article>
   </div>
-</div>
+</main>
 
-<footer class="foot">
-  <div class="wrap">
-    <div class="foot-top">
-      <div>
-        <div class="eyebrow">CONTACT</div>
-        <h3>Contact TRAVI</h3>
-        <a class="mail" href="mailto:contact@travi.example">contact@travi.example <span class="todo">교체 필요</span></a>
-        <div class="social"><a href="#" aria-label="LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5C4.98 4.88 3.87 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.22 8h4.56v14H.22V8zm7.4 0h4.37v1.92h.06c.61-1.15 2.1-2.36 4.32-2.36 4.62 0 5.47 3.04 5.47 7V22h-4.56v-6.6c0-1.57-.03-3.6-2.2-3.6-2.2 0-2.53 1.72-2.53 3.49V22H7.62V8z"/></svg></a></div>
-      </div>
-      <a class="btn solid lg" href="mailto:contact@travi.example">CONTACT US</a>
-    </div>
-    <div class="foot-bottom"><span>© 2026 TRAVI</span><span>DINA Lab, Hongik University · Neouly</span></div>
-  </div>
-</footer>
+<footer data-travi-footer></footer>
 
+<script src="app.js"></script>
 <script>
 /* 스크롤 위치에 맞춰 왼쪽 목차의 현재 항목을 표시한다 */
 (function () {
@@ -139,6 +124,5 @@
   update();
 })();
 </script>
-<script src="common.js"></script>
 </body>
 </html>

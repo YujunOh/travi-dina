@@ -7,170 +7,165 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <link rel="stylesheet" href="style.css">
 <style>
-.join { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: 72px; padding: 40px 0 128px; align-items: start; }
-.join-left { position: sticky; top: calc(var(--header-h) + 40px); }
-.join-left h1 { font-size: 52px; letter-spacing: -0.03em; line-height: 1.08; margin: 14px 0 18px; }
-.next { list-style: none; padding: 0; margin: 36px 0 0; border-top: 1px solid var(--line); }
-.next li { display: grid; grid-template-columns: 40px 1fr; padding: 18px 0; border-bottom: 1px solid var(--line); font-size: 15px; color: var(--muted); line-height: 1.55; }
-.next b { display: block; color: var(--text); font-size: 16px; margin-bottom: 2px; }
-.next .mono { color: var(--accent); font-size: 13px; font-weight: 700; padding-top: 2px; }
+/* MF 05 Join TRAVI. 가입과 로그인은 나눈다. Google 우선 */
+[hidden] { display: none !important; }
+.jn-banner { margin: 20px 0 0; max-width: 760px; }
+.jn { display: grid; grid-template-columns: minmax(0, 0.85fr) minmax(0, 1fr); gap: 64px; align-items: start; margin-top: 28px; }
+.jn-left { position: sticky; top: calc(var(--header-h) + 32px); }
+.jn-left .tv-h1 { font-size: 44px; line-height: 1.1; }
+.jn-lead { margin: 24px 0 12px; font-size: 16px; font-weight: 600; }
+.jn-list { margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--line); }
+.jn-list li { position: relative; padding: 14px 0 14px 28px; border-bottom: 1px solid var(--line); font-size: 15px; line-height: 1.55; color: var(--muted); }
+.jn-list li::before { content: ""; position: absolute; left: 4px; top: 21px; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
 
-.form { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 36px; }
-.form h2 { font-size: 22px; margin: 0 0 4px; }
-.form .hint { color: var(--faint); font-size: 14px; margin: 0 0 28px; }
-.fs { border: 0; padding: 0; margin: 0 0 28px; }
-.fs legend { font-size: 11px; letter-spacing: 0.18em; font-weight: 700; color: var(--faint); margin-bottom: 14px; padding: 0; }
-.row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-.field { display: flex; flex-direction: column; gap: 7px; margin-bottom: 14px; }
-.field label { font-size: 14px; font-weight: 600; }
-.field label .opt { color: var(--faint); font-weight: 400; }
-.field input, .field select, .field textarea { font: inherit; font-size: 15px; padding: 12px 14px; border: 1px solid var(--line-2); border-radius: 10px; background: var(--bg); color: var(--text); }
-.field input:focus, .field select:focus, .field textarea:focus { outline: 2px solid var(--accent-soft); border-color: var(--accent); }
-.field textarea { min-height: 110px; resize: vertical; }
-.chips { display: flex; flex-wrap: wrap; gap: 10px; }
-.chip { position: relative; }
-.chip input { position: absolute; opacity: 0; }
-.chip span { display: inline-block; padding: 10px 16px; border: 1px solid var(--line-2); border-radius: 999px; font-size: 14px; cursor: pointer; }
-.chip input:checked + span { background: var(--text); color: #fff; border-color: var(--text); }
-.chip input:focus-visible + span { outline: 2px solid var(--accent); }
-.auth { display: grid; gap: 10px; margin-bottom: 22px; }
-.gbtn { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; font: inherit; font-size: 15px; font-weight: 600; padding: 13px 16px; border-radius: 10px; border: 1px solid var(--line-2); background: var(--card); color: var(--text); cursor: pointer; }
-.gbtn:hover { border-color: var(--text); }
-.gbtn .g { width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; font-weight: 800; font-size: 13px; color: #fff; background: conic-gradient(#ea4335 0 25%, #fbbc05 0 50%, #34a853 0 75%, #4285f4 0); }
-.auth-later { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; border: 1px dashed var(--line-2); border-radius: 10px; color: var(--faint); font-size: 14px; }
-.or { display: flex; align-items: center; gap: 12px; margin: 0 0 24px; color: var(--faint); font-size: 13px; }
-.or::before, .or::after { content: ''; flex: 1; height: 1px; background: var(--line); }
-.upload { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; padding: 14px; border: 1px dashed var(--line-2); border-radius: 10px; background: var(--bg); cursor: not-allowed; }
-.upload input { display: none; }
-.upload span { font-size: 14px; font-weight: 600; color: var(--muted); }
-.upload small { font-size: 12px; color: var(--faint); }
-.consent { display: flex; gap: 10px; align-items: flex-start; font-size: 14px; color: var(--muted); line-height: 1.5; margin: 6px 0 24px; }
-.consent input { margin-top: 3px; }
-.submit { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; padding-top: 24px; border-top: 1px solid var(--line); }
-.submit .alt { font-size: 14px; color: var(--muted); }
-.submit .alt a { color: var(--text); font-weight: 600; text-decoration: underline; }
-@media (max-width: 960px) { .join { grid-template-columns: 1fr; gap: 40px; } .join-left { position: static; } .row { grid-template-columns: 1fr; } .form { padding: 24px; } }
+.jn-form { padding: 32px; max-width: 520px; width: 100%; justify-self: end; }
+.jn-google { width: 100%; justify-content: center; letter-spacing: 0.02em; }
+.jn-g { width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; font-weight: 800; font-size: 13px; color: #fff; background: conic-gradient(#ea4335 0 25%, #fbbc05 0 50%, #34a853 0 75%, #4285f4 0); }
+.jn-form .jn-signed { display: flex; align-items: center; gap: 10px; margin: 0; padding: 12px 14px; border: 1px solid #bfe3cf; border-radius: 10px; background: #eef8f3; font-size: 14px; font-weight: 600; }
+.jn-signed small { margin-left: auto; font-size: 13px; font-weight: 400; color: var(--muted); }
+.jn-sep { display: flex; align-items: center; gap: 12px; margin: 28px 0 18px; font-size: 13px; font-weight: 600; color: var(--muted); }
+.jn-sep::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+
+.jn-chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; border: 0; }
+.jn-chips legend { padding: 0; margin-bottom: 8px; font-size: 14px; font-weight: 600; }
+.jn-chip { position: relative; }
+.jn-chip input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.jn-chip span { display: inline-block; padding: 8px 14px; border: 1px solid var(--line-2); border-radius: 999px; background: var(--card); font-size: 14px; cursor: pointer; }
+.jn-chip input:checked + span { background: var(--text); border-color: var(--text); color: #fff; }
+.jn-chip input:focus-visible + span { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.jn-submit { margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--line); display: flex; flex-direction: column; gap: 14px; }
+.jn-submit .btn { width: 100%; justify-content: center; letter-spacing: 0.02em; }
+.jn-form .jn-alt { margin: 0; text-align: center; font-size: 14px; color: var(--muted); }
+.jn-alt a { color: var(--text); font-weight: 600; text-decoration: underline; }
+
+@media (max-width: 960px) {
+  .jn { grid-template-columns: 1fr; gap: 32px; }
+  .jn-left { position: static; }
+  .jn-form { justify-self: stretch; max-width: none; }
+}
+@media (max-width: 760px) {
+  .jn-left .tv-h1 { font-size: 30px; }
+  .jn-form { padding: 22px; }
+}
 </style>
 </head>
 <body>
 
-<!-- 가입 페이지: 오른쪽 메뉴가 LOG IN, SIGN UP으로 바뀐다 -->
-<header class="topbar">
-  <div class="wrap">
-    <a class="brand" href="index.html">
-      <svg viewBox="0 0 32 32" aria-hidden="true">
-        <defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1aa3d9"/><stop offset=".55" stop-color="#5b4ce0"/><stop offset="1" stop-color="#e0675e"/></linearGradient></defs>
-        <circle cx="16" cy="16" r="12.5" fill="none" stroke="url(#lg)" stroke-width="2.4"/>
-        <path d="M6 22 C10 12, 14 22, 18 12 S 25 14, 26 8" fill="none" stroke="#0d1220" stroke-width="2" stroke-linecap="round"/>
-        <circle cx="6" cy="22" r="2.2" fill="#0d1220"/><circle cx="18" cy="12" r="2.2" fill="#0d1220"/><circle cx="26" cy="8" r="2.2" fill="#e0675e"/>
-      </svg>
-      TRAVI
-    </a>
-    <div class="spacer"></div>
-    <nav class="nav">
-      <a class="hide-sm" href="domain.html">DOMAIN</a>
-      <a class="hide-sm" href="whitepaper.html">WHITEPAPER</a>
-      <a class="btn ghost" href="coop.html">LOG IN</a>
-      <a class="btn solid" href="#signup">SIGN UP</a>
-    </nav>
-  </div>
-</header>
+<header data-travi-header data-active=""></header>
 
-<div class="wrap">
+<main class="wrap tv-main">
   <div class="crumb"><a href="index.html">Home</a><span class="sep">›</span><span class="cur">Join TRAVI</span></div>
 
-  <div class="join">
-    <div class="join-left">
-      <div class="eyebrow">JOIN TRAVI</div>
-      <h1>Join an<br>AI Cooperative</h1>
-      <p class="sec-lead" style="font-size:17px">Tell us about your organization. We will match you with a cohort that shares your assets, risks, and goals.</p>
-      <ul class="next">
-        <li><span class="mono">01</span><div><b>Sign up</b>Create your TRAVI account with Google, then tell us about your organization.</div></li>
-        <li><span class="mono">02</span><div><b>Verify</b>We check your organization with its business registration certificate.</div></li>
-        <li><span class="mono">03</span><div><b>Join a Coop</b>Pick a Coop on the Coops page and send a join request. Your node connects with verified identity. Raw data stays with you.</div></li>
-        <li><span class="mono">04</span><div><b>Get paid</b>Each settlement period pays you on Hedera for the value your contribution created. (Planned)</div></li>
+  <!-- 코옵 상세에서 온 경우만 보인다 (join.html?coop=soc&return=...) -->
+  <div class="tv-banner jn-banner" id="from-coop" hidden>Create an account to send your join request to <b id="from-coop-name">SOC Threat Detection Coop</b>. You'll return to your request afterward.</div>
+
+  <div class="jn">
+    <section class="jn-left" aria-labelledby="jn-h">
+      <h1 class="tv-h1" id="jn-h">Create your TRAVI account</h1>
+      <p class="jn-lead">With a TRAVI account, you can:</p>
+      <ul class="jn-list">
+        <li>Request to join a Coop.</li>
+        <li>Create a Coop and invite members.</li>
+        <li>Track the points you earn by contributing.</li>
       </ul>
-    </div>
+    </section>
 
-    <form class="form" id="signup" onsubmit="return false">
-      <h2>Create your account</h2>
-      <p class="hint">시안용 양식입니다. 제출해도 아무 데도 전송되지 않습니다.</p>
+    <form class="tv-card jn-form" id="join-form" novalidate aria-label="Create your TRAVI account">
+      <button class="btn solid lg jn-google" type="button" id="g-btn"><span class="jn-g" aria-hidden="true">G</span>Continue with Google</button>
+      <p class="jn-signed" id="g-done" hidden role="status"><span class="tv-chip ok">Signed in with Google</span><small id="g-mail">soc@univ-a.example</small></p>
 
-      <!-- 가입 수단: 지금은 Google, 자체 로그인(이메일·비밀번호)은 나중에 추가한다(11/8 사용자 결정) -->
-      <div class="auth">
-        <button class="gbtn" type="button" onclick="return false"><span class="g" aria-hidden="true">G</span>Continue with Google</button>
-        <div class="auth-later"><span>Email and password</span><span class="st road">COMING LATER</span></div>
+      <div class="jn-sep">Then complete your profile</div>
+
+      <div class="tv-field"><label for="name">Name</label><input id="name" autocomplete="name" placeholder="Jane Kim"></div>
+      <div class="tv-field"><label for="org">Organization</label><input id="org" autocomplete="organization" placeholder="University A Security Lab"></div>
+      <div class="tv-field">
+        <fieldset class="jn-chips">
+          <legend>Domains of interest</legend>
+          <label class="jn-chip"><input type="checkbox" name="domain" value="security"><span>Security</span></label>
+          <label class="jn-chip"><input type="checkbox" name="domain" value="finance"><span>Finance</span></label>
+          <label class="jn-chip"><input type="checkbox" name="domain" value="agriculture"><span>Agriculture</span></label>
+          <label class="jn-chip"><input type="checkbox" name="domain" value="healthcare"><span>Healthcare</span></label>
+        </fieldset>
       </div>
-      <div class="or"><span>then tell us about your organization</span></div>
 
-      <fieldset class="fs">
-        <legend>ORGANIZATION</legend>
-        <div class="row">
-          <div class="field"><label for="org">Organization name</label><input id="org" placeholder="Acme Co."></div>
-          <div class="field"><label for="type">Organization type</label>
-            <select id="type"><option>Select</option><option>Small / medium business</option><option>Public institution</option><option>Research institute</option><option>Cooperative</option><option>Other</option></select>
-          </div>
-        </div>
-        <div class="field"><label for="biz">Business registration certificate</label>
-          <label class="upload" for="biz"><input id="biz" type="file" disabled><span>Upload PDF or image</span><small>Used only to verify your organization.</small></label>
-        </div>
-        <div class="field"><label>Interested in <span class="opt">(optional, you join a Coop after sign-up)</span></label>
-          <div class="chips">
-            <label class="chip"><input type="radio" name="dom" checked><span>Security</span></label>
-            <label class="chip"><input type="radio" name="dom"><span>Agriculture</span></label>
-            <label class="chip"><input type="radio" name="dom"><span>Healthcare</span></label>
-            <label class="chip"><input type="radio" name="dom"><span>Other</span></label>
-          </div>
-        </div>
-        <div class="field"><label>How will you take part?</label>
-          <div class="chips">
-            <label class="chip"><input type="checkbox" checked><span>Provide data</span></label>
-            <label class="chip"><input type="checkbox"><span>Provide compute</span></label>
-            <label class="chip"><input type="checkbox"><span>Use the shared model</span></label>
-          </div>
-        </div>
-      </fieldset>
+      <label class="tv-check"><input type="checkbox" id="agree"> I agree to the Terms of Service and Privacy Policy.</label>
 
-      <fieldset class="fs">
-        <legend>CONTACT PERSON</legend>
-        <div class="row">
-          <div class="field"><label for="name">Full name</label><input id="name" placeholder="Jane Kim"></div>
-          <div class="field"><label for="role">Role</label><input id="role" placeholder="IT manager"></div>
-        </div>
-        <div class="row">
-          <div class="field"><label for="mail">Work email</label><input id="mail" type="email" placeholder="jane@acme.com"></div>
-          <div class="field"><label for="tel">Phone <span class="opt">(optional)</span></label><input id="tel" placeholder="+82 10 0000 0000"></div>
-        </div>
-      </fieldset>
-
-      <fieldset class="fs">
-        <legend>ABOUT YOUR DATA</legend>
-        <div class="field"><label for="desc">What data could you bring, and what would you like the cooperative model to do?</label><textarea id="desc" placeholder="e.g. Firewall and web server logs from two sites. We want earlier warning of attacks on our Linux servers."></textarea></div>
-      </fieldset>
-
-      <label class="consent"><input type="checkbox"> I agree that TRAVI may contact me about joining a cooperative.</label>
-
-      <div class="submit">
-        <span class="alt">Already a member? <a href="coop.html">Log in</a></span>
-        <button class="btn solid lg" type="submit">SUBMIT APPLICATION</button>
+      <div class="jn-submit">
+        <button class="btn solid" type="submit" id="create" disabled>Create account</button>
+        <p class="jn-alt">Already have an account? <a id="to-login" href="login.html">Log in</a></p>
       </div>
     </form>
   </div>
-</div>
 
-<footer class="foot">
-  <div class="wrap">
-    <div class="foot-top">
-      <div>
-        <div class="eyebrow">CONTACT</div>
-        <h3>Contact TRAVI</h3>
-        <a class="mail" href="mailto:contact@travi.example">contact@travi.example <span class="todo">교체 필요</span></a>
-        <div class="social"><a href="#" aria-label="LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5C4.98 4.88 3.87 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.22 8h4.56v14H.22V8zm7.4 0h4.37v1.92h.06c.61-1.150 2.1-2.36 4.32-2.36 4.62 0 5.47 3.04 5.47 7V22h-4.56v-6.6c0-1.57-.03-3.6-2.2-3.6-2.2 0-2.53 1.72-2.53 3.49V22H7.62V8z"/></svg></a></div>
-      </div>
-      <a class="btn solid lg" href="mailto:contact@travi.example">CONTACT US</a>
+  <details class="tv-review">
+    <summary>Review notes <span>4 open questions</span></summary>
+    <div class="tv-review-body">
+      <h3>미결</h3>
+      <ol>
+        <li>가입 허들을 낮추고 사업자 정보는 Create a Coop 때만 받는 방향으로 그렸다. 가입할 때 기관을 검증해야 한다는 교수님 발언과 어떻게 맞출지는 아직 정하지 않았다. 사업자등록증 업로드 칸은 이 화면에서 빼고 Verify your organization 화면(verify.html)으로 옮겼다.</li>
+        <li>'Account review takes 1 to 2 business days.'(가입 심사에 영업일 기준 1~2일이 걸린다는 뜻) 문장은 화면에 넣지 않고 보류했다. 가입 심사를 둘지는 1번이 정해진 뒤에 결정한다.</li>
+        <li>개인 가입을 허용하는지 근거를 찾지 못했다. 그래서 개인과 기관을 나누는 문장은 넣지 않았고 Organization 칸을 그대로 두었다.</li>
+        <li>이메일과 비밀번호로 가입하는 자체 계정은 나중에 백엔드와 함께 붙인다. 지금 화면에서는 Google만 쓴다. 다른 소셜 로그인을 더할지는 교수님 확인 전이다.</li>
+      </ol>
+      <h3>가정</h3>
+      <ol>
+        <li>시안에서는 Continue with Google을 누르면 Signed in with Google 표시로 바뀌고 Name 칸이 채워진다. 실제 Google 연동은 없다.</li>
+        <li>Create account는 약관 동의를 체크해야 눌린다. 누르면 회원 상태가 되고 주소의 return 값으로 간다. return이 없으면 Dashboard로 가고, 코옵에서 왔으면 참여 요청 페이지(request.html?coop=soc)로 간다.</li>
+        <li>Terms of Service와 Privacy Policy 문서는 아직 없어 링크를 걸지 않았다.</li>
+        <li>Domains of interest는 여러 개 고를 수 있고 안 골라도 가입된다. 코옵에서 온 경우에는 그 코옵의 도메인(Security)을 미리 골라 둔다.</li>
+      </ol>
     </div>
-    <div class="foot-bottom"><span>© 2026 TRAVI</span><span>DINA Lab, Hongik University · Neouly</span></div>
-  </div>
-</footer>
+  </details>
+</main>
+
+<footer data-travi-footer></footer>
+
+<script src="app.js"></script>
+<script>
+(function () {
+  var T = window.TRAVI;
+  var q = new URLSearchParams(location.search);
+  var coopId = q.get('coop');
+  var coop = coopId && T.coops[coopId] && T.coops[coopId].status === 'Open to join' ? T.coops[coopId] : null;
+
+  // 코옵에서 온 경우: 출처 배너
+  if (coop) {
+    document.getElementById('from-coop-name').textContent = coop.name;
+    document.getElementById('from-coop').hidden = false;
+    var dom = document.querySelector('input[name="domain"][value="' + String(coop.domain).toLowerCase() + '"]');
+    if (dom) dom.checked = true;
+  }
+
+  // coop과 return 값은 Log in 링크에 그대로 넘긴다
+  var keep = new URLSearchParams();
+  ['coop', 'return'].forEach(function (k) { if (q.get(k)) keep.set(k, q.get(k)); });
+  var ks = keep.toString();
+  document.getElementById('to-login').setAttribute('href', 'login.html' + (ks ? '?' + ks : ''));
+
+  // Continue with Google (시안: 연결된 것처럼 표시만 바꾼다)
+  var gBtn = document.getElementById('g-btn');
+  gBtn.addEventListener('click', function () {
+    var u = T.users.member;
+    gBtn.hidden = true;
+    document.getElementById('g-mail').textContent = u.email;
+    document.getElementById('g-done').hidden = false;
+    var name = document.getElementById('name');
+    if (!name.value) name.value = u.name;
+    document.getElementById('org').focus();
+  });
+
+  // 약관 동의 체크 뒤에만 Create account
+  var agree = document.getElementById('agree');
+  var create = document.getElementById('create');
+  agree.addEventListener('change', function () { create.disabled = !agree.checked; });
+
+  document.getElementById('join-form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    if (!agree.checked) return;
+    T.signIn('member', coop ? 'request.html?coop=' + encodeURIComponent(coop.id) : 'dashboard.html');
+  });
+})();
+</script>
 </body>
 </html>

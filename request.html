@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Request to join · TRAVI</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="style.css">
+<style>
+/* MF 04 Request to join: 모달이 아니라 별도 페이지 */
+[hidden] { display: none !important; }
+.rq-form fieldset { min-width: 0; margin: 0 0 22px; padding: 0; border: 0; }
+.rq-form legend { margin-bottom: 10px; padding: 0; font-size: 14px; font-weight: 600; }
+.rq-sec { padding-top: 22px; margin-top: 22px; border-top: 1px solid var(--line); }
+.roles { display: grid; gap: 10px; }
+.rc { position: relative; display: block; cursor: pointer; }
+.rc input { position: absolute; top: 18px; left: 16px; margin: 0; accent-color: var(--text); }
+.rc-box { display: block; padding: 14px 16px 14px 44px; border: 1px solid var(--line-2); border-radius: 12px; background: var(--card); transition: border-color .15s, background .15s; }
+.rc:hover .rc-box { border-color: var(--text); }
+.rc input:checked + .rc-box { border-color: var(--text); box-shadow: inset 0 0 0 1px var(--text); }
+.rc input:focus-visible + .rc-box { outline: 2px solid var(--accent); outline-offset: 2px; }
+.rc-box b { font-size: 15px; }
+.rc-box .s { color: var(--muted); font-size: 14px; }
+.rc-box small { display: block; margin-top: 4px; font-size: 13px; color: var(--faint); }
+.rc.off { cursor: not-allowed; }
+.rc.off .rc-box { background: var(--bg-2); border-style: dashed; color: var(--faint); }
+.rc.off:hover .rc-box { border-color: var(--line-2); }
+.rc.off b { color: var(--muted); }
+.ro { padding: 11px 14px; border: 1px solid var(--line); border-radius: 10px; background: var(--bg-2); font-size: 15px; color: var(--text); overflow-wrap: anywhere; }
+.ro small { color: var(--faint); font-size: 13px; }
+.rq-form .tv-check a { text-decoration: underline; text-underline-offset: 3px; }
+.rq-acts { display: flex; justify-content: flex-end; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 18px; padding-top: 18px; border-top: 1px solid var(--line); }
+.rq-after { margin: 12px 0 0; text-align: right; font-size: 13px; color: var(--muted); }
+.rq-form .tv-err { margin: 10px 0 0; }
+.side h2 { margin: 0 0 10px; font-size: 18px; }
+.side .tv-chip { margin-bottom: 14px; }
+.side dl { display: grid; gap: 12px; margin: 0 0 14px; }
+.side dd { margin: 3px 0 0; font-size: 16px; font-weight: 600; }
+.side a { font-size: 14px; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+.lead-note { margin: 0 0 24px; }
+@media (max-width: 960px) { .side { order: -1; } }
+@media (max-width: 640px) { .rq-acts { justify-content: stretch; } .rq-acts .btn { flex: 1; justify-content: center; } .rq-after { text-align: left; } }
+</style>
+</head>
+<body data-auth="required">
+<header data-travi-header data-active="cooperatives"></header>
+
+<main class="wrap tv-main">
+  <div class="crumb"><a href="coop.html">Cooperatives</a><span class="sep">›</span><a href="coop.html?coop=soc">SOC Threat Detection Coop</a><span class="sep">›</span><span class="cur">Request to join</span></div>
+  <div class="tv-head">
+    <div>
+      <h1 class="tv-h1">Request to join SOC Threat Detection Coop</h1>
+      <p class="tv-lead">The Coop leader reviews each request. Joining closes Dec 2.</p>
+    </div>
+  </div>
+
+  <!-- 이 코옵의 리더가 열었을 때 -->
+  <div class="tv-banner only-leader lead-note">You lead SOC Threat Detection Coop, so there's nothing to request here. Join requests come to <a href="coop-manage.html?coop=soc#requests" style="text-decoration:underline">Manage Coop</a>.</div>
+
+  <div class="tv-grid only-member">
+    <form class="tv-card rq-form" id="rq" novalidate>
+      <fieldset id="f-role">
+        <legend>Choose a role</legend>
+        <div class="roles">
+          <label class="rc"><input type="radio" name="role" value="data"><span class="rc-box"><b>Data provider</b> <span class="s">· 6 of 10 seats open</span><small>Train the model on your own network flow records.</small></span></label>
+          <label class="rc"><input type="radio" name="role" value="compute"><span class="rc-box"><b>Compute provider</b> <span class="s">· 2 of 4 seats open</span><small>Provide the GPUs used for training.</small></span></label>
+          <label class="rc off"><input type="radio" name="role" value="model" disabled><span class="rc-box"><b>Model user</b><small>No seats left</small></span></label>
+        </div>
+      </fieldset>
+
+      <div class="tv-field">
+        <span class="lab">Joining as</span>
+        <div class="ro" id="joining-as">University A Security Lab <small>(from your account)</small></div>
+      </div>
+
+      <!-- Data provider를 고르면 -->
+      <div class="rq-sec" id="sec-data" hidden>
+        <div class="tv-field">
+          <label for="data-desc">Describe your data</label>
+          <textarea id="data-desc" placeholder="e.g. Network flow records from Jan to Oct 2026, about 30,000 flows a day, labeled by attack type"></textarea>
+          <span class="tv-help">The Coop leader reads this to review your request. You don't upload any data at this step.</span>
+        </div>
+        <div class="tv-field">
+          <label for="data-size">Dataset size</label>
+          <select id="data-size">
+            <option value="" selected disabled>Choose a size</option>
+            <option>Under 1 million flows</option>
+            <option>1 to 10 million flows</option>
+            <option>Over 10 million flows</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Compute provider를 고르면 -->
+      <div class="rq-sec" id="sec-compute" hidden>
+        <div class="tv-field">
+          <label for="compute-desc">Describe your compute</label>
+          <textarea id="compute-desc" placeholder="e.g. 2 servers with 4 A100 GPUs each"></textarea>
+          <span class="tv-help">The Coop leader reads this to review your request.</span>
+        </div>
+      </div>
+
+      <div class="rq-sec">
+        <div class="tv-field">
+          <span class="lab">Contact person</span>
+          <div class="ro" id="contact">Jane Kim · soc@univ-a.example</div>
+        </div>
+        <label class="tv-check"><input type="checkbox" id="ok-points"> <span>I've read <a href="coop.html?coop=soc#value">how points are shared</a> in this Coop.</span></label>
+        <label class="tv-check"><input type="checkbox" id="ok-contact"> <span>I agree to share my contact details with the Coop leader.</span></label>
+      </div>
+
+      <p class="tv-err" id="err" role="alert" hidden></p>
+      <div class="rq-acts">
+        <a class="btn ghost" href="coop.html?coop=soc">Cancel</a>
+        <button class="btn solid" type="submit">Send request</button>
+      </div>
+      <p class="rq-after">You'll get a notification with the decision.</p>
+    </form>
+
+    <aside class="tv-card tv-sticky side" aria-label="Coop summary">
+      <h2>SOC Threat Detection Coop</h2>
+      <span class="tv-chip open">Open to join</span>
+      <dl>
+        <div><dt class="tv-k">Joining closes in</dt><dd>12 days</dd></div>
+        <div><dt class="tv-k">Members</dt><dd>12 of 20 members</dd></div>
+      </dl>
+      <p style="margin:0 0 12px"><span class="tv-sample">Sample data</span></p>
+      <a href="coop.html?coop=soc">View Coop</a>
+    </aside>
+  </div>
+
+  <details class="tv-review">
+    <summary>Review notes <span>2 open questions</span></summary>
+    <div class="tv-review-body">
+      <h3>미결</h3>
+      <ol>
+        <li>동의 체크 두 개를 모두 필수로 둘지 확인이 필요하다. 지금은 역할을 고르고 두 칸을 모두 체크해야 보낼 수 있다.</li>
+        <li>Dataset size 구간은 예시다. 구간을 코옵마다 Coop leader가 정할지 정하지 않았다.</li>
+      </ol>
+      <h3>가정</h3>
+      <ol>
+        <li>참여 요청은 모달이 아니라 별도 페이지로 한다는 결정을 따랐다.</li>
+        <li>언러닝은 코옵을 나갈 때만 다룬다. 그래서 이 페이지에는 언러닝 확인 체크가 없다.</li>
+        <li>Joining as와 Contact person은 계정 정보에서 가져온 값이라 여기서 고치지 않는다.</li>
+        <li>Send request를 누르면 아무것도 보내지 않고 Verify your organization 화면으로 넘어간다.</li>
+        <li>모집 중인 예시 코옵이 SOC Threat Detection Coop 하나라 이 페이지는 이 코옵만 보여 준다.</li>
+      </ol>
+    </div>
+  </details>
+</main>
+
+<footer data-travi-footer></footer>
+
+<script src="app.js"></script>
+<script>
+(function () {
+  'use strict';
+  function $(s) { return document.querySelector(s); }
+  var T = window.TRAVI || {};
+  var u = T.user || (T.users && T.users.member);
+  if (u && !T.isLeader) {
+    $('#joining-as').firstChild.nodeValue = u.org + ' ';
+    $('#contact').textContent = u.name + ' · ' + u.email;
+  }
+
+  var form = $('#rq'), err = $('#err');
+  function role() { var r = form.querySelector('input[name="role"]:checked'); return r ? r.value : ''; }
+  function showRole() {
+    var r = role();
+    $('#sec-data').hidden = r !== 'data';
+    $('#sec-compute').hidden = r !== 'compute';
+  }
+  form.querySelectorAll('input[name="role"]').forEach(function (i) {
+    i.addEventListener('change', function () { showRole(); if (err.getAttribute('data-k') === 'role') err.hidden = true; });
+  });
+  ['#ok-points', '#ok-contact'].forEach(function (s) {
+    $(s).addEventListener('change', function () { if (err.getAttribute('data-k') === 'check') err.hidden = true; });
+  });
+
+  // 전송하지 않는다. 확인만 하고 인증 화면으로 넘어간다
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    if (!role()) { fail('role', 'Choose a role to continue.', form.querySelector('input[name="role"]')); return; }
+    if (!$('#ok-points').checked || !$('#ok-contact').checked) {
+      fail('check', 'Check both boxes to send your request.', !$('#ok-points').checked ? $('#ok-points') : $('#ok-contact'));
+      return;
+    }
+    location.href = 'verify.html?coop=soc&sent=1';
+  });
+  function fail(k, msg, focusEl) {
+    err.textContent = msg;
+    err.setAttribute('data-k', k);
+    err.hidden = false;
+    if (focusEl) focusEl.focus();
+  }
+  showRole();
+})();
+</script>
+</body>
+</html>

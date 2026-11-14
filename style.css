@@ -30,7 +30,7 @@ a { color: inherit; text-decoration: none; }
 .mono { font-family: ui-monospace, 'SFMono-Regular', Consolas, monospace; }
 .wrap { max-width: var(--wrap); margin: 0 auto; padding: 0 32px; }
 
-/* 위쪽 고정 바. 모든 페이지에 같은 자리로 붙고 오른쪽 메뉴만 페이지마다 다르다 */
+/* 위쪽 고정 바. 마크업은 app.js가 그린다(<header data-travi-header>). 옛 페이지의 복붙 헤더도 같은 스타일을 쓴다 */
 .topbar {
   position: fixed; inset: 0 0 auto 0; z-index: 20;
   height: var(--header-h);
@@ -164,4 +164,179 @@ a { color: inherit; text-decoration: none; }
   .sec { padding: 80px 0; }
   .sec-title { font-size: 32px; }
   .sec-title br { display: none; }
+}
+
+/* ==========================================================================
+   공통 부품 v2 (11/9, 11/10 결정 반영). 헤더, 푸터, 팝업은 app.js가 그린다.
+   이름은 tv- 로 시작해 페이지 안 기존 스타일과 겹치지 않는다.
+   ========================================================================== */
+
+/* 공통 헤더: 게스트와 회원이 같은 메뉴. 오른쪽만 다르다 */
+.tv-nav { gap: 28px; font-size: 14px; letter-spacing: 0.01em; }
+.tv-right { display: flex; align-items: center; gap: 10px; }
+.tv-right .btn { padding: 9px 16px; letter-spacing: 0.02em; }
+.tv-bell { position: relative; width: 36px; height: 36px; padding: 0; border-radius: 50%; border: 1px solid var(--line-2); background: var(--card); color: var(--text); display: grid; place-items: center; cursor: pointer; }
+.tv-bell svg { width: 18px; height: 18px; }
+.tv-bell:hover, .tv-bell[aria-expanded="true"] { border-color: var(--text); }
+.tv-bell-n { position: absolute; top: -5px; right: -5px; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 999px; border: 2px solid var(--bg); background: var(--g3); color: #fff; font-size: 10px; font-weight: 700; line-height: 14px; text-align: center; }
+.menu.tv-notif { width: 360px; padding: 0; }
+.tv-n-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 14px 16px 12px; border-bottom: 1px solid var(--line); font-size: 14px; font-weight: 700; }
+.tv-n-list { max-height: min(420px, 70vh); overflow: auto; padding: 6px; }
+.tv-n { display: grid; grid-template-columns: 8px minmax(0, 1fr); gap: 10px; padding: 10px; border-radius: 10px; font-size: 14px; line-height: 1.45; color: var(--muted); }
+.tv-n:hover { background: var(--bg-2); }
+.tv-n.unread { color: var(--text); }
+.tv-n-dot { width: 8px; height: 8px; margin-top: 6px; border-radius: 50%; }
+.tv-n.unread .tv-n-dot { background: var(--accent); }
+.tv-n small { display: block; margin-top: 3px; font-size: 12px; color: var(--faint); }
+.tv-n-empty { margin: 0; padding: 28px 16px; text-align: center; font-size: 14px; color: var(--faint); }
+.tv-link { background: none; border: 0; padding: 0; font: inherit; font-size: 13px; font-weight: 600; color: var(--accent); cursor: pointer; }
+.tv-link:hover { text-decoration: underline; }
+.tv-burger-dd { display: none; }
+.tv-burger { width: 36px; height: 36px; padding: 0; border: 1px solid var(--line-2); border-radius: 10px; background: var(--card); display: grid; place-content: center; gap: 4px; cursor: pointer; }
+.tv-burger span { display: block; width: 16px; height: 2px; border-radius: 2px; background: var(--text); }
+.tv-mnav .mi { display: block; }
+.tv-mnav .mi.on { font-weight: 700; }
+
+/* 버튼 보조 */
+.btn.sm { padding: 7px 14px; font-size: 12px; }
+.btn:disabled, .btn[aria-disabled="true"] { opacity: 0.45; cursor: not-allowed; }
+.btn.danger { background: #b8443b; color: #fff; }
+.btn.danger:hover { background: #9d362e; }
+.btn.outline { background: var(--card); border: 1.5px solid var(--text); color: var(--text); }
+.btn.outline:hover { background: var(--bg-2); }
+
+/* 보기 상태별로 보이기: <html data-as="guest|member|leader"> */
+html[data-as="guest"] .only-signed,
+html[data-as="guest"] .only-member,
+html[data-as="guest"] .only-leader,
+html[data-as="member"] .only-guest,
+html[data-as="member"] .only-leader,
+html[data-as="leader"] .only-guest,
+html[data-as="leader"] .only-member { display: none !important; }
+
+/* 공통 모달: <dialog class="tv-modal"><div class="tv-modal-box">...</div></dialog> */
+dialog.tv-modal { border: 0; padding: 0; border-radius: 18px; width: min(520px, calc(100% - 32px)); max-height: calc(100vh - 48px); overflow: auto; background: var(--card); color: var(--text); box-shadow: 0 24px 64px rgba(13, 18, 32, 0.25); }
+dialog.tv-modal.sm { width: min(420px, calc(100% - 32px)); }
+dialog.tv-modal::backdrop { background: rgba(13, 18, 32, 0.45); }
+.tv-modal-box { padding: 28px; }
+.tv-modal-title { margin: 0 0 10px; font-size: 22px; line-height: 1.3; letter-spacing: -0.01em; }
+.tv-modal-body { margin: 0 0 12px; font-size: 15px; line-height: 1.6; color: var(--muted); }
+.tv-modal-note { margin: 12px 0 0; padding: 12px 14px; border-radius: 10px; background: var(--bg-2); font-size: 13px; line-height: 1.55; color: var(--muted); }
+.tv-modal-actions { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
+.tv-modal-actions.stack { flex-direction: column; align-items: stretch; }
+.tv-modal-actions.stack .btn { justify-content: center; }
+.tv-modal-actions.stack .tv-link { align-self: center; padding: 6px; color: var(--muted); }
+
+/* 토스트 (TRAVI.toast) */
+.tv-toast { position: fixed; left: 50%; bottom: 28px; z-index: 60; max-width: calc(100% - 32px); transform: translate(-50%, 16px); padding: 12px 18px; border-radius: 12px; background: var(--text); color: #fff; font-size: 14px; line-height: 1.45; box-shadow: 0 16px 40px -16px rgba(13, 18, 32, 0.5); opacity: 0; pointer-events: none; transition: opacity 0.2s ease, transform 0.2s ease; }
+.tv-toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+/* 시안 전용 보기 전환 막대 (오른쪽 아래). ?demo=0이면 숨는다 */
+.tv-demo { position: fixed; right: 16px; bottom: 16px; z-index: 40; display: flex; align-items: center; gap: 2px; padding: 4px; border: 1px dashed var(--line-2); border-radius: 999px; background: var(--card); font-size: 12px; box-shadow: 0 8px 24px -12px rgba(13, 18, 32, 0.3); }
+.tv-demo-k { padding: 0 8px 0 10px; color: var(--faint); }
+.tv-demo button { padding: 5px 10px; border: 0; border-radius: 999px; background: none; font: inherit; color: var(--muted); cursor: pointer; }
+.tv-demo button[aria-pressed="true"] { background: var(--text); color: #fff; }
+@media print { .tv-demo, .tv-toast { display: none; } }
+
+/* 작은 푸터 (메인 밖 모든 페이지). 큰 Contact 푸터는 메인만 */
+.tv-foot { border-top: 1px solid var(--line); background: var(--bg-2); padding: 22px 0 72px; font-size: 13px; color: var(--faint); }
+.tv-foot .wrap { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 20px; }
+.tv-foot a:hover { color: var(--text); }
+
+/* 새 페이지용 뼈대: 경로(.crumb) 아래 제목, 본문 카드 */
+.tv-main { padding-bottom: 96px; }
+/* 내용이 짧은 페이지에서 바닥글이 화면 중간에 뜨지 않게 본문이 남는 높이를 채운다 */
+body:has(> main.tv-main) { display: flex; flex-direction: column; min-height: 100vh; }
+body > main.tv-main { flex: 1 0 auto; width: 100%; }
+.tv-head { display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 16px 24px; margin: 20px 0 32px; }
+.tv-h1 { margin: 0; font-size: 36px; line-height: 1.15; letter-spacing: -0.02em; }
+.tv-lead { margin: 10px 0 0; max-width: 680px; font-size: 17px; line-height: 1.6; color: var(--muted); }
+.tv-card { min-width: 0; padding: 24px; border: 1px solid var(--line); border-radius: 16px; background: var(--card); }
+.tv-card + .tv-card { margin-top: 16px; }
+.tv-card h2, .tv-card h3 { margin: 0 0 8px; font-size: 18px; letter-spacing: -0.01em; }
+.tv-card p { margin: 0 0 10px; font-size: 15px; line-height: 1.6; color: var(--muted); }
+.tv-grid { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 24px; align-items: start; }
+.tv-sticky { position: sticky; top: calc(var(--header-h) + 24px); }
+.tv-k { font-size: 12px; font-weight: 600; color: var(--faint); }
+.tv-v { margin-top: 4px; font-size: 20px; font-weight: 700; letter-spacing: -0.01em; }
+
+/* 상태 칩: Coming soon / Open to join / Full / Training / Ended / Waiting to start, 요청 상태 */
+.tv-chip { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border: 1px solid var(--line-2); border-radius: 999px; background: var(--card); font-size: 12px; font-weight: 600; color: var(--muted); white-space: nowrap; }
+.tv-chip::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.tv-chip.coming { border-style: dashed; color: var(--faint); background: var(--bg-2); }
+.tv-chip.open { color: var(--accent); border-color: #c8cdfb; background: var(--accent-soft); }
+.tv-chip.full { color: #8a5a00; border-color: #f0d9a8; background: #fdf7ea; }
+.tv-chip.training { color: #1d7d52; border-color: #bfe3cf; background: #eef8f3; }
+.tv-chip.ended { color: var(--muted); background: var(--bg-2); }
+.tv-chip.waiting { color: #8a5a00; border-color: #f0d9a8; background: #fdf7ea; }
+.tv-chip.ok { color: #1d7d52; border-color: #bfe3cf; background: #eef8f3; }
+.tv-chip.no { color: #b8443b; border-color: #f2c6c2; background: #fdf1f0; }
+.tv-sample { display: inline-block; padding: 2px 8px; border: 1px dashed var(--line-2); border-radius: 6px; font-size: 11px; font-weight: 600; color: var(--faint); white-space: nowrap; vertical-align: 2px; }
+
+/* 안내 띠: 출처 배너, 완료 배너, 대기 배너 */
+.tv-banner { padding: 14px 16px; border: 1px solid #c8cdfb; border-radius: 12px; background: var(--accent-soft); font-size: 14px; line-height: 1.55; color: var(--text); }
+.tv-banner.ok { border-color: #bfe3cf; background: #eef8f3; }
+.tv-banner.wait { border-color: #f0d9a8; background: #fdf7ea; }
+
+/* 진행 단계: Requested, Verification, Leader review, Approved */
+.tv-steps { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0; list-style: none; font-size: 13px; color: var(--faint); }
+.tv-steps li { display: flex; align-items: center; gap: 6px; }
+.tv-steps li + li::before { content: ""; width: 18px; height: 1px; background: var(--line-2); }
+.tv-steps li.done { color: var(--muted); }
+.tv-steps li.now { color: var(--text); font-weight: 700; }
+@media (max-width: 560px) {
+  .tv-steps { gap: 4px; font-size: 12px; }
+  .tv-steps li { gap: 4px; }
+  .tv-steps li + li::before { width: 10px; }
+}
+
+/* 입력 칸 */
+.tv-field { display: flex; flex-direction: column; gap: 7px; min-width: 0; margin-bottom: 16px; }
+.tv-field > label, .tv-field .lab { font-size: 14px; font-weight: 600; }
+.tv-field input, .tv-field textarea, .tv-field select { width: 100%; min-width: 0; padding: 11px 14px; border: 1px solid var(--line-2); border-radius: 10px; background: var(--bg); font: inherit; font-size: 15px; color: var(--text); }
+.tv-field input:focus, .tv-field textarea:focus, .tv-field select:focus { outline: 2px solid var(--accent-soft); border-color: var(--accent); }
+.tv-field input:disabled, .tv-field textarea:disabled, .tv-field select:disabled { background: var(--bg-2); color: var(--faint); cursor: not-allowed; }
+.tv-field textarea { min-height: 96px; resize: vertical; }
+.tv-help { font-size: 12px; line-height: 1.5; color: var(--faint); }
+.tv-err { font-size: 13px; color: #b8443b; }
+.tv-check { display: flex; align-items: flex-start; gap: 10px; margin: 10px 0; font-size: 14px; line-height: 1.5; }
+.tv-check input { margin-top: 3px; }
+
+/* 표 */
+.tv-tbl-wrap { overflow-x: auto; }
+.tv-tbl { width: 100%; border-collapse: collapse; font-size: 14px; }
+.tv-tbl th { padding: 0 12px 10px 0; border-bottom: 1px solid var(--line); text-align: left; font-size: 12px; font-weight: 600; color: var(--faint); white-space: nowrap; }
+.tv-tbl td { padding: 12px 12px 12px 0; border-bottom: 1px solid var(--line); vertical-align: middle; }
+.tv-tbl tr:last-child td { border-bottom: 0; }
+.tv-tbl .num { text-align: right; font-variant-numeric: tabular-nums; }
+
+/* 검토 메모 (페이지 맨 아래, 한국어 가능) */
+.tv-review { margin: 48px 0 0; border: 1px solid var(--line); border-radius: 16px; background: var(--card); }
+.tv-review summary { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 18px 24px; font-weight: 600; cursor: pointer; list-style: none; }
+.tv-review summary::-webkit-details-marker { display: none; }
+.tv-review summary::after { content: "+"; font-size: 20px; color: var(--faint); }
+.tv-review[open] summary::after { content: "\2212"; }
+.tv-review summary span { margin-left: auto; font-size: 13px; font-weight: 400; color: var(--faint); }
+.tv-review .tv-review-body { padding: 4px 24px 24px; border-top: 1px solid var(--line); }
+.tv-review h3 { margin: 20px 0 10px; font-size: 13px; color: var(--faint); }
+.tv-review ol { margin: 0; padding-left: 20px; }
+.tv-review li { margin-bottom: 10px; font-size: 14px; line-height: 1.6; color: #2c3446; }
+
+@media (max-width: 960px) {
+  .tv-grid { grid-template-columns: 1fr; }
+  .tv-sticky { position: static; }
+}
+@media (max-width: 760px) {
+  .tv-nav { display: none; }
+  .tv-burger-dd { display: block; }
+  .topbar.tv-top .wrap { gap: 8px; }
+  .topbar.tv-top .brand { letter-spacing: 0.2em; }
+  .tv-right { gap: 6px; }
+  .tv-right .btn { padding: 7px 11px; font-size: 12px; }
+  .menu.tv-notif { width: min(360px, calc(100vw - 32px)); }
+  .tv-h1 { font-size: 28px; }
+  .tv-modal-box { padding: 22px; }
+  .tv-review summary, .tv-review .tv-review-body { padding-left: 18px; padding-right: 18px; }
+  .tv-demo { right: 8px; bottom: 8px; }
+  .tv-demo-k { display: none; }
 }

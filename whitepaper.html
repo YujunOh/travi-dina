@@ -3,33 +3,15 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>TRAVI Whitepaper</title>
+<title>Whitepaper · TRAVI</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<header class="topbar">
-  <div class="wrap">
-    <a class="brand" href="index.html">
-      <svg viewBox="0 0 32 32" aria-hidden="true">
-        <defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1aa3d9"/><stop offset=".55" stop-color="#5b4ce0"/><stop offset="1" stop-color="#e0675e"/></linearGradient></defs>
-        <circle cx="16" cy="16" r="12.5" fill="none" stroke="url(#lg)" stroke-width="2.4"/>
-        <path d="M6 22 C10 12, 14 22, 18 12 S 25 14, 26 8" fill="none" stroke="#0d1220" stroke-width="2" stroke-linecap="round"/>
-        <circle cx="6" cy="22" r="2.2" fill="#0d1220"/><circle cx="18" cy="12" r="2.2" fill="#0d1220"/><circle cx="26" cy="8" r="2.2" fill="#e0675e"/>
-      </svg>
-      TRAVI
-    </a>
-    <div class="spacer"></div>
-    <nav class="nav">
-      <a href="domain.html">DOMAIN</a>
-      <a class="on hide-sm" href="whitepaper.html">WHITEPAPER</a>
-      <a class="btn solid" href="join.html">JOIN TRAVI</a>
-    </nav>
-  </div>
-</header>
+<header data-travi-header data-active="whitepaper"></header>
 
-<div class="wrap">
+<main class="wrap">
   <div class="crumb"><a href="index.html">Home</a><span class="sep">›</span><span class="cur">Whitepaper</span></div>
 
   <div class="docs">
@@ -37,7 +19,6 @@
       <p class="grp">WHITEPAPER</p>
       <ul>
         <li><a class="on" href="#overview">Overview</a></li>
-        <li><a href="#settlement">Settlement on Hedera</a></li>
         <li><a href="#publications">Selected publications</a></li>
         <li><a href="#writing">Featured writing</a></li>
         <li><a href="#code">Code</a></li>
@@ -47,20 +28,8 @@
     <article class="doc">
       <div class="eyebrow">WHITEPAPER</div>
       <h1 id="overview">The AI Cooperatives</h1>
-      <p class="lede">Giving access to the means of creating self-sovereign vertical intelligence.</p>
+      <p class="lede">Research and writing behind TRAVI and AI Coops.</p>
       <div class="ph" style="margin-top:28px">Whitepaper PDF 자리. 파일이 정해지면 다운로드 버튼으로 바꿉니다.</div>
-
-      <h2 id="settlement">Settlement on Hedera</h2>
-      <p>Fair rewards need settlement that participants can check. Permissionless blockchains make this hard for distributed learning: as SettleFL puts it, "the prohibitive cost of permissionless blockchains directly clashes with the high-frequency, iterative nature of model training."</p>
-      <p>TRAVI splits settlement into three layers. Contribution records for each training round are anchored to Hedera Consensus Service, at about $0.0008 per message (Hedera fee schedule, Nov 2026). Settlement amounts are computed off-chain from contribution scores using the cooperative's sharing rule. Payouts are made on the Hedera network each settlement period, according to the cooperative's sharing rule.</p>
-      <div class="callout">
-        <div class="eyebrow">STATUS</div>
-        <p style="margin:0">Record: planned. Compute: research (arXiv:2606.28217). Pay: planned. Unlearning on exit: roadmap.</p>
-      </div>
-      <ul class="refs">
-        <li>SettleFL (2026). arXiv:2602.23167.</li>
-        <li>Hedera fee schedule. <a href="https://docs.hedera.com/hedera/networks/mainnet/fees" style="text-decoration:underline">docs.hedera.com</a></li>
-      </ul>
 
       <h2 id="publications">Selected publications</h2>
       <ul class="refs">
@@ -75,28 +44,33 @@
       <h2 id="writing">Featured writing</h2>
       <ul class="refs">
         <li>Yoon, Y. (2026). Creating Agentic AI Cooperatives for the Recovery of Economic Self-Sovereignty. Guest essay, Fourth Generation Civilization (Michel Bauwens), 'Civilizational AI' series. <a href="https://4thgenerationcivilization.substack.com/p/creating-agentic-ai-cooperatives" style="text-decoration:underline">Read the essay</a></li>
+        <li><a href="domain-security.html" style="text-decoration:underline">AI Cooperative in action: Cybersecurity</a> (case study)</li>
       </ul>
 
       <h2 id="code">Code</h2>
       <p>TL++ repository: <a href="https://github.com/neouly-inc/TLplus" style="text-decoration:underline">github.com/neouly-inc/TLplus</a></p>
+
+      <details class="tv-review">
+        <summary>Review notes <span>1 open question</span></summary>
+        <div class="tv-review-body">
+          <h3>미결</h3>
+          <ol>
+            <li>Whitepaper 표기는 팀 확인 전 임시다.</li>
+          </ol>
+          <h3>가정</h3>
+          <ol>
+            <li>정산 단락은 졸전 데모에서 빠져 보류 중이라 화면에서 뺐다. 다시 넣을 때는 구현 상태를 현재형으로 쓰지 않는다.</li>
+            <li>논문과 글 제목은 출판된 그대로 인용한다. 제목 안의 표현은 바꾸지 않는다.</li>
+          </ol>
+        </div>
+      </details>
     </article>
   </div>
-</div>
+</main>
 
-<footer class="foot">
-  <div class="wrap">
-    <div class="foot-top">
-      <div>
-        <div class="eyebrow">CONTACT</div>
-        <h3>Contact TRAVI</h3>
-        <a class="mail" href="mailto:contact@travi.example">contact@travi.example <span class="todo">교체 필요</span></a>
-        <div class="social"><a href="#" aria-label="LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5C4.98 4.88 3.87 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.22 8h4.56v14H.22V8zm7.4 0h4.37v1.92h.06c.61-1.15 2.1-2.36 4.32-2.36 4.62 0 5.47 3.04 5.47 7V22h-4.56v-6.6c0-1.57-.03-3.6-2.2-3.6-2.2 0-2.53 1.72-2.53 3.49V22H7.62V8z"/></svg></a></div>
-      </div>
-      <a class="btn solid lg" href="mailto:contact@travi.example">CONTACT US</a>
-    </div>
-    <div class="foot-bottom"><span>© 2026 TRAVI</span><span>DINA Lab, Hongik University · Neouly</span></div>
-  </div>
-</footer>
+<footer data-travi-footer></footer>
+
+<script src="app.js"></script>
 <script>
 /* 스크롤 위치에 맞춰 왼쪽 목차의 현재 항목을 표시한다 */
 (function () {

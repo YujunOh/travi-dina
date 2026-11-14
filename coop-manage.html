@@ -4,544 +4,289 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Manage Coop · TRAVI</title>
-<script>document.documentElement.classList.add('js')</script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <link rel="stylesheet" href="style.css">
 <style>
-/* 페이지 머리 (헤더 드롭다운 스타일은 style.css) */
-.m-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 24px; padding: 36px 0 28px; }
-.m-head h1 { font-size: 44px; letter-spacing: -0.025em; line-height: 1.1; margin: 12px 0 10px; }
-.m-head .sub { color: var(--muted); font-size: 16px; margin: 0; }
-.m-tag { text-align: right; flex-shrink: 0; }
-.m-tag .st { margin-left: 0; font-size: 11px; padding: 5px 10px; }
-.m-tag p { margin: 8px 0 0; font-size: 12px; color: var(--faint); }
-.m-tag .asof { font-size: 13px; font-weight: 600; color: var(--muted); margin-left: 6px; white-space: nowrap; }
-.facts4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; border: 1px solid var(--line); border-radius: 16px; background: var(--card); overflow: hidden; }
-.f4 { padding: 20px 22px; }
-.f4 + .f4 { border-left: 1px solid var(--line); }
-.f4 .k { font-size: 11px; letter-spacing: 0.16em; font-weight: 700; color: var(--faint); }
-.f4 .v { margin-top: 8px; font-size: 18px; font-weight: 700; letter-spacing: -0.01em; }
-.f4 .s { margin-top: 4px; font-size: 13px; color: var(--muted); }
-.as-note { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin: 16px 0 0; font-size: 14px; color: var(--muted); }
-.as-note b { color: var(--text); }
-.as-note a { text-decoration: underline; color: var(--text); }
+/* MF 07 Manage Coop (leader 전용). 공통 부품은 style.css의 tv- */
+html:not([data-as]) .mg-gate { display: none; }
 
-/* 구역 바로가기: 헤더 바로 아래 붙는다 */
-.subnav { position: sticky; top: var(--header-h); z-index: 10; background: color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); margin-top: 36px; }
-.subnav .in { display: flex; gap: 28px; overflow-x: auto; scrollbar-width: none; }
-.subnav .in::-webkit-scrollbar { display: none; }
-.subnav a { padding: 14px 0; font-size: 13px; font-weight: 600; color: var(--muted); white-space: nowrap; }
-.subnav a:hover { color: var(--text); }
+/* 리더가 아닐 때 */
+.mg-deny { max-width: 520px; margin: calc(var(--header-h) + 72px) auto 0; text-align: center; }
+.mg-deny p { margin: 0 0 18px; font-size: 17px; color: var(--text); }
 
-/* 구역 카드 */
-.blocks { display: flex; flex-direction: column; gap: 28px; padding-top: 32px; padding-bottom: 64px; }
-.panel { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 28px; scroll-margin-top: calc(var(--header-h) + 64px); min-width: 0; }
-.p-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; flex-wrap: wrap; margin-bottom: 18px; }
-.p-head h2 { font-size: 22px; letter-spacing: -0.01em; margin: 6px 0 6px; }
-.p-head p { margin: 0; color: var(--muted); font-size: 15px; line-height: 1.6; max-width: 720px; }
-.p-head .badges { display: flex; flex-wrap: wrap; gap: 6px; }
-.p-head .badges .st { margin-left: 0; }
-.k-sm { font-size: 11px; letter-spacing: 0.16em; font-weight: 700; color: var(--faint); }
-.two { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 28px; }
-.two.stack { grid-template-columns: minmax(0, 1fr); }
-.sub-h { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; font-size: 15px; font-weight: 700; margin: 28px 0 12px; }
-.sub-h .st { margin-left: 6px; }
+/* 제목 줄 */
+.mg-title { display: flex; align-items: center; flex-wrap: wrap; gap: 10px 12px; }
+.mg-actions { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
+.mg-btns { display: flex; flex-wrap: wrap; gap: 10px; justify-content: flex-end; }
+.mg-btns .btn { letter-spacing: 0.02em; }
+.mg-actions .tv-help { margin: 0; text-align: right; }
+#wait-banner { margin: 20px 0 0; }
+
+/* 탭 (앵커) */
+.mg-tabs { display: flex; gap: 28px; margin: 0 0 28px; border-bottom: 1px solid var(--line); overflow-x: auto; scrollbar-width: none; }
+.mg-tabs::-webkit-scrollbar { display: none; }
+.mg-tabs a { padding: 12px 0; font-size: 14px; font-weight: 600; color: var(--muted); white-space: nowrap; border-bottom: 2px solid transparent; margin-bottom: -1px; }
+.mg-tabs a:hover { color: var(--text); }
+.mg-tabs a[aria-current="true"] { color: var(--text); border-bottom-color: var(--text); }
+.mg-tabs .n { margin-left: 6px; padding: 1px 7px; border-radius: 999px; background: var(--bg-2); font-size: 11px; color: var(--muted); }
+.mg-pane { scroll-margin-top: calc(var(--header-h) + 24px); }
+.mg-pane[hidden] { display: none; }
+
+/* 사실 칸 */
+.mg-facts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border: 1px solid var(--line); border-radius: 16px; background: var(--card); overflow: hidden; margin-bottom: 16px; }
+.mg-facts > div { padding: 20px 22px; min-width: 0; }
+.mg-facts > div + div { border-left: 1px solid var(--line); }
+.mg-facts .s { margin-top: 4px; font-size: 13px; color: var(--muted); }
+
+/* 체크리스트 */
+.mg-check-list { margin: 6px 0 0; }
+.mg-check-list .tv-check { padding: 12px 0; margin: 0; border-top: 1px solid var(--line); }
+.mg-check-list .tv-check:first-child { border-top: 0; }
+.mg-check-list input:disabled + span { color: var(--muted); }
 
 /* 표 */
-.tbl-wrap { overflow-x: auto; }
-.tbl { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 600px; }
-.tbl th { text-align: left; font-size: 11px; letter-spacing: 0.12em; color: var(--faint); font-weight: 700; padding: 0 12px 10px 0; border-bottom: 1px solid var(--line); white-space: nowrap; }
-.tbl td { padding: 13px 12px 13px 0; border-bottom: 1px solid var(--line); vertical-align: middle; }
-.tbl tr:last-child td { border-bottom: 0; }
-.tbl .num { text-align: right; font-variant-numeric: tabular-nums; }
-.tbl .mono { font-size: 13px; }
-.tbl .dim { color: var(--faint); }
-.tbl .org { font-weight: 600; }
-.tbl tr.rowlink { cursor: pointer; }
-.tbl tr.rowlink:hover td { background: var(--bg); }
-.tag { display: inline-block; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 6px; background: var(--bg-2); color: var(--muted); margin-left: 6px; white-space: nowrap; }
-.tag.lead { background: var(--accent-soft); color: var(--accent); }
+.mg-tbl { min-width: 640px; }
+.mg-tbl .sub { display: block; margin-top: 2px; font-size: 12px; color: var(--faint); }
+.mg-acts { display: flex; gap: 8px; flex-wrap: wrap; }
+.tv-chip.lead { color: var(--accent); border-color: #c8cdfb; background: var(--accent-soft); margin-left: 6px; }
+.tv-chip.lead::before { display: none; }
+.mg-foot { margin: 14px 0 0; font-size: 13px; color: var(--muted); }
+.mg-empty { padding: 36px 16px; text-align: center; color: var(--faint); font-size: 15px; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
-/* 상태 표시 */
-.pill { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 999px; border: 1px solid var(--line); background: var(--bg); white-space: nowrap; }
-.pill::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: var(--faint); }
-.pill.ok::before { background: #1f9d63; }
-.pill.warn::before { background: #d99a12; }
-.pill.run::before { background: var(--accent); }
-.pill.done { color: var(--muted); }
-.pill.done::before { background: var(--line-2); }
-.pill.wait { color: var(--muted); border-style: dashed; }
-
-.note { font-size: 13px; color: var(--muted); line-height: 1.6; margin: 14px 0 0; }
-.note.box { background: var(--bg-2); border-radius: 10px; padding: 12px 14px; }
-.btns { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
-.btn[disabled] { opacity: .45; cursor: not-allowed; }
-.btn.sm { padding: 8px 14px; font-size: 12px; }
-
-/* 모델 알림 상자 */
-.notice { border: 2px solid #e8b931; background: #fffbea; border-radius: 14px; padding: 20px; }
-.notice h3 { font-size: 16px; margin: 6px 0 8px; line-height: 1.45; }
-.notice p { margin: 0 0 12px; font-size: 14px; color: #5c4a10; line-height: 1.6; }
-.meter { position: relative; height: 10px; border-radius: 999px; background: #f3e6b5; margin: 22px 0 26px; }
-.meter i { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 999px; background: #d99a12; }
-.meter span { position: absolute; top: -6px; bottom: -6px; width: 2px; background: #5c4a10; }
-.meter span em { position: absolute; top: 24px; left: 50%; transform: translateX(-50%); font-style: normal; font-size: 11px; color: #5c4a10; white-space: nowrap; }
-.notice .who { display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; font-size: 13px; margin: 0 0 16px; }
-.notice .who dt { color: #8a7230; }
-.notice .who dd { margin: 0; }
-.dismissed { display: none; font-size: 14px; color: var(--muted); border: 1px dashed var(--line-2); border-radius: 14px; padding: 18px 20px; }
-.dismissed button { font: inherit; background: none; border: 0; text-decoration: underline; cursor: pointer; color: var(--text); padding: 0; }
-
-/* 정산 */
-.rule { border: 1px solid var(--line); border-radius: 14px; padding: 20px; background: var(--bg); }
-.rule .f { font-size: 17px; font-weight: 600; margin: 8px 0 6px; line-height: 1.45; }
-.rule .f .mono { font-size: 15px; }
-.preview { border: 1px dashed var(--line-2); border-radius: 14px; padding: 22px; }
-.pv-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
-.pv-head .t { font-size: 17px; font-weight: 700; margin-top: 6px; }
-.pv-ctl { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin: 16px 0 0; }
-.pv-ctl label { font-size: 13px; color: var(--muted); display: inline-flex; align-items: center; gap: 8px; }
-.pv-ctl select { font: inherit; font-size: 13px; padding: 7px 10px; border: 1px solid var(--line-2); border-radius: 8px; background: var(--card); color: var(--text); }
-.pv-msg { font-size: 12px; color: var(--faint); margin: 10px 0 0; min-height: 18px; }
-.pv-tbl { min-width: 380px; }
-.pv-tbl td { white-space: nowrap; }
-.pv-tbl tfoot td { border-top: 1px solid var(--line); border-bottom: 0; font-weight: 700; }
-.bar { display: inline-block; vertical-align: middle; height: 6px; border-radius: 999px; background: linear-gradient(90deg, var(--g1), var(--g2)); margin-right: 8px; }
-.rec { display: grid; grid-template-columns: auto 1fr; gap: 6px 18px; margin: 18px 0 0; padding-top: 14px; border-top: 1px solid var(--line); font-size: 12px; }
-.rec dt { color: var(--faint); }
-.rec dd { margin: 0; color: var(--muted); overflow-wrap: anywhere; }
-.r-link { color: var(--faint); font-style: italic; font-size: 13px; }
-
-/* 탈퇴 요청 진행 단계 */
-.steps3 { display: flex; gap: 0; margin: 4px 0 4px; padding: 0; list-style: none; flex-wrap: wrap; }
-.steps3 li { position: relative; flex: 1 1 160px; padding: 10px 14px 10px 30px; font-size: 13px; color: var(--faint); border-top: 3px solid var(--line); }
-.steps3 li::before { content: ''; position: absolute; left: 8px; top: 14px; width: 12px; height: 12px; border-radius: 50%; border: 2px solid var(--line-2); background: var(--card); }
-.steps3 li b { display: block; font-size: 14px; color: inherit; }
-.steps3 li.done { color: var(--muted); border-top-color: var(--text); }
-.steps3 li.done::before { background: var(--text); border-color: var(--text); }
-.steps3 li.now { color: var(--text); border-top-color: var(--accent); }
-.steps3 li.now::before { border-color: var(--accent); background: var(--accent-soft); }
-.detail td { background: var(--bg); }
-.expand { font: inherit; font-size: 12px; font-weight: 600; background: none; border: 1px solid var(--line-2); border-radius: 999px; padding: 4px 10px; cursor: pointer; color: var(--text); white-space: nowrap; }
-.fixed-note { border-left: 3px solid var(--text); padding: 4px 0 4px 14px; margin: 18px 0 0; font-size: 15px; line-height: 1.6; }
-
-/* 검토 메모(교수님 온라인 검토용) */
-.review { border: 1px solid var(--line); border-radius: 16px; background: var(--card); margin: 0 0 96px; scroll-margin-top: calc(var(--header-h) + 64px); }
-.review > summary { cursor: pointer; padding: 22px 28px; font-weight: 700; font-size: 16px; display: flex; justify-content: space-between; gap: 12px; align-items: center; }
-.review > summary span { font-size: 13px; color: var(--faint); font-weight: 500; }
-.review .body { padding: 0 28px 28px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 36px; }
-.review h3 { font-size: 13px; letter-spacing: 0.14em; color: var(--faint); margin: 0 0 12px; }
-.review ol { margin: 0; padding-left: 20px; }
-.review li { font-size: 14px; line-height: 1.6; margin-bottom: 12px; color: #2c3446; }
-.review li .src { display: block; font-size: 12px; color: var(--faint); margin-top: 2px; overflow-wrap: anywhere; }
-
-@media (max-width: 960px) {
-  .two, .review .body { grid-template-columns: minmax(0, 1fr); }
-  .facts4 { grid-template-columns: 1fr 1fr; }
-  .f4:nth-child(3) { border-left: 0; }
-  .f4:nth-child(n+3) { border-top: 1px solid var(--line); }
-  .m-head h1 { font-size: 34px; }
-}
 @media (max-width: 760px) {
-  .m-head { flex-direction: column; gap: 12px; padding-top: 24px; }
-  .m-tag { text-align: left; }
-  .panel { padding: 20px 16px; }
-  .review > summary { padding: 18px 16px; }
-  .review .body { padding: 0 16px 20px; }
-}
-@media (max-width: 520px) {
-  .crumb { flex-wrap: wrap; gap: 4px 8px; }
-  .crumb > * { white-space: nowrap; }
-  .f4 { padding: 14px; }
-  .f4 .v { font-size: 15px; }
-  .f4 .k { letter-spacing: 0.1em; }
-  .m-head h1 { font-size: 30px; }
-  /* 정산 미리보기: 좁은 화면에서는 기관·몫·지급을 한 줄에, 누적 기여는 그 아래 */
-  .preview { padding: 16px; }
-  .pv-tbl { min-width: 0; }
-  .pv-tbl tr { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 2px 14px; align-items: baseline; border-bottom: 1px solid var(--line); padding: 10px 0; }
-  .pv-tbl thead tr { padding-top: 0; }
-  .pv-tbl tr:last-child { border-bottom: 0; }
-  .pv-tbl th, .pv-tbl td { padding: 0; border: 0; }
-  .pv-tbl .c-raw { grid-column: 1 / -1; grid-row: 2; text-align: left; font-size: 12px; color: var(--faint); }
-  .pv-tbl th.c-raw { display: none; }
-  .pv-tbl td.c-raw::before { content: 'Cumulative contribution (raw) '; font-family: 'Pretendard Variable', Pretendard, system-ui, sans-serif; }
-  .pv-tbl tfoot td.c-raw { display: none; }
-  .pv-tbl tfoot td { border-top: 0; }
-  .pv-tbl tfoot tr { border-top: 1px solid var(--line); }
-  .pv-tbl .bar { display: none; }
+  .mg-actions { align-items: flex-start; }
+  .mg-btns { justify-content: flex-start; }
+  .mg-actions .tv-help { text-align: left; }
+  .mg-facts { grid-template-columns: 1fr 1fr; }
+  .mg-facts > div:nth-child(3) { border-left: 0; }
+  .mg-facts > div:nth-child(n+3) { border-top: 1px solid var(--line); }
+  .mg-facts > div { padding: 14px 16px; }
+  .mg-tabs { gap: 20px; }
 }
 </style>
 </head>
-<body>
+<body data-auth="required">
+<header data-travi-header data-active="dashboard"></header>
 
-<!-- 앱 영역 헤더: 자리와 모양은 공개 페이지와 같고 메뉴 구성만 Coop leader용이다 -->
-<header class="topbar">
-  <div class="wrap">
-    <a class="brand" href="index.html">
-      <svg viewBox="0 0 32 32" aria-hidden="true">
-        <defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1aa3d9"/><stop offset=".55" stop-color="#5b4ce0"/><stop offset="1" stop-color="#e0675e"/></linearGradient></defs>
-        <circle cx="16" cy="16" r="12.5" fill="none" stroke="url(#lg)" stroke-width="2.4"/>
-        <path d="M6 22 C10 12, 14 22, 18 12 S 25 14, 26 8" fill="none" stroke="#0d1220" stroke-width="2" stroke-linecap="round"/>
-        <circle cx="6" cy="22" r="2.2" fill="#0d1220"/><circle cx="18" cy="12" r="2.2" fill="#0d1220"/><circle cx="26" cy="8" r="2.2" fill="#e0675e"/>
-      </svg>
-      TRAVI
-    </a>
-    <div class="spacer"></div>
-    <nav class="nav">
-      <a class="hide-sm" href="coop.html">COOPS</a>
-      <a class="on hide-sm" href="coop-manage.html" aria-current="page">MANAGE COOP</a>
-      <a class="hide-sm" href="mypage.html">MY PAGE</a>
-      <!-- 역할 전환: 이 계정이 가진 역할만. 같은 세션에서 화면 묶음만 바뀐다 -->
-      <div class="dd">
-        <button class="va" type="button" data-dd aria-haspopup="true" aria-expanded="false" aria-controls="m-role">
-          <span class="long">Viewing as: <b>Coop leader</b></span><span class="short"><b>L</b></span> ▾
-        </button>
-        <div class="menu" id="m-role" role="menu">
-          <div class="mh">VIEW TRAVI AS</div>
-          <a class="mi" role="menuitem" href="coop.html"><span></span><span>Participant<small>Browse Coops, your requests, My page</small></span></a>
-          <a class="mi" role="menuitem" href="coop-manage.html" aria-current="true"><span class="ck">✓</span><span>Coop leader<small>SOC Threat Detection Coop · manage this one Coop</small></span></a>
-          <a class="mi" role="menuitem" href="admin.html"><span></span><span>Admin<small>Platform operations (granted in this mock)</small></span></a>
-          <div class="mf">Switching changes the screens you see. You stay signed in. Roles are listed per Coop. COOPS and MY PAGE open the Participant view.</div>
-        </div>
-      </div>
-      <div class="dd">
-        <button class="me" type="button" data-dd aria-haspopup="true" aria-expanded="false" aria-controls="m-me" aria-label="Account menu"><i>JK</i>▾</button>
-        <div class="menu sm" id="m-me" role="menu">
-          <div class="who"><b>Jane Kim</b><span>Org A · jane@org-a.example</span></div>
-          <a class="mi" role="menuitem" href="mypage.html"><span></span><span>My page</span></a>
-          <a class="mi" role="menuitem" href="index.html"><span></span><span>Log out</span></a>
-        </div>
-      </div>
-    </nav>
-  </div>
-</header>
+<main class="wrap tv-main">
 
-<main>
-  <div class="wrap">
-    <div class="crumb"><a href="index.html">Home</a><span class="sep">›</span><a href="coop.html">Coops</a><span class="sep">›</span><a href="coop.html#co=soc">SOC Threat Detection Coop</a><span class="sep">›</span><span class="cur">Manage</span></div>
-
-    <!-- 개요 -->
-    <section id="overview">
-      <div class="m-head">
-        <div>
-          <div class="eyebrow">MANAGE COOP</div>
-          <h1>SOC Threat Detection Coop</h1>
-          <p class="sub">Security · Earlier warning of attacks on Linux servers</p>
-        </div>
-        <div class="m-tag">
-          <span class="st ill">SAMPLE DATA</span> <span class="asof">as of Dec 3, 2026</span>
-          <p>Names and numbers on this page are examples.</p>
-        </div>
-      </div>
-
-      <div class="facts4">
-        <div class="f4"><div class="k">MEMBERS</div><div class="v">4</div><div class="s">1 join request pending</div></div>
-        <div class="f4"><div class="k">CURRENT TRAINING ROUND</div><div class="v">Round 5 of 6</div><div class="s">Running · Dec 1–14</div></div>
-        <div class="f4"><div class="k">TRAINING MODE</div><div class="v">Secure mode on</div><div class="s">Default for every Coop</div></div>
-        <div class="f4"><div class="k">SETTLEMENT PERIOD</div><div class="v">Dec 1 – Dec 31, 2026</div><div class="s">Period #2 · Open · separate from rounds</div></div>
-      </div>
-
-      <p class="as-note"><span class="tag lead" style="margin-left:0">Coop leader</span><span>You are viewing as <b>Coop leader</b>. Your Participant view is in <a href="mypage.html">My page</a>.</span></p>
-    </section>
-  </div>
-
-  <div class="subnav">
-    <div class="wrap in">
-      <a href="#members">Members and sites</a>
-      <a href="#rounds">Training rounds</a>
-      <a href="#settlement">Settlement periods</a>
-      <a href="#exits">Leave requests</a>
-      <a href="#review">Review notes</a>
+  <!-- 참여자(member)로 볼 때: 본문 대신 안내만 -->
+  <div class="mg-gate only-member">
+    <div class="tv-card mg-deny">
+      <p>Only the Coop leader can open this page.</p>
+      <a class="btn ghost" href="dashboard.html">Back to Dashboard</a>
     </div>
   </div>
 
-  <div class="wrap blocks">
+  <!-- 리더(leader): 모집 중인 SOC Threat Detection Coop -->
+  <div class="mg-gate only-leader">
+    <div class="crumb"><a href="dashboard.html">Dashboard</a><span class="sep">›</span><a href="coop.html?coop=soc">SOC Threat Detection Coop</a><span class="sep">›</span><span class="cur">Manage</span></div>
 
-    <!-- 구성원과 사이트: 학습 역할과 관리 역할은 다른 열 -->
-    <section class="panel" id="members">
-      <div class="p-head">
-        <div>
-          <div class="k-sm">01 · MEMBERS</div>
-          <h2>Members and sites</h2>
-          <p>Who is in the Coop, what each one provides, and whether its site is connected. Training role (Node / OC) and Coop role are separate.</p>
+    <div class="tv-banner wait" id="wait-banner" role="status" hidden>TRAVI is reviewing your request. The status changes to Training when round 1 starts. You don't need to do anything.</div>
+
+    <div class="tv-head">
+      <div>
+        <div class="mg-title">
+          <h1 class="tv-h1">SOC Threat Detection Coop</h1>
+          <span class="tv-chip open" id="status-chip">Open to join</span>
+          <span class="tv-sample">Sample data</span>
         </div>
-        <div class="badges"><span class="st ill">SAMPLE DATA</span><span class="st design">IN DESIGN</span></div>
+        <p class="tv-lead">Security · SOCs train one attack classifier together, each on its own network flow records.</p>
       </div>
-      <div class="tbl-wrap">
-        <table class="tbl">
-          <thead><tr><th>Organization</th><th>Provides</th><th>Training role</th><th>Coop role</th><th>Site</th><th>Connection</th><th>Last seen</th></tr></thead>
-          <tbody>
-            <tr><td class="org">Org A</td><td>Data</td><td>Node</td><td>Participant <span class="tag lead">Coop leader</span></td><td class="mono">org-a-soc-01</td><td><span class="pill ok">Connected</span></td><td class="dim">Just now</td></tr>
-            <tr><td class="org">Org B</td><td>Data</td><td>Node</td><td>Participant</td><td class="mono">org-b-soc-01</td><td><span class="pill ok">Connected</span></td><td class="dim">1 min ago</td></tr>
-            <tr><td class="org">Org C <span class="tag">Leave requested Nov 5</span></td><td>Data</td><td>Node</td><td>Participant</td><td class="mono">org-c-soc-01</td><td><span class="pill">Offline</span></td><td class="dim">Offline since Nov 5 (leaving)</td></tr>
-            <tr><td class="org">Org D</td><td>Compute</td><td>OC</td><td>Participant</td><td class="mono">org-d-oc-01</td><td><span class="pill ok">Connected</span></td><td class="dim">4 min ago</td></tr>
-          </tbody>
-        </table>
-      </div>
-      <p class="note">Connection states: Connected / Delayed / Offline. Training role comes with what a member provides and gives no management rights.</p>
-
-      <div class="sub-h">Pending join requests <span class="st design">IN DESIGN</span></div>
-      <div class="tbl-wrap">
-        <table class="tbl">
-          <thead><tr><th>Organization</th><th>Provides</th><th>Submitted</th><th>State</th><th>Joins from</th></tr></thead>
-          <tbody>
-            <tr><td class="org">Org E</td><td>Data</td><td>Nov 28, 2026</td><td><span class="pill wait">Pending review</span></td><td class="dim">Next round after approval</td></tr>
-          </tbody>
-        </table>
-      </div>
-      <p class="note box">Approval is handled by TRAVI operations for now. Who approves join requests (TRAVI admin or Coop leader) is not decided.</p>
-    </section>
-
-    <!-- 학습 라운드와 모델 알림. 정산은 넣지 않는다 -->
-    <section class="panel" id="rounds">
-      <div class="p-head">
-        <div>
-          <div class="k-sm">02 · TRAINING</div>
-          <h2>Training rounds and model notices</h2>
-          <p>Training rounds only. Settlement is listed separately below. Sites are fixed during a round, so a new member joins from the next round.</p>
+      <div class="mg-actions">
+        <div class="mg-btns">
+          <button class="btn ghost" type="button" disabled>Edit Coop</button>
+          <span id="start-wrap" title="Finish the checklist to start training."><button class="btn solid" type="button" id="start" disabled data-modal-open="start-modal">Start training</button></span>
         </div>
-        <div class="badges"><span class="st ill">SAMPLE DATA</span><span class="st research">RESEARCH</span></div>
+        <p class="tv-help" id="start-help">TRAVI reviews your request before training begins.</p>
       </div>
-      <div class="two">
-        <div>
-          <div class="tbl-wrap">
-            <table class="tbl">
-              <thead><tr><th>Round</th><th>Dates</th><th>State</th><th>Settlement period</th><th>vs. local model</th></tr></thead>
-              <tbody>
-                <tr><td class="org">Round 1</td><td>Oct 6–19</td><td><span class="pill done">Done</span></td><td class="dim">—</td><td class="dim">— placeholder</td></tr>
-                <tr><td class="org">Round 2</td><td>Oct 20–Nov 2</td><td><span class="pill done">Done</span></td><td class="dim">—</td><td class="dim">— placeholder</td></tr>
-                <tr><td class="org">Round 3</td><td>Nov 3–16</td><td><span class="pill done">Done</span></td><td>#1</td><td class="dim">— placeholder</td></tr>
-                <tr><td class="org">Round 4</td><td>Nov 17–30</td><td><span class="pill done">Done</span></td><td>#1</td><td class="dim">— placeholder</td></tr>
-                <tr><td class="org">Round 5</td><td>Dec 1–14</td><td><span class="pill run">Running</span></td><td>#2</td><td class="dim">—</td></tr>
-                <tr><td class="org dim">Round 6</td><td class="dim">Dec 15–28</td><td><span class="pill wait">Scheduled</span></td><td class="dim">#2</td><td class="dim">—</td></tr>
-              </tbody>
-            </table>
-          </div>
-          <p class="note">Rounds run every two weeks. Retraining after unlearning: recommended when more than 50% is removed (example). The accuracy baseline (same as one pooled model, or just better than local) is not decided.</p>
-        </div>
+    </div>
 
-        <div>
-          <div class="notice" id="notice">
-            <div class="k-sm" style="color:#8a7230">MODEL NOTICE <span class="st research">RESEARCH</span></div>
-            <h3>More than 50% of what this model learned has been removed. Retraining is recommended.</h3>
-            <p>Unlearning in progress for Org C (requested Nov 5, 2026). Removed so far: 52% (example).</p>
-            <div class="meter" role="img" aria-label="52 percent removed, marks at 50 and 75 percent">
-              <i style="width:52%"></i>
-              <span style="left:50%"><em>50%</em></span>
-              <span style="left:75%"><em>75%</em></span>
-            </div>
-            <dl class="who">
-              <dt>Sent to</dt><dd>Not decided</dd>
-              <dt>Decided by</dt><dd>Not decided</dd>
-            </dl>
-            <div class="btns">
-              <button class="btn ghost sm" type="button" id="dismiss">Dismiss</button>
-              <button class="btn solid sm" type="button" disabled>Plan retraining</button>
-            </div>
-            <p class="note" style="color:#5c4a10">Retraining after unlearning: recommended when more than 50% is removed (example). The 50% and 75% marks apply to the tree-based unlearning module only.</p>
-          </div>
-          <div class="dismissed" id="dismissed">Model notice dismissed in this view. <button type="button" id="undo">Show again</button></div>
+    <nav class="mg-tabs" aria-label="Manage sections">
+      <a href="#overview" data-tab="overview">Overview</a>
+      <a href="#requests" data-tab="requests">Join requests<span class="n" id="req-n">1</span></a>
+      <a href="#members" data-tab="members">Members<span class="n">12</span></a>
+      <a href="#leave" data-tab="leave">Leave requests</a>
+    </nav>
+
+    <!-- 개요 -->
+    <section class="mg-pane" id="overview" aria-label="Overview">
+      <div class="mg-facts">
+        <div><div class="tv-k">Members</div><div class="tv-v">12 of 20</div><div class="s">8 seats open</div></div>
+        <div><div class="tv-k">Joining closes</div><div class="tv-v">Dec 2</div><div class="s">12 days left</div></div>
+        <div><div class="tv-k">Requests to review</div><div class="tv-v" id="fact-req">1</div><div class="s"><a href="#requests" data-tab="requests">Open join requests</a></div></div>
+        <div><div class="tv-k">Planned start</div><div class="tv-v">Dec 7</div><div class="s">After TRAVI approves</div></div>
+      </div>
+
+      <div class="tv-card">
+        <h2>Before training starts</h2>
+        <div class="mg-check-list" id="checklist">
+          <label class="tv-check"><input type="checkbox" checked> <span>Members confirmed (12 of 20)</span></label>
+          <label class="tv-check"><input type="checkbox" checked> <span>Data format checked (CIC-IDS)</span></label>
+          <label class="tv-check"><input type="checkbox"> <span>Compute ready</span></label>
         </div>
       </div>
     </section>
 
-    <!-- 정산 기간: 누적 기여에 나눔 규칙을 적용. 지급은 Hedera(계획) -->
-    <section class="panel" id="settlement">
-      <div class="p-head">
-        <div>
-          <div class="k-sm">03 · SETTLEMENT</div>
-          <h2>Settlement periods</h2>
-          <p>Prepare a settlement period from members' cumulative contribution with this Coop's sharing rule, and preview each member's share. Payout on Hedera is planned.</p>
-        </div>
-        <div class="badges"><span class="st ill">SAMPLE DATA</span><span class="st ill">ILLUSTRATIVE</span><span class="st research">RESEARCH</span><span class="st plan">PLANNED</span></div>
-      </div>
-
-      <div class="two stack">
-        <div>
-          <div class="rule">
-            <div class="k-sm">SHARING RULE <span class="st research">RESEARCH</span></div>
-            <div class="f">Power rule on cumulative contribution, <span class="mono" style="white-space:nowrap">α ≥ 1</span></div>
-            <div style="font-size:14px;color:var(--muted);line-height:1.6">arXiv:2606.28217. This Coop's setting: <b class="mono" style="color:var(--text);white-space:nowrap">α = 1</b> (example).</div>
-          </div>
-          <p class="fixed-note">Only revenue from contribution is shared. Not a severance payment. Org C has asked to leave but still receives its share for November (contribution revenue only).</p>
-
-          <div class="sub-h">Periods</div>
-          <div class="tbl-wrap">
-            <table class="tbl">
-              <thead><tr><th>Period</th><th>Rounds included</th><th class="num">Revenue to share</th><th>State</th><th></th></tr></thead>
-              <tbody>
-                <tr class="rowlink" data-href="mypage.html#settlements"><td class="org" style="white-space:nowrap">#1 · Nov 1 – Nov 30, 2026</td><td>Rounds 3–4</td><td class="num">1,000.00</td><td style="white-space:nowrap"><span class="pill ok">Paid (example)</span> <span class="st plan" style="margin-left:2px">PLANNED</span></td><td><a class="dim" href="mypage.html#settlements" style="font-size:13px;white-space:nowrap">Participant view →</a></td></tr>
-                <tr class="rowlink" data-href="mypage.html#settlements"><td class="org" style="white-space:nowrap">#2 · Dec 1 – Dec 31, 2026</td><td>Rounds 5–6</td><td class="num dim">—</td><td style="white-space:nowrap"><span class="pill wait">Open</span> <span class="dim" style="font-size:12px">Not computed yet</span></td><td><a class="dim" href="mypage.html#settlements" style="font-size:13px;white-space:nowrap">Participant view →</a></td></tr>
-              </tbody>
-            </table>
-          </div>
-          <p class="note">States: Open / Computed / Paid. Payout unit is TBD. Period #2 can be previewed after Round 5 ends on Dec 14. Rounds feed a period but are tracked in Training rounds.</p>
-        </div>
-
-        <div class="preview">
-          <div class="pv-head">
-            <div><div class="k-sm">PERIOD #1 · ROUNDS 3–4</div><div class="t">Nov 1 – Nov 30, 2026</div></div>
-            <span class="st ill">ILLUSTRATIVE</span>
-          </div>
-          <div class="tbl-wrap">
-            <table class="tbl pv-tbl">
-              <thead><tr><th>Organization</th><th class="num c-raw">Cumulative contribution (raw)</th><th class="num">Share</th><th class="num">Payout</th></tr></thead>
-              <tbody id="pv"></tbody>
-              <tfoot><tr><td>Total</td><td class="c-raw"></td><td class="num" id="pv-sh">100%</td><td class="num">1,000.00</td></tr></tfoot>
-            </table>
-          </div>
-          <p class="pv-msg" style="margin-top:8px">Payout unit TBD. Share comes from the sharing rule with this Coop's setting α = 1, not from contribution alone.</p>
-          <div class="pv-ctl">
-            <label>What-if
-              <select id="alpha"><option value="1">α = 1 (this Coop's setting)</option><option value="1.5">α = 1.5 (what-if)</option><option value="2">α = 2 (what-if)</option></select>
-            </label>
-            <button class="btn ghost sm" type="button" id="compute">Compute preview</button>
-            <span><span class="pill ok">Paid (example)</span> <span class="st plan" style="margin-left:2px">PLANNED</span></span>
-          </div>
-          <p class="pv-msg" id="pvmsg">Shown with this Coop's setting α = 1 on sample data. Not the real scoring method.</p>
-          <!-- 기록(HCS)과 지급(송금)은 다른 트랜잭션. 모두 예시 -->
-          <dl class="rec mono">
-            <dt>closed</dt><dd>Nov 30, 2026</dd>
-            <dt>computed</dt><dd>Dec 1, 2026 00:00 UTC</dd>
-            <dt>recorded to HCS</dt><dd>Dec 1, 2026 00:05:12 UTC</dd>
-            <dt>record topic</dt><dd>0.0.4811023</dd>
-            <dt>sequence_number</dt><dd>1247</dd>
-            <dt>consensus_timestamp</dt><dd>1796083512.384012001</dd>
-            <dt>payout transaction</dt><dd>0.0.4811001@1796083505.000000000 (submitted, example)</dd>
-          </dl>
-          <p style="margin:12px 0 0"><span class="r-link">View on HashScan (example, not a link)</span></p>
+    <!-- 참여 요청: 구조는 확정 전 -->
+    <section class="mg-pane" id="requests" aria-label="Join requests" hidden>
+      <div class="tv-card">
+        <h2>Join requests <span class="tv-sample">Sample data</span></h2>
+        <div class="tv-tbl-wrap">
+          <table class="tv-tbl mg-tbl">
+            <thead><tr><th scope="col">Organization</th><th scope="col">Role</th><th scope="col">Data</th><th scope="col">Sent</th><th scope="col">Status</th><th scope="col"><span class="sr">Decision</span></th></tr></thead>
+            <tbody>
+              <tr>
+                <td><b>Org C</b></td>
+                <td>Data provider</td>
+                <td>1 year of network flow records, about 50,000 flows a day</td>
+                <td>Nov 19</td>
+                <td class="req-state"><span class="tv-chip waiting">In review</span></td>
+                <td><div class="mg-acts"><button class="btn solid sm" type="button" data-req="approve">Approve</button><button class="btn ghost sm" type="button" data-req="decline">Decline</button></div></td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </section>
 
-    <!-- 탈퇴 요청: 리더는 상태만 본다. 승인·거절 없음 -->
-    <section class="panel" id="exits">
-      <div class="p-head">
-        <div>
-          <div class="k-sm">04 · LEAVING</div>
-          <h2>Leave requests</h2>
-          <p>Members' requests to leave this Coop. Leaving is not instant: it is requested, processed by unlearning (or retraining if resources allow), then recorded. Leaders can follow requests but cannot approve or deny them.</p>
+    <!-- 멤버: 구조는 확정 전 -->
+    <section class="mg-pane" id="members" aria-label="Members" hidden>
+      <div class="tv-card">
+        <h2>Members <span class="tv-sample">Sample data</span></h2>
+        <div class="tv-tbl-wrap">
+          <table class="tv-tbl mg-tbl">
+            <thead><tr><th scope="col">Organization</th><th scope="col">Role</th><th scope="col">Brings</th><th scope="col">Joined</th></tr></thead>
+            <tbody>
+              <tr><td><b>Org B</b><span class="tv-chip lead">Leader</span></td><td>Data provider</td><td>Network flow records, about 40,000 flows a day</td><td>Oct 21</td></tr>
+              <tr><td><b>Org D</b></td><td>Compute provider</td><td>Two A100 GPUs, available throughout training</td><td>Oct 29</td></tr>
+              <tr><td><b>Org E</b></td><td>Data provider</td><td>Network flow records, about 20,000 flows a day</td><td>Nov 2</td></tr>
+            </tbody>
+          </table>
         </div>
-        <div class="badges"><span class="st ill">SAMPLE DATA</span><span class="st road">ROADMAP</span><span class="st plan">PLANNED</span></div>
+        <p class="mg-foot">12 of 20 members · showing 3</p>
       </div>
-      <div class="tbl-wrap">
-        <table class="tbl" style="min-width:760px">
-          <thead><tr><th>Organization</th><th>Requested</th><th>Processing</th><th>State</th><th>Deadline</th><th>Ledger record</th><th></th></tr></thead>
-          <tbody>
-            <tr>
-              <td class="org">Org C</td><td>Nov 5, 2026</td><td>Unlearning · 52% removed (example)</td><td><span class="pill run">Unlearning in progress</span></td>
-              <td class="dim">TBD (legal period being checked)</td>
-              <td><span class="dim">Pending (example)</span> <span class="st plan">PLANNED</span></td>
-              <td><button class="expand" type="button" aria-expanded="false" aria-controls="exit-c">Status ▾</button></td>
-            </tr>
-            <tr class="detail" id="exit-c" hidden>
-              <td colspan="7">
-                <ol class="steps3">
-                  <li class="done"><b>Received</b>Nov 5, 2026</li>
-                  <li class="now"><b>Processing</b>Unlearning in progress · 52% removed. Retraining recommended (example)</li>
-                  <li><b>Done</b>Exit recorded on the ledger (planned)</li>
-                </ol>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <p class="note">Processing: Unlearning / Retraining if resources allow. State: Received / Processing / Done.</p>
-      <p class="note">Org C still receives revenue from its November contribution in period #1 (contribution revenue only).</p>
-      <p class="fixed-note">The ledger shows that an exit happened and when. Removing knowledge from the model is the job of unlearning, not the ledger.</p>
     </section>
-  </div>
 
-  <div class="wrap">
-    <!-- 검토 메모: 미결 질문과 가정, 출처 -->
-    <details class="review" id="review">
-      <summary>Review notes <span>7 open questions · 3 assumptions</span></summary>
-      <div class="body">
-        <div>
-          <h3>OPEN QUESTIONS</h3>
-          <ol>
-            <li>Two role layers: does each organization need its own manager role apart from the Coop leader? Is "Coop leader" the final name?</li>
-            <li>Who executes the settlement payout: the Coop leader, TRAVI admin, or the OC?</li>
-            <li>Who receives the retraining notice, and who decides to retrain?</li>
-            <li>Can a company that stays refuse unlearning on its own local model? Is the model deployed to nodes, or kept only on the orchestrator?</li>
-            <li>Should a Coop where one company holds 75% or more of the data be treated as an exception?</li>
-            <li>Does the professor confirm Hedera as the settlement payout method? What is the payout unit (token or fiat)?</li>
-            <li>Accuracy baseline: same as one pooled (monolithic) model, or just better than the local model?</li>
-          </ol>
-        </div>
-        <div>
-          <h3>ASSUMPTIONS</h3>
-          <ol>
-            <li>Approve and execute-payout buttons are left out or disabled here. Their owners are not decided, so this is the most conservative form.</li>
-            <li>The professor put admin dashboards at low priority for the MVP. This screen is a lo-fi review mock-up, not MVP build scope.</li>
-            <li>Compute preview re-calculates the same example numbers as the receipt on the home page. It is not the real contribution scoring method.</li>
-          </ol>
-        </div>
+    <!-- 탈퇴 요청: 지금은 없음 -->
+    <section class="mg-pane" id="leave" aria-label="Leave requests" hidden>
+      <div class="tv-card">
+        <h2>Leave requests</h2>
+        <p class="mg-empty">No leave requests</p>
+      </div>
+    </section>
+
+    <details class="tv-review">
+      <summary>Review notes <span>5 open questions</span></summary>
+      <div class="tv-review-body">
+        <h3>미결</h3>
+        <ol>
+          <li>Start training 버튼은 상태만 Waiting to start로 바꾸고, 실제 학습 시작은 TRAVI가 콘솔에서 승인한다. 승인한 뒤 리더에게 가는 알림은 'Training started for SOC Threat Detection Coop. Round 1 is running.'(SOC Threat Detection Coop의 학습이 시작됐고 1라운드가 돌고 있다는 뜻)으로 둔다. 승인 화면은 만들지 않는다.</li>
+          <li>참여 요청과 멤버 관리를 이 페이지의 탭으로 둘지, Dashboard와 떨어진 별도 페이지로 뗄지는 엇갈린 발언이 있어 정하지 않았다. 지금 Join requests와 Members 탭 구조는 확정 전 시안이다.</li>
+          <li>Coop leader 명칭은 팀이 정하기 전 임시 표기다. 칩은 Leader로 쓴다.</li>
+          <li>체크리스트 세 항목은 예시다. 리더가 무엇을 확인해야 학습을 시작할 수 있는지 정해야 한다.</li>
+          <li>탈퇴 요청을 리더가 승인하는지, 상태만 보는지 정하지 않았다. 지금은 빈 상태만 보여 준다.</li>
+        </ol>
+        <h3>가정</h3>
+        <ol>
+          <li>Approve와 Decline은 화면의 상태 칩만 바꾸고 아무것도 보내지 않는다.</li>
+          <li>아직 학습 전이라 학습 라운드 표와 언러닝 모델 알림은 넣지 않았다. 정산 탭과 정산 구역은 졸전 데모에서 빠졌다.</li>
+          <li>데이터와 연산 설명은 요청을 보낸 Org C 행과 연산을 내는 Org D 행에 둔다.</li>
+          <li>Edit Coop은 시안이라 비활성이다. 숫자는 예시이고 기준일은 Nov 20, 2026이다.</li>
+        </ol>
       </div>
     </details>
   </div>
 </main>
 
-<footer class="foot">
-  <div class="wrap">
-    <div class="foot-top">
-      <div>
-        <div class="eyebrow">CONTACT</div>
-        <h3>Contact TRAVI</h3>
-        <a class="mail" href="mailto:contact@travi.example">contact@travi.example <span class="todo">교체 필요</span></a>
-        <div class="social"><a href="#" aria-label="LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5C4.98 4.88 3.87 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.22 8h4.56v14H.22V8zm7.4 0h4.37v1.92h.06c.61-1.15 2.1-2.36 4.32-2.36 4.62 0 5.47 3.04 5.47 7V22h-4.56v-6.6c0-1.57-.03-3.6-2.2-3.6-2.2 0-2.530 1.72-2.53 3.49V22H7.62V8z"/></svg></a></div>
-      </div>
-      <a class="btn solid lg" href="mailto:contact@travi.example">CONTACT US</a>
+<footer data-travi-footer></footer>
+
+<dialog class="tv-modal sm" id="start-modal" aria-labelledby="start-h">
+  <div class="tv-modal-box">
+    <h2 class="tv-modal-title" id="start-h">Start training for SOC Threat Detection Coop?</h2>
+    <p class="tv-modal-body">Joining closes and the Coop shows as Waiting to start. TRAVI reviews the request, then round 1 starts.</p>
+    <div class="tv-modal-actions">
+      <button class="btn ghost" type="button" data-modal-close>Cancel</button>
+      <button class="btn solid" type="button" id="start-go">Start training</button>
     </div>
-    <div class="foot-bottom"><span>© 2026 TRAVI</span><span>DINA Lab, Hongik University · Neouly</span></div>
   </div>
-</footer>
+</dialog>
 
-<script src="common.js"></script>
-<script>
-// 모델 알림 닫기와 되돌리기(이 화면에서만)
-var notice = document.getElementById('notice'), dis = document.getElementById('dismissed');
-document.getElementById('dismiss').onclick = function () { notice.style.display = 'none'; dis.style.display = 'block'; };
-document.getElementById('undo').onclick = function () { notice.style.display = ''; dis.style.display = 'none'; };
-
-// 정산 기간 행: 참여자가 보는 같은 정산 기간으로
-document.querySelectorAll('tr.rowlink').forEach(function (tr) {
-  tr.addEventListener('click', function (e) { if (!e.target.closest('a')) location.href = tr.dataset.href; });
-});
-
-// 탈퇴 요청 진행 단계 펼치기
-document.querySelectorAll('.expand').forEach(function (b) {
-  b.onclick = function () {
-    var row = document.getElementById(b.getAttribute('aria-controls'));
-    row.hidden = !row.hidden;
-    b.setAttribute('aria-expanded', String(!row.hidden));
-    b.textContent = row.hidden ? 'Status ▾' : 'Status ▴';
-  };
-});
-
-// 미리보기: 몫 = 기여^α / Σ기여^α. 예시 숫자, 실제 산정 방법 아님
-var REVENUE = 1000;
-var MEMBERS = [['Org A', 1.146], ['Org B', 0.825], ['Org C', 0.633], ['Org D', 0.396]];
-function render(alpha) {
-  var w = MEMBERS.map(function (m) { return Math.pow(m[1], alpha); });
-  var sum = w.reduce(function (a, b) { return a + b; }, 0);
-  document.getElementById('pv').innerHTML = MEMBERS.map(function (m, i) {
-    var s = w[i] / sum;
-    return '<tr><td class="org">' + m[0] + '</td><td class="num mono c-raw">' + m[1].toFixed(3) +
-      '</td><td class="num"><span class="bar" style="width:' + Math.round(s * 60) + 'px"></span>' + (s * 100).toFixed(1) +
-      '%</td><td class="num">' + (REVENUE * s).toFixed(2) + '</td></tr>';
-  }).join('');
-}
-render(1);
-document.getElementById('compute').onclick = function () {
-  var a = parseFloat(document.getElementById('alpha').value);
-  render(a);
-  document.getElementById('pvmsg').textContent = a === 1
-    ? 'Shown with this Coop\'s setting α = 1 on sample data. Not the real scoring method.'
-    : 'What-if only: α = ' + a + '. Period #1 was paid with this Coop\'s setting α = 1. Not the real scoring method.';
-};
-</script>
 <script src="app.js"></script>
+<script>
+(function () {
+  'use strict';
+  var T = window.TRAVI;
+
+  /* 탭: 주소의 #overview #requests #members #leave */
+  var TABS = ['overview', 'requests', 'members', 'leave'];
+  function show(id, push) {
+    if (TABS.indexOf(id) < 0) id = 'overview';
+    TABS.forEach(function (t) { document.getElementById(t).hidden = t !== id; });
+    document.querySelectorAll('.mg-tabs a').forEach(function (a) {
+      a.setAttribute('aria-current', a.getAttribute('data-tab') === id ? 'true' : 'false');
+    });
+    if (push) { try { history.replaceState(null, '', '#' + id); } catch (e) {} }
+  }
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest('a[data-tab]');
+    if (!a) return;
+    e.preventDefault();
+    show(a.getAttribute('data-tab'), true);
+  });
+  window.addEventListener('hashchange', function () { show(location.hash.slice(1)); });
+  show(location.hash.slice(1));
+
+  /* 체크리스트를 다 채워야 Start training이 켜진다 */
+  var start = document.getElementById('start');
+  var wrap = document.getElementById('start-wrap');
+  var boxes = Array.prototype.slice.call(document.querySelectorAll('#checklist input'));
+  var waiting = false;
+  function sync() {
+    if (waiting) return;
+    var done = boxes.every(function (b) { return b.checked; });
+    start.disabled = !done;
+    if (done) wrap.removeAttribute('title');
+    else wrap.setAttribute('title', 'Finish the checklist to start training.');
+  }
+  boxes.forEach(function (b) { b.addEventListener('change', sync); });
+  sync();
+
+  /* 확인 뒤: Waiting to start, 버튼 비활성, 대기 배너 */
+  document.getElementById('start-go').addEventListener('click', function () {
+    T.closeModal('start-modal');
+    waiting = true;
+    var chip = document.getElementById('status-chip');
+    chip.className = 'tv-chip waiting';
+    chip.textContent = 'Waiting to start';
+    start.disabled = true;
+    start.textContent = 'Waiting for approval';
+    start.removeAttribute('data-modal-open');
+    wrap.removeAttribute('title');
+    boxes.forEach(function (b) { b.disabled = true; });
+    document.getElementById('start-help').hidden = true;
+    var banner = document.getElementById('wait-banner');
+    banner.hidden = false;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  /* 참여 요청: 칩만 바뀐다. 보내는 것 없음 */
+  var left = document.querySelectorAll('[data-req="approve"]').length;
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest('button[data-req]');
+    if (!b) return;
+    var row = b.closest('tr');
+    var ok = b.getAttribute('data-req') === 'approve';
+    row.querySelector('.req-state').innerHTML = ok
+      ? '<span class="tv-chip ok">Approved</span>'
+      : '<span class="tv-chip no">Declined</span>';
+    b.closest('.mg-acts').remove();
+    left = Math.max(0, left - 1);
+    document.getElementById('req-n').textContent = String(left);
+    document.getElementById('fact-req').textContent = String(left);
+  });
+})();
+</script>
 </body>
 </html>

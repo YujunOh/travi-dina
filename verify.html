@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Verify your organization · TRAVI</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="style.css">
+<style>
+/* MF 04b Verify your organization: 참여 요청 직후 한 번 */
+[hidden] { display: none !important; }
+.vf-steps { margin: 18px 0 0; }
+.vf-card-h { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px 16px; flex-wrap: wrap; }
+.vf-card-h h2 { margin: 0; }
+.vf-n { display: inline-grid; place-items: center; width: 24px; height: 24px; margin-right: 10px; border-radius: 50%; background: var(--bg-2); font-size: 12px; font-weight: 700; color: var(--muted); vertical-align: 1px; }
+.tv-card .tv-link { font-size: 14px; }
+.drop { margin-top: 14px; }
+/* 기본 파일 칸은 브라우저 언어를 따라 글자가 바뀌므로 영어 버튼으로 덮는다 */
+.vf-file { position: relative; display: flex; align-items: center; gap: 12px; min-width: 0; padding: 12px 14px; border: 1px dashed var(--line-2); border-radius: 10px; background: var(--bg); }
+.vf-file input[type="file"] { position: absolute; inset: 0; width: 100%; height: 100%; padding: 0; border: 0; opacity: 0; cursor: pointer; }
+.vf-file:focus-within { outline: 2px solid var(--accent-soft); border-color: var(--accent); }
+.vf-file .btn { pointer-events: none; border-color: var(--line-2); background: var(--card); }
+.vf-file-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 14px; color: var(--muted); }
+.vf-file.off { background: var(--bg-2); }
+.vf-file.off input[type="file"] { cursor: not-allowed; }
+.vf-acts { display: flex; justify-content: flex-end; gap: 10px; flex-wrap: wrap; margin-top: 20px; }
+.vf-done { margin-top: 20px; }
+.side h2 { margin: 0 0 12px; font-size: 18px; }
+.side ol { margin: 0 0 18px; padding-left: 20px; font-size: 14px; line-height: 1.6; color: #2c3446; }
+.side ol li { margin-bottom: 6px; }
+.side .st-row { padding-top: 14px; border-top: 1px solid var(--line); }
+.side .st-row .tv-k { margin-bottom: 6px; }
+.side .coop { margin: 0 0 6px; font-size: 14px; font-weight: 600; }
+@media (max-width: 640px) { .vf-acts .btn { flex: 1; justify-content: center; } }
+</style>
+</head>
+<body data-auth="required">
+<header data-travi-header data-active="cooperatives"></header>
+
+<main class="wrap tv-main">
+  <div class="crumb"><a href="coop.html">Cooperatives</a><span class="sep">›</span><a href="coop.html?coop=soc">SOC Threat Detection Coop</a><span class="sep">›</span><span class="cur">Verify your organization</span></div>
+
+  <ol class="tv-steps vf-steps" aria-label="Request progress">
+    <li class="done">Requested</li>
+    <li class="now" aria-current="step">Verification</li>
+    <li>Leader review</li>
+    <li>Approved</li>
+  </ol>
+
+  <div class="tv-head">
+    <div>
+      <h1 class="tv-h1">Verify your organization</h1>
+      <p class="tv-lead" id="lead">Before the Coop leader reviews your request, TRAVI checks that you belong to <span data-u="org">University A Security Lab</span>. You only do this once.</p>
+    </div>
+  </div>
+
+  <div class="tv-grid">
+    <div>
+      <section class="tv-card">
+        <div class="vf-card-h">
+          <h2><span class="vf-n">1</span>Confirm your work email</h2>
+          <span class="tv-chip ok">Confirmed</span>
+        </div>
+        <p style="margin-top:10px">You confirmed <b data-u="email">soc@univ-a.example</b> with the link we sent.</p>
+        <button class="tv-link" type="button" id="resend" hidden>Resend link</button>
+      </section>
+
+      <section class="tv-card">
+        <h2><span class="vf-n">2</span>Upload proof of organization</h2>
+        <p style="margin-top:10px">A business registration certificate or an official letter. PDF or JPG, up to 10 MB.</p>
+        <p class="tv-help" style="margin:0">Optional for universities and research institutes.</p>
+        <div class="tv-field drop">
+          <label for="proof">Proof of organization</label>
+          <div class="vf-file" id="proof-box">
+            <input id="proof" type="file" accept=".pdf,.jpg,.jpeg,application/pdf,image/jpeg" aria-describedby="proof-name">
+            <span class="btn ghost sm" aria-hidden="true">Choose file</span>
+            <span class="vf-file-name" id="proof-name">No file chosen</span>
+          </div>
+          <span class="tv-help">TRAVI uses this to verify your organization.</span>
+          <p class="tv-err" id="proof-err" role="alert" hidden>Choose a PDF or JPG file up to 10 MB.</p>
+        </div>
+      </section>
+
+      <div class="vf-acts" id="acts">
+        <a class="btn ghost" href="dashboard.html">Finish later</a>
+        <button class="btn solid" type="button" id="submit">Submit for verification</button>
+      </div>
+      <div class="tv-banner ok vf-done" id="done" role="status" hidden>Verification submitted. We'll notify you when it's done. You can leave this page.</div>
+    </div>
+
+    <aside class="tv-card tv-sticky side" aria-label="What happens next">
+      <h2>What happens next</h2>
+      <ol>
+        <li>TRAVI checks your details.</li>
+        <li>The Coop leader reviews your request.</li>
+        <li>You get a notification with the decision.</li>
+      </ol>
+      <div class="st-row">
+        <div class="tv-k">Request status</div>
+        <p class="coop">SOC Threat Detection Coop</p>
+        <span class="tv-chip open" id="req-chip">Verification needed</span>
+        <p style="margin:12px 0 0"><span class="tv-sample">Sample data</span></p>
+      </div>
+    </aside>
+  </div>
+
+  <details class="tv-review">
+    <summary>Review notes <span>3 open questions</span></summary>
+    <div class="tv-review-body">
+      <h3>미결</h3>
+      <ol>
+        <li>누가 무엇을 확인하는지, 그리고 검증과 승인을 어떤 순서로 할지 정해지지 않았다.</li>
+        <li>기관 증빙을 가입할 때 받을지, 이 화면에서 받을지가 아직 부딪친다. 교수님 확인 전이다.</li>
+        <li>요청 상태 칩은 Verification needed, Verifying, In review, Approved, Declined 다섯 개로 둔다. Dashboard와 알림에도 같은 이름을 쓸지 확인이 필요하다.</li>
+      </ol>
+      <h3>가정</h3>
+      <ol>
+        <li>TRAVI가 리더 검토 전에 이메일과 기관 증빙을 한 번 확인한다.</li>
+        <li>이메일 확인은 이미 끝난 예시로 그렸다. 확인 전 상태에서만 쓰는 Resend link는 숨겨 두었다.</li>
+        <li>대학과 연구기관은 증빙이 선택이라 파일 없이도 제출된다.</li>
+        <li>고른 파일은 어디에도 올라가지 않는다. Resend link도 실제로 메일을 보내지 않는다.</li>
+      </ol>
+    </div>
+  </details>
+</main>
+
+<footer data-travi-footer></footer>
+
+<script src="app.js"></script>
+<script>
+(function () {
+  'use strict';
+  function $(s) { return document.querySelector(s); }
+  var T = window.TRAVI || { toast: function () {} };
+  var u = T.user || (T.users && T.users.member);
+  if (u && !T.isLeader) {
+    document.querySelectorAll('[data-u]').forEach(function (el) { el.textContent = u[el.getAttribute('data-u')]; });
+  }
+
+  // 요청 직후(sent=1)에만 토스트. 새로고침해도 다시 뜨지 않게 주소에서 뺀다
+  function onReady() {
+    var sent = null;
+    try { sent = new URLSearchParams(location.search).get('sent'); } catch (e) {}
+    if (sent !== '1') return;
+    T.toast('Request sent to SOC Threat Detection Coop.');
+    try {
+      var url = new URL(location.href);
+      url.searchParams.delete('sent');
+      history.replaceState(null, '', url.pathname.split('/').pop() + url.search + url.hash);
+    } catch (e) {}
+  }
+  if (document.querySelector('.tv-top')) onReady(); else document.addEventListener('travi:ready', onReady);
+
+  $('#resend').addEventListener('click', function () {
+    T.toast('We sent the link again to ' + (u ? u.email : 'soc@univ-a.example') + '.');
+  });
+
+  var MAX = 10 * 1024 * 1024;
+  function fileOk() {
+    var f = $('#proof').files && $('#proof').files[0];
+    if (!f) return true;
+    return f.size <= MAX && /\.(pdf|jpe?g)$/i.test(f.name);
+  }
+  $('#proof').addEventListener('change', function () {
+    var f = this.files && this.files[0];
+    $('#proof-name').textContent = f ? f.name : 'No file chosen';
+    $('#proof-err').hidden = fileOk();
+  });
+
+  // 제출: 전송 없이 상태만 Verifying으로
+  $('#submit').addEventListener('click', function () {
+    if (!fileOk()) { $('#proof-err').hidden = false; $('#proof').focus(); return; }
+    $('#acts').hidden = true;
+    $('#done').hidden = false;
+    $('#proof').disabled = true;
+    $('#proof-box').classList.add('off');
+    var c = $('#req-chip');
+    c.className = 'tv-chip waiting';
+    c.textContent = 'Verifying';
+    $('#done').focus && $('#done').setAttribute('tabindex', '-1');
+    $('#done').focus();
+  });
+})();
+</script>
+</body>
+</html>
