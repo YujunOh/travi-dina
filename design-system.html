@@ -1,0 +1,355 @@
+<!doctype html>
+<html lang="ko" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TRAVI Design System</title>
+<meta name="robots" content="noindex">
+<script>try { var t0 = localStorage.getItem('tv-ds-theme'); if (t0 === 'dark' || t0 === 'light') document.documentElement.setAttribute('data-theme', t0); } catch (e) {}</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="ds/tokens.css">
+<style>
+/* 디자인 시스템 검토 페이지. 단계마다 '지금 정할 것' 한 가지를 맨 위에 두고, 정해진 것은 아래로 내린다.
+   색 값은 전부 ds/tokens.css 에서 읽는다. 이 파일에는 색 값을 직접 적지 않는다(예전 값 비교용 3개 제외).
+   sx- 로 시작하는 것은 색을 입혀 보는 임시 화면 조각이다. 모양은 4단계(버튼)부터 정한다. */
+* { box-sizing: border-box; }
+html { overflow-x: clip; }
+body { margin: 0; background: var(--tv-bg); color: var(--tv-text); font-family: 'Pretendard Variable', Pretendard, system-ui, sans-serif; font-size: 15px; line-height: 1.6; word-break: keep-all; -webkit-font-smoothing: antialiased; }
+button, input { font: inherit; }
+.wrap { max-width: 1240px; margin: 0 auto; padding: 0 20px; }
+.mono { font-family: ui-monospace, 'SFMono-Regular', Consolas, monospace; }
+
+.bar { border-bottom: 1px solid var(--tv-line); }
+.bar .wrap { display: flex; align-items: center; gap: 16px; height: 56px; }
+.bar b { font-size: 15px; letter-spacing: -0.01em; }
+.bar .sp { flex: 1; }
+.toggle { border: 1px solid var(--tv-line-strong); background: var(--tv-surface); color: var(--tv-text); border-radius: 8px; padding: 7px 12px; font-size: 13px; font-weight: 600; cursor: pointer; }
+.toggle:hover { border-color: var(--tv-text); }
+
+.steps { display: flex; gap: 6px; list-style: none; margin: 20px 0 0; padding: 0 0 4px; overflow-x: auto; }
+.steps li { flex: none; display: flex; align-items: center; gap: 7px; font-size: 13px; color: var(--tv-text-faint); border: 1px solid var(--tv-line); border-radius: 8px; padding: 5px 10px 5px 6px; background: var(--tv-surface); }
+.steps li i { font-style: normal; width: 20px; height: 20px; border-radius: 6px; display: grid; place-items: center; font-size: 11px; font-weight: 700; background: var(--tv-bg-subtle); color: var(--tv-text-muted); }
+.steps li.now { color: var(--tv-text); border-color: var(--tv-text); font-weight: 600; }
+.steps li.now i { background: var(--tv-text); color: var(--tv-bg); }
+
+.ask { padding: 36px 0 20px; }
+.kicker { font-size: 12px; font-weight: 700; letter-spacing: 0.08em; color: var(--tv-text-muted); margin: 0 0 8px; }
+.ask h1 { font-size: 32px; line-height: 1.2; letter-spacing: -0.03em; margin: 0 0 14px; }
+.ask p { margin: 0 0 8px; max-width: 760px; color: var(--tv-text-muted); }
+.ask p strong { color: var(--tv-text); font-weight: 600; }
+.reco { margin-top: 16px; max-width: 760px; border-left: 3px solid var(--tv-text); padding: 2px 0 2px 14px; color: var(--tv-text); }
+
+.cands { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; padding-bottom: 12px; }
+.cand { min-width: 0; display: flex; flex-direction: column; gap: 12px; }
+.cand-head { display: flex; align-items: center; gap: 10px; }
+.cand-head .letter { width: 30px; height: 30px; border-radius: 8px; display: grid; place-items: center; font-weight: 700; font-size: 15px; background: var(--tv-primary); color: var(--tv-on-primary); }
+.cand-head h2 { font-size: 18px; margin: 0; letter-spacing: -0.01em; }
+.cand-head .rec { font-size: 11px; font-weight: 700; border: 1px solid var(--tv-text); border-radius: 6px; padding: 1px 7px; }
+.cand-line { margin: 0; font-size: 14px; color: var(--tv-text-muted); min-height: 3.2em; }
+.cand-notes { display: grid; gap: 8px; font-size: 14px; }
+.cand-notes div { display: grid; grid-template-columns: 62px 1fr; gap: 8px; }
+.cand-notes span.k { font-size: 12px; font-weight: 700; color: var(--tv-text-faint); padding-top: 2px; }
+.cand-num { font-size: 12px; color: var(--tv-text-faint); margin: 0; font-variant-numeric: tabular-nums; }
+
+/* 색을 입혀 보는 임시 화면 조각 */
+.sx { border: 1px solid var(--tv-line); border-radius: 14px; background: var(--tv-bg); overflow: hidden; }
+.sx-top { display: flex; align-items: center; gap: 8px; padding: 11px 14px; border-bottom: 1px solid var(--tv-line); }
+.sx-brand { display: flex; align-items: center; gap: 8px; font-weight: 700; letter-spacing: 0.28em; font-size: 13px; }
+.sx-brand i { width: 16px; height: 16px; border-radius: 50%; border: 2px solid currentColor; }
+.sx-sp { flex: 1; }
+.sx-btn { display: inline-flex; align-items: center; justify-content: center; white-space: nowrap; border-radius: 8px; font-size: 13px; font-weight: 600; padding: 8px 14px; border: 1px solid transparent; cursor: pointer; text-decoration: none; }
+.sx-btn.primary { background: var(--tv-primary); color: var(--tv-on-primary); }
+.sx-btn.primary:hover { background: var(--tv-primary-hover); }
+.sx-btn.ghost { background: var(--tv-surface); border-color: var(--tv-line-strong); color: var(--tv-text); }
+.sx-btn.ghost:hover { border-color: var(--tv-text); }
+.sx-btn.danger { background: var(--tv-surface); border-color: var(--tv-danger-line); color: var(--tv-danger); }
+.sx-btn.plain { padding-left: 6px; padding-right: 6px; color: var(--tv-text-muted); }
+.sx-body { padding: 22px 14px 16px; display: grid; gap: 18px; }
+.sx-h { font-size: 25px; line-height: 1.14; letter-spacing: -0.03em; font-weight: 700; margin: 0 0 14px; }
+.sx-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.sx-link { color: var(--tv-link); font-weight: 600; font-size: 13px; text-decoration: underline; text-underline-offset: 3px; }
+.sx-tab { font-size: 13px; font-weight: 600; padding: 5px 11px; border-radius: 8px; border: 1px solid var(--tv-line-strong); background: var(--tv-surface); color: var(--tv-text-muted); }
+.sx-tab.on { background: var(--tv-accent-bg); border-color: var(--tv-accent-line); color: var(--tv-accent); }
+.sx-card { border: 1px solid var(--tv-line); border-radius: 12px; background: var(--tv-surface); padding: 14px; display: grid; gap: 10px; }
+.sx-dom { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; color: var(--tv-domain-security); }
+.sx-dom svg { width: 18px; height: 18px; }
+.sx-title { font-size: 16px; font-weight: 700; letter-spacing: -0.01em; line-height: 1.3; }
+.sx-meta { font-size: 13px; color: var(--tv-text-muted); }
+.sx-chip { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border: 1px solid var(--tv-line-strong); border-radius: 999px; font-size: 12px; font-weight: 600; color: var(--tv-text-muted); background: var(--tv-surface); white-space: nowrap; }
+.sx-chip::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.sx-chip.coming { border-style: dashed; background: var(--tv-bg-subtle); }
+.sx-chip.open { color: var(--tv-info); border-color: var(--tv-info-line); background: var(--tv-info-bg); }
+.sx-chip.full, .sx-chip.waiting { color: var(--tv-warning); border-color: var(--tv-warning-line); background: var(--tv-warning-bg); }
+.sx-chip.training, .sx-chip.ok { color: var(--tv-success); border-color: var(--tv-success-line); background: var(--tv-success-bg); }
+.sx-chip.no { color: var(--tv-danger); border-color: var(--tv-danger-line); background: var(--tv-danger-bg); }
+.sx-chip.ended { background: var(--tv-bg-subtle); }
+.sx-input { width: 100%; font-size: 14px; padding: 9px 12px; border-radius: 8px; border: 1px solid var(--tv-line-strong); background: var(--tv-surface); color: var(--tv-text); }
+.sx-input::placeholder { color: var(--tv-text-faint); }
+.sx-input.is-focus, .sx-input:focus-visible { outline: 2px solid var(--tv-focus); outline-offset: 1px; border-color: var(--tv-focus); }
+.sx-cap { font-size: 11px; font-weight: 700; letter-spacing: 0.06em; color: var(--tv-text-faint); margin: 0 0 -8px; }
+
+.sec { padding: 44px 0 8px; border-top: 1px solid var(--tv-line); margin-top: 36px; }
+.sec h2 { font-size: 22px; letter-spacing: -0.02em; margin: 0 0 6px; }
+.sec > .wrap > p.lead { margin: 0 0 22px; color: var(--tv-text-muted); }
+.checks { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.check { min-width: 0; border: 1px solid var(--tv-line); border-radius: 14px; background: var(--tv-surface); padding: 18px; }
+.check.wide { grid-column: 1 / -1; }
+.check h3 { font-size: 15px; margin: 0 0 4px; }
+.check p { margin: 0 0 12px; font-size: 14px; color: var(--tv-text-muted); }
+.check p:last-child { margin-bottom: 0; }
+
+.strip { display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); gap: 3px; }
+.strip .col { min-width: 0; }
+.strip .cell { height: 56px; padding: 6px 7px; font-size: 11px; line-height: 1.25; display: flex; flex-direction: column; justify-content: space-between; border-radius: 6px; box-shadow: inset 0 0 0 1px var(--tv-line); }
+.strip .cell b { font-weight: 700; }
+.strip .cell span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.strip .use { margin: 5px 2px 0 1px; font-size: 11px; line-height: 1.3; color: var(--tv-text-muted); min-height: 2.6em; }
+.strip.labeled { margin-bottom: 8px; }
+.cmp { display: grid; gap: 4px; font-size: 14px; font-variant-numeric: tabular-nums; }
+.cmp .old { color: var(--ds-old-faint); }
+.cmp .new { color: var(--tv-text-faint); }
+:root { --ds-old-faint: #8e97a9; }
+[data-theme="dark"] { --ds-old-faint: #6f7a92; }
+.doms { display: flex; flex-wrap: wrap; gap: 14px 20px; }
+.doms div { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; }
+.doms svg { width: 28px; height: 28px; }
+.gradbar { height: 10px; border-radius: 6px; max-width: 260px; background: linear-gradient(90deg, #1aa3d9, #5b4ce0 50%, #e0675e); opacity: 0.55; }
+
+details.more { border-top: 1px solid var(--tv-line); }
+details.more:last-of-type { border-bottom: 1px solid var(--tv-line); }
+details.more summary { cursor: pointer; padding: 14px 2px; font-weight: 600; list-style-position: inside; }
+details.more .in { padding: 4px 0 26px; }
+details.more p { margin: 0 0 12px; max-width: 820px; color: var(--tv-text-muted); font-size: 14px; }
+.scale-name { display: flex; align-items: baseline; gap: 10px; margin: 16px 0 6px; font-size: 13px; }
+.scale-name b { font-size: 14px; }
+.scale-name span { color: var(--tv-text-muted); }
+.tbl-wrap { overflow-x: auto; border: 1px solid var(--tv-line); border-radius: 10px; margin-bottom: 18px; }
+table.roles { border-collapse: collapse; width: 100%; font-size: 13px; background: var(--tv-surface); }
+table.roles th, table.roles td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--tv-line); vertical-align: middle; white-space: nowrap; }
+table.roles td.use { white-space: normal; min-width: 180px; color: var(--tv-text-muted); }
+table.roles tr:last-child td { border-bottom: 0; }
+table.roles th { font-size: 12px; color: var(--tv-text-muted); background: var(--tv-bg-subtle); font-weight: 600; }
+.swv { display: inline-flex; align-items: center; gap: 8px; }
+.swv i { width: 18px; height: 18px; border-radius: 5px; border: 1px solid var(--tv-line-strong); flex: none; }
+.foot { padding: 28px 0 60px; font-size: 13px; color: var(--tv-text-faint); }
+
+@media (max-width: 980px) {
+  .cands { grid-template-columns: minmax(0, 1fr); gap: 32px; }
+  .cand-line { min-height: 0; }
+  .checks { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 640px) {
+  .wrap { padding: 0 16px; }
+  .ask h1 { font-size: 26px; }
+  .strip { grid-template-columns: repeat(5, minmax(0, 1fr)); row-gap: 8px; }
+}
+</style>
+</head>
+<body>
+
+<header class="bar">
+  <div class="wrap">
+    <b>TRAVI 디자인 시스템</b>
+    <span class="sp"></span>
+    <button class="toggle" id="themeBtn" type="button">어둡게 보기</button>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <ol class="steps" id="steps" aria-label="진행 순서"></ol>
+
+    <section class="ask">
+      <p class="kicker">지금 정할 것 (1단계, 색)</p>
+      <h1>주색을 하나 골라 주세요</h1>
+      <p>주색은 가장 중요한 버튼에 칠하는 색입니다. 아래 셋은 같은 화면 조각에 주색만 바꿔 입혔습니다. <strong>버튼 모양과 글자 크기는 임시이니 색만 봐 주세요.</strong></p>
+      <p>채팅에 A, B, C 중 하나로 답하면 2단계(글자)로 넘어갑니다. 다른 색이 보고 싶으면 색 이름만 말해 주세요. 같은 방식으로 바로 뽑습니다.</p>
+      <p class="reco">추천은 B입니다. 지금 사이트와 첫 화면 미리보기가 이미 이 방식이라 고칠 곳이 가장 적습니다. 색은 첫 화면 도식과 도메인 아이콘이 맡고 버튼은 한 걸음 물러납니다.</p>
+    </section>
+
+    <section class="cands" id="cands" aria-label="주색 후보"></section>
+  </div>
+
+  <section class="sec">
+    <div class="wrap">
+      <h2>같이 확인할 것</h2>
+      <p class="lead">아래는 제안한 기본값입니다. 이의가 없으면 이대로 가고, 고칠 것만 말해 주세요.</p>
+      <div class="checks">
+        <div class="check wide">
+          <h3>바탕, 글자, 선</h3>
+          <p>지금 사이트가 쓰는 값에 밝은 순서로 0부터 9까지 번호를 붙였습니다. 새로 채운 칸은 아래에 따로 적었습니다. Figma 와이어프레임의 회색은 글자만 17가지라 따르지 않고 이 열 칸으로 줄입니다.</p>
+          <div class="strip labeled" id="neutralStrip"></div>
+          <p>바뀌는 것은 흐린 글자 하나입니다. 너무 옅어서 조금 진하게 했습니다. 글자는 바탕과의 대비가 4.5를 넘어야 편하게 읽힙니다.</p>
+          <div class="cmp">
+            <span class="old">3 of 8 seats open <span id="oldNum"></span></span>
+            <span class="new">3 of 8 seats open <span id="newNum"></span></span>
+          </div>
+        </div>
+        <div class="check">
+          <h3>상태를 알리는 색</h3>
+          <p>초록, 노랑, 빨강, 남색은 지금 상태 칩에 쓰는 값 그대로입니다. 어느 상태에 어느 색을 붙일지는 6단계에서 다시 봅니다.</p>
+          <div class="sx-row" style="margin-bottom:8px">
+            <span class="sx-chip coming">Coming soon</span><span class="sx-chip open">Open to join</span><span class="sx-chip full">Full</span><span class="sx-chip training">In training</span><span class="sx-chip ended">Ended</span>
+          </div>
+          <div class="sx-row">
+            <span class="sx-chip ok">Approved</span><span class="sx-chip waiting">In review</span><span class="sx-chip no">Declined</span>
+          </div>
+        </div>
+        <div class="check">
+          <h3>어두운 화면</h3>
+          <p>첫 화면 미리보기에서 쓰던 값 그대로입니다. 사이트 전체를 밝게 갈지 어둡게 갈지 아직 정해지지 않아 두 벌을 같이 만듭니다.</p>
+          <p>오른쪽 위 버튼을 누르면 이 페이지 전체가 어두운 값으로 바뀝니다.</p>
+        </div>
+        <div class="check">
+          <h3>도메인 색</h3>
+          <p>도메인 아이콘에 쓰는 낮은 채도의 다섯 색을 그대로 씁니다. Figma 와이어프레임에서는 Security가 강조색과 같은 파랑, Healthcare가 오류색과 같은 빨강이라 뜻이 겹쳤습니다.</p>
+          <div class="doms" id="doms"></div>
+        </div>
+        <div class="check">
+          <h3>그라데이션</h3>
+          <p>제목 글자에 쓰던 세 가지 색 그라데이션은 디자인 시스템에 넣지 않습니다. AI가 만든 티가 난다는 의견이 있었던 요소입니다.</p>
+          <div class="gradbar" aria-hidden="true"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="wrap">
+      <h2>자세히 보기</h2>
+      <p class="lead">고르는 데는 필요 없습니다. 값이 궁금할 때만 펼쳐 보세요.</p>
+      <details class="more">
+        <summary>색 계단 전체</summary>
+        <div class="in" id="scales"></div>
+      </details>
+      <details class="more">
+        <summary>역할 이름과 지금 값</summary>
+        <div class="in">
+          <p>화면을 만들 때는 계단 번호 대신 역할 이름을 씁니다. 밝은 화면과 어두운 화면에서 같은 이름이 다른 값을 가리키므로, 이름만 맞게 쓰면 두 화면이 함께 맞습니다. 표의 값은 지금 보고 있는 화면 기준입니다.</p>
+          <div class="tbl-wrap"><table class="roles" id="rolesCommon"></table></div>
+          <p>아래는 주색을 무엇으로 고르느냐에 따라 달라지는 이름입니다.</p>
+          <div class="tbl-wrap"><table class="roles" id="rolesCand"></table></div>
+        </div>
+      </details>
+      <details class="more">
+        <summary>만든 방법</summary>
+        <div class="in">
+          <p>색마다 기준이 되는 값 하나를 6번 칸에 두고, 밝기만 고르게 올리고 내려 열 칸을 채웠습니다. 사이트가 이미 쓰던 값은 계산한 값 대신 그 자리에 그대로 꽂았습니다.</p>
+          <p>글자는 바탕과의 대비 4.5 이상, 버튼이나 입력칸의 경계는 3 이상을 기준으로 삼았습니다. 이 페이지에 적힌 대비 숫자는 화면에 칠해진 색을 읽어 그 자리에서 계산한 값입니다.</p>
+          <p>0부터 9까지 열 칸으로 나누는 방식은 Mantine 같은 화면 부품 도구의 색 구조와 같습니다. 4단계에서 도구를 정할 때 이 값을 그대로 옮기면 됩니다.</p>
+        </div>
+      </details>
+      <p class="foot">값 파일은 ds/tokens.css 입니다. 이 페이지와 값 파일은 기존 화면이 쓰는 style.css 와 아직 연결되어 있지 않습니다.</p>
+    </div>
+  </section>
+</main>
+
+<script src="icons/domain-icons.js"></script>
+<script>
+(function () {
+  var root = document.documentElement;
+  var $ = function (id) { return document.getElementById(id); };
+  var esc = function (s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); };
+
+  /* 색 읽기: 변수가 가리키는 최종 색을 화면에서 읽어 #rrggbb 로 바꾼다 */
+  var cv = document.createElement('canvas').getContext('2d');
+  function toHex(css) { cv.fillStyle = '#000000'; cv.fillStyle = css; var v = cv.fillStyle; if (v.charAt(0) === '#') return v; var m = v.match(/[\d.]+/g) || [0, 0, 0]; return '#' + m.slice(0, 3).map(function (n) { return ('0' + Math.round(+n).toString(16)).slice(-2); }).join(''); }
+  function read(name, scope) { var p = document.createElement('span'); p.style.color = 'var(' + name + ')'; (scope || document.body).appendChild(p); var c = getComputedStyle(p).color; p.remove(); return toHex(c); }
+  function lum(hex) { var c = [1, 3, 5].map(function (i) { var v = parseInt(hex.substr(i, 2), 16) / 255; return v <= 0.04045 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); }); return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2]; }
+  function ratio(a, b) { var x = lum(a), y = lum(b); return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05); }
+  function ink(hex) { return ratio(hex, '#ffffff') >= ratio(hex, '#0b0f1a') ? '#ffffff' : '#0b0f1a'; }
+
+  var STEPS = ['색', '글자', '간격과 모서리', '버튼', '입력칸', '칩과 상태', '카드', '헤더와 탭', '팝업과 빈 상태', '페이지 조립'];
+  $('steps').innerHTML = STEPS.map(function (s, i) { return '<li' + (i === 0 ? ' class="now" aria-current="step"' : '') + '><i>' + (i + 1) + '</i>' + s + '</li>'; }).join('');
+
+  var CANDS = [
+    { id: 'a', name: '남색', line: '버튼, 링크, 선택 표시를 모두 남색으로 칠합니다.', good: '눌러야 할 곳이 한눈에 들어옵니다.', bad: '요즘 서비스 템플릿에 가장 흔한 색이라 어디서 본 화면처럼 보입니다.' },
+    { id: 'b', name: '먹색', rec: true, line: '버튼은 먹색으로 두고 남색은 링크와 선택 표시에만 씁니다.', good: '지금 사이트와 같은 방식입니다. 도식과 아이콘의 색을 가리지 않습니다.', bad: '화면이 차분한 만큼 TRAVI만의 색은 약합니다.' },
+    { id: 'c', name: '테라코타', line: '버튼, 링크, 선택 표시를 붉은 주황으로 칠합니다. 첫 화면 도식의 따뜻한 팔레트에서 뽑았습니다.', good: '흔하지 않고 따뜻한 인상을 줍니다.', bad: '오류를 알리는 빨강과 가까워 오류색을 진분홍으로 옮겨야 합니다. 상태 칩의 남색, 초록, 노랑에 색이 하나 더 얹힙니다.' }
+  ];
+  var secIcon = (window.TRAVI_ICONS && window.TRAVI_ICONS.security) || '';
+  function sample() {
+    return '<div class="sx">' +
+      '<div class="sx-top"><span class="sx-brand"><i></i>TRAVI</span><span class="sx-sp"></span><span class="sx-btn plain">Log in</span><button class="sx-btn primary" type="button">Join TRAVI</button></div>' +
+      '<div class="sx-body">' +
+        '<div><p class="sx-h">Build AI Together.<br>Share the Value.</p><div class="sx-row"><button class="sx-btn primary" type="button">Explore AI Cooperatives</button><button class="sx-btn ghost" type="button">How it works</button></div></div>' +
+        '<div class="sx-row"><span class="sx-tab">All</span><span class="sx-tab on">Open to join</span><span class="sx-tab">In training</span><span class="sx-tab">Full</span></div>' +
+        '<div class="sx-card"><span class="sx-dom">' + secIcon + 'Security</span><div class="sx-title">SOC Threat Detection Coop</div>' +
+          '<div class="sx-row"><span class="sx-chip open">Open to join · 12 days left</span><span class="sx-meta">3 of 8 seats open</span></div>' +
+          '<div class="sx-row"><button class="sx-btn primary" type="button">Request to join</button><a class="sx-link" href="#cands">View Coop</a></div></div>' +
+        '<div class="sx-card"><div class="sx-row"><span class="sx-title" style="font-size:14px">University A Security Lab</span><span class="sx-chip waiting">In review</span></div>' +
+          '<input class="sx-input is-focus" placeholder="Reason (required)" aria-label="Reason">' +
+          '<div class="sx-row"><button class="sx-btn primary" type="button">Approve</button><button class="sx-btn danger" type="button">Decline</button></div></div>' +
+      '</div></div>';
+  }
+  $('cands').innerHTML = CANDS.map(function (c) {
+    return '<article class="cand" data-primary="' + c.id + '">' +
+      '<div class="cand-head"><span class="letter">' + c.id.toUpperCase() + '</span><h2>' + c.name + '</h2>' + (c.rec ? '<span class="rec">추천</span>' : '') + '</div>' +
+      '<p class="cand-line">' + c.line + '</p>' + sample() +
+      '<div class="cand-notes"><div><span class="k">좋은 점</span><span>' + c.good + '</span></div><div><span class="k">걸리는 점</span><span>' + c.bad + '</span></div></div>' +
+      '<p class="cand-num" data-num></p></article>';
+  }).join('');
+
+  var NEUTRAL_USE = {
+    light: ['페이지 바탕', '옅은 바탕', '선', '진한 선', '새로 채운 칸', '예전 흐린 글자', '흐린 글자 (새 값)', '보조 글자', '긴 본문, 먹색 버튼에 마우스를 올린 색', '본문 글자, 먹색 버튼'],
+    dark: ['본문 글자, 밝은 버튼', '새로 채운 칸', '보조 글자', '흐린 글자 (새 값)', '진한 선', '선', '카드', '페이지 바탕', '새로 채운 칸', '새로 채운 칸']
+  };
+  var SCALES = [
+    ['gray', '회색, 밝은 화면', '바탕, 선, 글자'], ['dark', '회색, 어두운 화면', '글자, 선, 바탕'], ['indigo', '남색', '기준은 6번. 사이트 강조색'],
+    ['terra', '테라코타', '후보 C. 기준은 6번'], ['green', '초록', '잘 됨, 학습 중'], ['amber', '노랑', '기다림, 가득 참'],
+    ['red', '빨강', '오류, 거절, 되돌릴 수 없는 동작'], ['crimson', '진분홍', '주색을 C로 고를 때만 쓰는 오류색']
+  ];
+  var ROLES = [
+    ['--tv-bg', '페이지 바탕'], ['--tv-bg-subtle', '한 단 가라앉은 구역, 표 머리'], ['--tv-surface', '카드, 팝업, 입력칸'],
+    ['--tv-line', '카드 테두리, 구분선'], ['--tv-line-strong', '버튼과 입력칸 테두리'],
+    ['--tv-text', '본문 글자'], ['--tv-text-muted', '보조 설명'], ['--tv-text-faint', '가장 흐린 글자. 카드와 페이지 바탕 위에서만'],
+    ['--tv-success', '잘 됨을 알리는 글자'], ['--tv-success-bg', '그 칩의 바탕'], ['--tv-warning', '기다림, 주의를 알리는 글자'], ['--tv-warning-bg', '그 칩의 바탕'],
+    ['--tv-danger', '오류, 거절을 알리는 글자'], ['--tv-danger-bg', '그 칩의 바탕'], ['--tv-info', '모집 중처럼 알림 성격의 글자'], ['--tv-info-bg', '그 칩의 바탕']
+  ];
+  var CROLES = [
+    ['--tv-primary', '가장 중요한 버튼'], ['--tv-primary-hover', '그 버튼에 마우스를 올렸을 때'], ['--tv-on-primary', '그 버튼 위의 글자'],
+    ['--tv-link', '글자 링크'], ['--tv-accent', '선택된 것의 글자'], ['--tv-accent-bg', '선택된 것의 바탕'], ['--tv-focus', '키보드로 짚은 곳의 테'], ['--tv-danger', '오류, 거절']
+  ];
+  function sw(hex) { return '<span class="swv"><i style="background:' + hex + '"></i><span class="mono">' + hex + '</span></span>'; }
+  function strip(name, uses) {
+    var h = '';
+    for (var i = 0; i < 10; i++) { var v = read('--tv-' + name + '-' + i); h += '<div class="col"><div class="cell" style="background:' + v + ';color:' + ink(v) + '"><b>' + i + '</b><span class="mono">' + v + '</span></div>' + (uses ? '<div class="use">' + uses[i] + '</div>' : '') + '</div>'; }
+    return h;
+  }
+
+  function paint() {
+    var dark = root.getAttribute('data-theme') === 'dark';
+    $('themeBtn').textContent = dark ? '밝게 보기' : '어둡게 보기';
+    var nz = dark ? 'dark' : 'gray';
+    $('neutralStrip').innerHTML = strip(nz, NEUTRAL_USE[dark ? 'dark' : 'light']);
+    var surf = read('--tv-surface');
+    $('oldNum').textContent = '(예전 값, 대비 ' + ratio(read('--ds-old-faint'), surf).toFixed(1) + ')';
+    $('newNum').textContent = '(새 값, 대비 ' + ratio(read('--tv-text-faint'), surf).toFixed(1) + ')';
+    $('scales').innerHTML = SCALES.map(function (s) { return '<div class="scale-name"><b>' + s[1] + '</b><span>' + s[2] + '</span></div><div class="strip">' + strip(s[0]) + '</div>'; }).join('');
+    $('rolesCommon').innerHTML = '<tr><th>이름</th><th>쓰임</th><th>지금 값</th></tr>' + ROLES.map(function (r) { return '<tr><td class="mono">' + r[0] + '</td><td class="use">' + r[1] + '</td><td>' + sw(read(r[0])) + '</td></tr>'; }).join('');
+    var arts = [].slice.call(document.querySelectorAll('.cand'));
+    $('rolesCand').innerHTML = '<tr><th>이름</th><th>쓰임</th><th>A 남색</th><th>B 먹색</th><th>C 테라코타</th></tr>' + CROLES.map(function (r) {
+      return '<tr><td class="mono">' + r[0] + '</td><td class="use">' + r[1] + '</td>' + arts.map(function (a) { return '<td>' + sw(read(r[0], a)) + '</td>'; }).join('') + '</tr>';
+    }).join('');
+    arts.forEach(function (a) {
+      var p = read('--tv-primary', a), op = read('--tv-on-primary', a), l = read('--tv-link', a), bg = read('--tv-surface', a);
+      a.querySelector('[data-num]').textContent = '버튼 글자 대비 ' + ratio(p, op).toFixed(1) + ', 링크 글자 대비 ' + ratio(l, bg).toFixed(1) + ' (기준 4.5)';
+    });
+  }
+
+  var IC = window.TRAVI_ICONS || {};
+  $('doms').innerHTML = [['security', 'Security'], ['economy', 'Finance'], ['agriculture', 'Agriculture'], ['healthcare', 'Healthcare'], ['other', 'Other']].map(function (d) {
+    return '<div style="color:var(--tv-domain-' + (d[0] === 'economy' ? 'finance' : d[0]) + ')">' + (IC[d[0]] || '') + '<span>' + esc(d[1]) + '</span></div>';
+  }).join('');
+
+  $('themeBtn').addEventListener('click', function () {
+    var next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem('tv-ds-theme', next); } catch (e) {}
+    paint();
+  });
+  paint();
+})();
+</script>
+</body>
+</html>

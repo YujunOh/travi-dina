@@ -1,0 +1,108 @@
+/* TRAVI 디자인 시스템 값 파일. 지금은 1단계(색)만 들어 있다. design-system.html 이 읽는다.
+   style.css 와는 아직 연결하지 않았다. 변수 이름 앞의 tv 는 기존 --bg, --text 와 겹치지 않게 붙였다.
+
+   읽는 순서
+   1) 계단: 색의 원재료. 0이 가장 밝고 9가 가장 어둡다. 화면에서 직접 쓰지 않는다.
+   2) 역할: 화면이 실제로 쓰는 이름. 밝은 화면과 어두운 화면에서 같은 이름이 다른 칸을 가리킨다.
+   3) 주색 후보 A, B, C. 하나로 정해지면 나머지 둘은 지운다.
+
+   대비 기준: 글자는 바탕과 4.5 이상, 버튼이나 입력칸의 경계는 3 이상. */
+
+:root {
+  --tv-white: #ffffff;
+  /* gray: 밝은 화면의 바탕, 선, 글자. 4번(빈칸 채움)과 6번(흐린 글자 대비를 맞춤)만 새 값, 나머지는 사이트에서 쓰던 값 */
+  --tv-gray-0: #fbfbfd; --tv-gray-1: #f2f4f8; --tv-gray-2: #e3e7ef; --tv-gray-3: #cfd5e1; --tv-gray-4: #aeb6c5; --tv-gray-5: #8e97a9; --tv-gray-6: #6a7388; --tv-gray-7: #586276; --tv-gray-8: #2c3446; --tv-gray-9: #0d1220;
+  /* dark: 어두운 화면의 글자, 선, 바탕. 0, 2, 4, 5, 6, 7번은 첫 화면 미리보기에서 쓰던 값. 7번이 페이지 바탕, 6번이 카드 */
+  --tv-dark-0: #e8ecf5; --tv-dark-1: #c5cddc; --tv-dark-2: #a3adc2; --tv-dark-3: #77829a; --tv-dark-4: #34405a; --tv-dark-5: #232c40; --tv-dark-6: #121828; --tv-dark-7: #0b0f1a; --tv-dark-8: #080b14; --tv-dark-9: #05070d;
+  /* indigo: 기준 6번 = 사이트 강조색. 1번, 2번은 '모집 중' 칩의 바탕과 테두리 */
+  --tv-indigo-0: #f5f6ff; --tv-indigo-1: #eceefe; --tv-indigo-2: #c8cdfb; --tv-indigo-3: #a8b6ff; --tv-indigo-4: #8598fe; --tv-indigo-5: #6075fd; --tv-indigo-6: #3f4ff0; --tv-indigo-7: #3139d3; --tv-indigo-8: #2529af; --tv-indigo-9: #1a1c88;
+  /* terra: 주색 후보 C. 첫 화면 도식의 따뜻한 팔레트(살구색과 산호색 사이)에서 뽑고 흰 글자가 읽히게 어둡게 함 */
+  --tv-terra-0: #fff4f1; --tv-terra-1: #fee3db; --tv-terra-2: #fccabb; --tv-terra-3: #f7ad97; --tv-terra-4: #ee8e70; --tv-terra-5: #dd6d4a; --tv-terra-6: #c54f28; --tv-terra-7: #ab3c15; --tv-terra-8: #8f2e09; --tv-terra-9: #712307;
+  /* green: 기준 6번 = 칩의 초록 글자. 0번, 2번은 그 칩의 바탕과 테두리 */
+  --tv-green-0: #eef8f3; --tv-green-1: #ddede3; --tv-green-2: #bfe3cf; --tv-green-3: #99c8ac; --tv-green-4: #71b28d; --tv-green-5: #48996f; --tv-green-6: #1d7d52; --tv-green-7: #006840; --tv-green-8: #015332; --tv-green-9: #003e24;
+  /* amber: 8번 = 칩의 노랑 글자. 0번, 2번은 그 칩의 바탕과 테두리 */
+  --tv-amber-0: #fdf7ea; --tv-amber-1: #f7eada; --tv-amber-2: #f0d9a8; --tv-amber-3: #e8c496; --tv-amber-4: #deae6f; --tv-amber-5: #cf9748; --tv-amber-6: #bb8022; --tv-amber-7: #a46c07; --tv-amber-8: #8a5a00; --tv-amber-9: #704a07;
+  /* red: 기준 6번 = 위험 버튼과 거절 칩. 7번은 그 버튼에 마우스를 올린 색 */
+  --tv-red-0: #fdf1f0; --tv-red-1: #fde2de; --tv-red-2: #f2c6c2; --tv-red-3: #f1a89f; --tv-red-4: #e6877b; --tv-red-5: #d36559; --tv-red-6: #b8443b; --tv-red-7: #9d362e; --tv-red-8: #82231e; --tv-red-9: #651915;
+  /* crimson: 주색을 C로 고를 때만 쓰는 오류색. 붉은 주황과 헷갈리지 않게 진분홍 쪽으로 옮김 */
+  --tv-crimson-0: #fff4f5; --tv-crimson-1: #ffe1e5; --tv-crimson-2: #ffc4cd; --tv-crimson-3: #fda2b2; --tv-crimson-4: #f47c96; --tv-crimson-5: #e3567a; --tv-crimson-6: #c9305f; --tv-crimson-7: #ae194d; --tv-crimson-8: #900b3d; --tv-crimson-9: #71072e;
+
+  /* 도메인 아이콘 색. icons/domain-icons.js 와 같은 값 */
+  --tv-domain-security: #51628e; --tv-domain-finance: #7f643a; --tv-domain-agriculture: #4d7357; --tv-domain-healthcare: #8f565d; --tv-domain-other: #616978;
+}
+
+/* 2) 역할: 밝은 화면 */
+:root, [data-theme="light"] {
+  --tv-bg: var(--tv-gray-0);            /* 페이지 바탕 */
+  --tv-bg-subtle: var(--tv-gray-1);     /* 한 단 가라앉은 구역, 표 머리 */
+  --tv-surface: var(--tv-white);        /* 카드, 팝업, 입력칸 */
+  --tv-line: var(--tv-gray-2);          /* 카드 테두리, 구분선 */
+  --tv-line-strong: var(--tv-gray-3);   /* 버튼과 입력칸 테두리 */
+  --tv-text: var(--tv-gray-9);          /* 본문 글자 */
+  --tv-text-muted: var(--tv-gray-7);    /* 보조 설명 */
+  --tv-text-faint: var(--tv-gray-6);    /* 가장 흐린 글자. 흰 카드와 페이지 바탕 위에서만 */
+
+  --tv-success: var(--tv-green-6); --tv-success-bg: var(--tv-green-0); --tv-success-line: var(--tv-green-2);
+  --tv-warning: var(--tv-amber-8); --tv-warning-bg: var(--tv-amber-0); --tv-warning-line: var(--tv-amber-2);
+  --tv-danger: var(--tv-red-6);    --tv-danger-bg: var(--tv-red-0);    --tv-danger-line: var(--tv-red-2);
+  --tv-info: var(--tv-indigo-6);   --tv-info-bg: var(--tv-indigo-1);   --tv-info-line: var(--tv-indigo-2);
+}
+
+/* 2) 역할: 어두운 화면. 옅은 바탕은 색을 카드 바탕에 조금 섞어 만든다 */
+[data-theme="dark"] {
+  --tv-bg: var(--tv-dark-7);
+  --tv-bg-subtle: #101626;              /* 첫 화면 미리보기의 --bg-2. 계단 6번과 7번 사이 */
+  --tv-surface: var(--tv-dark-6);
+  --tv-line: var(--tv-dark-5);
+  --tv-line-strong: var(--tv-dark-4);
+  --tv-text: var(--tv-dark-0);
+  --tv-text-muted: var(--tv-dark-2);
+  --tv-text-faint: var(--tv-dark-3);
+
+  --tv-success: var(--tv-green-4); --tv-success-bg: color-mix(in srgb, var(--tv-green-6) 22%, var(--tv-dark-6)); --tv-success-line: color-mix(in srgb, var(--tv-green-5) 50%, var(--tv-dark-6));
+  --tv-warning: var(--tv-amber-4); --tv-warning-bg: color-mix(in srgb, var(--tv-amber-6) 20%, var(--tv-dark-6)); --tv-warning-line: color-mix(in srgb, var(--tv-amber-5) 48%, var(--tv-dark-6));
+  --tv-danger: var(--tv-red-4);    --tv-danger-bg: color-mix(in srgb, var(--tv-red-6) 22%, var(--tv-dark-6));    --tv-danger-line: color-mix(in srgb, var(--tv-red-5) 50%, var(--tv-dark-6));
+  --tv-info: var(--tv-indigo-4);   --tv-info-bg: color-mix(in srgb, var(--tv-indigo-6) 26%, var(--tv-dark-6));   --tv-info-line: color-mix(in srgb, var(--tv-indigo-5) 55%, var(--tv-dark-6));
+
+  --tv-domain-security: #a5b7e2; --tv-domain-finance: #d2ba91; --tv-domain-agriculture: #a3c9ac; --tv-domain-healthcare: #dea7ac; --tv-domain-other: #afb8c7;
+}
+
+/* 3) 주색 후보. primary = 가장 중요한 버튼, link = 글자 링크, accent = 선택된 것 표시, focus = 키보드로 짚은 곳의 테 */
+
+/* A 남색: 버튼, 링크, 선택 표시가 모두 남색 */
+[data-primary="a"] {
+  --tv-primary: var(--tv-indigo-6); --tv-primary-hover: var(--tv-indigo-7); --tv-on-primary: var(--tv-white);
+  --tv-link: var(--tv-indigo-6); --tv-focus: var(--tv-indigo-5);
+  --tv-accent: var(--tv-indigo-6); --tv-accent-bg: var(--tv-indigo-1); --tv-accent-line: var(--tv-indigo-2);
+}
+[data-theme="dark"] [data-primary="a"], [data-theme="dark"][data-primary="a"] {
+  --tv-primary: var(--tv-indigo-4); --tv-primary-hover: var(--tv-indigo-3); --tv-on-primary: var(--tv-dark-7);
+  --tv-link: var(--tv-indigo-4); --tv-focus: var(--tv-indigo-4);
+  --tv-accent: var(--tv-indigo-3); --tv-accent-bg: color-mix(in srgb, var(--tv-indigo-6) 26%, var(--tv-dark-6)); --tv-accent-line: color-mix(in srgb, var(--tv-indigo-5) 55%, var(--tv-dark-6));
+}
+
+/* B 먹색: 버튼은 먹색, 남색은 링크와 선택 표시에만 */
+[data-primary="b"] {
+  --tv-primary: var(--tv-gray-9); --tv-primary-hover: var(--tv-gray-8); --tv-on-primary: var(--tv-white);
+  --tv-link: var(--tv-indigo-6); --tv-focus: var(--tv-indigo-5);
+  --tv-accent: var(--tv-indigo-6); --tv-accent-bg: var(--tv-indigo-1); --tv-accent-line: var(--tv-indigo-2);
+}
+[data-theme="dark"] [data-primary="b"], [data-theme="dark"][data-primary="b"] {
+  --tv-primary: var(--tv-dark-0); --tv-primary-hover: var(--tv-white); --tv-on-primary: var(--tv-dark-7);
+  --tv-link: var(--tv-indigo-4); --tv-focus: var(--tv-indigo-4);
+  --tv-accent: var(--tv-indigo-3); --tv-accent-bg: color-mix(in srgb, var(--tv-indigo-6) 26%, var(--tv-dark-6)); --tv-accent-line: color-mix(in srgb, var(--tv-indigo-5) 55%, var(--tv-dark-6));
+}
+
+/* C 테라코타: 버튼, 링크, 선택 표시가 모두 붉은 주황. 오류색은 진분홍(crimson)으로 옮긴다 */
+[data-primary="c"] {
+  --tv-primary: var(--tv-terra-6); --tv-primary-hover: var(--tv-terra-7); --tv-on-primary: var(--tv-white);
+  --tv-link: var(--tv-terra-7); --tv-focus: var(--tv-terra-5);
+  --tv-accent: var(--tv-terra-7); --tv-accent-bg: var(--tv-terra-0); --tv-accent-line: var(--tv-terra-2);
+  --tv-danger: var(--tv-crimson-6); --tv-danger-bg: var(--tv-crimson-0); --tv-danger-line: var(--tv-crimson-2);
+}
+[data-theme="dark"] [data-primary="c"], [data-theme="dark"][data-primary="c"] {
+  --tv-primary: var(--tv-terra-4); --tv-primary-hover: var(--tv-terra-3); --tv-on-primary: var(--tv-dark-7);
+  --tv-link: var(--tv-terra-4); --tv-focus: var(--tv-terra-4);
+  --tv-accent: var(--tv-terra-3); --tv-accent-bg: color-mix(in srgb, var(--tv-terra-6) 24%, var(--tv-dark-6)); --tv-accent-line: color-mix(in srgb, var(--tv-terra-5) 52%, var(--tv-dark-6));
+  --tv-danger: var(--tv-crimson-4); --tv-danger-bg: color-mix(in srgb, var(--tv-crimson-6) 22%, var(--tv-dark-6)); --tv-danger-line: color-mix(in srgb, var(--tv-crimson-5) 50%, var(--tv-dark-6));
+}
