@@ -102,7 +102,7 @@
     '<path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15L6 16z"/><path d="M10 20.5a2 2 0 0 0 4 0"/></svg>';
 
   var NAV = [
-    { key: 'cooperatives', label: 'Cooperatives', href: 'coop.html' },
+    { key: 'cooperatives', label: 'AI Cooperatives', href: 'coop.html' },
     { key: 'dashboard', label: 'Dashboard', href: 'dashboard.html', gate: 'dashboard' },
     { key: 'wallet', label: 'Wallet', href: 'wallet.html' },
     { key: 'whitepaper', label: 'Whitepaper', href: 'whitepaper.html' }
@@ -178,7 +178,7 @@
   var LINKEDIN_SVG = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4.98 3.5C4.98 4.88 3.87 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.22 8h4.56v14H.22V8zm7.4 0h4.37v1.92h.06c.61-1.15 2.1-2.36 4.32-2.36 4.62 0 5.47 3.04 5.47 7V22h-4.56v-6.6c0-1.57-.03-3.6-2.2-3.6-2.2 0-2.53 1.72-2.53 3.49V22H7.62V8z"/></svg>';
   var MAIL = 'contact@travi.example';
   var TODO = '<span class="todo">교체 필요</span>';
-  var ORG_LINE = 'DINA Lab, Hongik University · Neouly';
+  var ORG_LINE = 'Operated by DINA Lab &amp; Neouly Inc.';
 
   function renderFooter(el) {
     var full = el.getAttribute('data-travi-footer') === 'full';

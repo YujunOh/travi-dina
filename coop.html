@@ -255,8 +255,8 @@
             </details>
           </div>
           <p id="d-norange" hidden>The Coop leader hasn't estimated a range yet.</p>
-          <h3>How points are shared</h3>
-          <p>Each member's contribution is scored every round. After each round, points are credited under this Coop's reward rule, based on that contribution. Points can't be withdrawn.</p>
+          <h3>How rewards are shared</h3>
+          <p>Contribution is recorded for each member every round. Points are shared in proportion to each member's total contribution and credited when training ends. Points can't be withdrawn.</p>
           <p class="ask">Questions about this Coop? Email the Coop leader at <a id="d-mail" href="#"></a>.</p>
         </section>
       </div>
@@ -310,12 +310,12 @@
       line: 'SOCs train one attack classifier together, each on its own network flow records.',
       card: ['12 of 20 members · 2 open roles', '12 days left'],
       badge: 'Sample data based on the CIC-IDS dataset',
-      goal: "Every security operations center (SOC) sees a different mix of attacks. One organization's own records are rarely enough to learn the attack types that seldom appear. In this Coop, SOCs train one attack classifier together from their own network flow records, so every member can classify a wider range of attacks.",
+      goal: "Every security operations center (SOC) sees a different mix of attacks. One organization's logs rarely hold enough examples of the rare attack types to learn them. In this Coop, SOCs train one attack classifier together, each on its own network flow records, so every member can classify a wider range of attacks.",
       task: 'Classify network flows as benign or by attack type',
       input: 'Network flow features (CIC-IDS format)',
       leader: 'Org B', contact: 'soc-coop@org-b.example',
       roles: [
-        { n: 'Data provider', s: '6 of 10 seats open', open: true, d: 'Train the model on your own network flow records.', r: 'Requires 3+ months of labeled network flow records and 10,000+ flows a day' },
+        { n: 'Data provider', s: '6 of 10 seats open', open: true, d: 'Train the model on your own network flow records.', r: 'Requirements: 3+ months of labeled network flow records, 10,000+ flows a day' },
         { n: 'Compute provider', s: '2 of 4 seats open', open: true, d: 'Provide the GPUs used for training.', r: 'Two A100 GPUs, available throughout training' },
         { n: 'Model user', s: NO_SEATS, open: false, d: 'Get the finished model and use it in your own SOC.' }
       ],
@@ -323,7 +323,7 @@
       more: '8 more members', memNote: 'Members are named only if they agreed to be listed. This Coop has 20 seats.',
       membersLine: '12 of 20 members', fill: 60,
       range: '180 to 260 pts',
-      assume: ['· Members spend 10 to 30% less time handling false positives', '· 5 to 12 organizations use the finished model', '· This range is an estimate and depends on how well the model performs.']
+      assume: ['· Members spend 10 to 30% less time handling false positives', '· 5 to 12 organizations use the finished model', '· This range is an estimate, not a guarantee. It changes with model performance.']
     },
     botnet: {
       name: 'Botnet Traffic Detection Coop', dom: 'security', status: 'training',
@@ -344,7 +344,7 @@
       more: '2 more members', memNote: 'Members are named only if they agreed to be listed. This Coop has 5 seats.',
       membersLine: '5 members', round: 'In training · Round 6 of 12',
       range: '120 to 190 pts',
-      assume: ['· Members flag botnet hosts earlier than with their own rules alone', '· 3 to 6 organizations use the finished model', '· This range is an estimate and depends on how well the model performs.']
+      assume: ['· Members flag botnet hosts earlier than with their own rules alone', '· 3 to 6 organizations use the finished model', '· This range is an estimate, not a guarantee. It changes with model performance.']
     },
     malware: {
       name: 'Malware Classification Coop', dom: 'security', status: 'full',
@@ -363,7 +363,7 @@
       more: '5 more members', memNote: 'Members are named only if they agreed to be listed. This Coop has 7 seats.',
       membersLine: '7 of 7 members', fill: 100,
       range: '150 to 210 pts',
-      assume: ['· 4 to 8 organizations use the finished model', '· This range is an estimate and depends on how well the model performs.']
+      assume: ['· 4 to 8 organizations use the finished model', '· This range is an estimate, not a guarantee. It changes with model performance.']
     },
     phishing: {
       name: 'Phishing URL Classification Coop', dom: 'security', status: 'ended',
@@ -381,7 +381,7 @@
       more: '7 more members', memNote: 'Members are named only if they agreed to be listed.',
       membersLine: '9 of 9 members', fill: 100,
       range: '90 to 140 pts',
-      assume: ['· This range is an estimate and depends on how well the model performs.']
+      assume: ['· This range is an estimate, not a guarantee. It changes with model performance.']
     },
     ddos: {
       name: 'DDoS Early Warning Coop', dom: 'security', status: 'coming',
