@@ -7,99 +7,209 @@
 <meta name="robots" content="noindex">
 <script>try { var t0 = localStorage.getItem('tv-ds-theme'); if (t0 === 'dark' || t0 === 'light') document.documentElement.setAttribute('data-theme', t0); } catch (e) {}</script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400..600&family=Source+Serif+4:opsz,wght@8..60,400..700&display=swap">
 <link rel="stylesheet" href="ds/tokens.css">
 <style>
-/* 디자인 시스템 검토 페이지. 단계마다 '지금 정할 것' 한 가지를 맨 위에 두고, 정해진 것은 아래로 내린다.
-   지금 상태: 1단계(색) 정함. 주색은 남색. 다음은 2단계(글자).
-   색 값은 전부 ds/tokens.css 에서 읽는다. 이 파일에는 색 값을 직접 적지 않는다(예전 값 비교용 3개 제외).
-   sx- 로 시작하는 것은 색을 입혀 보는 임시 화면 조각이다. 모양은 4단계(버튼)부터 정한다. */
+/* 디자인 시스템 회의용 페이지. 한 화면에 한 단계만 보인다.
+   단계마다 후보를 같은 화면 조각에 입혀 나란히 놓고, 하나를 누르면 고른 것으로 표시하고 다음 단계로 넘어간다.
+   고른 값은 뒤 단계의 화면 조각에 바로 입혀진다. 고른 내용은 이 브라우저와 주소 뒤 값에 남는다.
+   색과 크기 값은 전부 ds/tokens.css 에서 읽는다. sx- 로 시작하는 것은 값을 입혀 보는 화면 조각이다.
+   정해진 것은 주색(남색) 하나뿐이고 나머지는 회의에서 고르기 전이다. */
 * { box-sizing: border-box; }
 html { overflow-x: clip; }
 body { margin: 0; background: var(--tv-bg); color: var(--tv-text); font-family: 'Pretendard Variable', Pretendard, system-ui, sans-serif; font-size: 15px; line-height: 1.6; word-break: keep-all; -webkit-font-smoothing: antialiased; }
-button, input { font: inherit; }
+button, input, textarea { font: inherit; }
 .wrap { max-width: 1240px; margin: 0 auto; padding: 0 20px; }
 .mono { font-family: ui-monospace, 'SFMono-Regular', Consolas, monospace; }
+[hidden] { display: none !important; }
 
+/* 맨 위 막대 */
 .bar { border-bottom: 1px solid var(--tv-line); }
-.bar .wrap { display: flex; align-items: center; gap: 16px; height: 56px; }
-.bar b { font-size: 15px; letter-spacing: -0.01em; }
+.bar .wrap { display: flex; align-items: center; gap: 10px; min-height: 56px; }
+.bar b { font-size: 15px; letter-spacing: -0.01em; white-space: nowrap; }
+.bar .count { font-size: 13px; color: var(--tv-text-muted); white-space: nowrap; }
 .bar .sp { flex: 1; }
-.toggle { border: 1px solid var(--tv-line-strong); background: var(--tv-surface); color: var(--tv-text); border-radius: 8px; padding: 7px 12px; font-size: 13px; font-weight: 600; cursor: pointer; }
+.toggle { border: 1px solid var(--tv-line-strong); background: var(--tv-surface); color: var(--tv-text); border-radius: 8px; padding: 7px 12px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; }
 .toggle:hover { border-color: var(--tv-text); }
+.toggle.warn { border-color: var(--tv-danger); color: var(--tv-danger); }
+button:focus-visible, summary:focus-visible, textarea:focus-visible { outline: 2px solid var(--tv-focus); outline-offset: 2px; }
 
-.steps { display: flex; gap: 6px; list-style: none; margin: 20px 0 0; padding: 0 0 4px; overflow-x: auto; }
-.steps li { flex: none; display: flex; align-items: center; gap: 7px; font-size: 13px; color: var(--tv-text-faint); border: 1px solid var(--tv-line); border-radius: 8px; padding: 5px 10px 5px 6px; background: var(--tv-surface); }
-.steps li i { font-style: normal; width: 20px; height: 20px; border-radius: 6px; display: grid; place-items: center; font-size: 11px; font-weight: 700; background: var(--tv-bg-subtle); color: var(--tv-text-muted); }
-.steps li.now { color: var(--tv-text); border-color: var(--tv-text); font-weight: 600; }
-.steps li.now i { background: var(--tv-text); color: var(--tv-bg); }
-.steps li.done { color: var(--tv-text-muted); }
-.steps li.done i { background: var(--tv-accent-bg); color: var(--tv-accent); }
-.steps li.done b { font-weight: 600; color: var(--tv-text); }
+/* 단계 띠. 누르면 그 단계로 간다 */
+.steps { display: flex; flex-wrap: wrap; gap: 6px; margin: 18px 0 0; padding: 0 0 4px; }
+.st { flex: none; display: flex; align-items: center; gap: 7px; font-size: 13px; color: var(--tv-text-muted); border: 1px solid var(--tv-line); border-radius: 8px; padding: 5px 10px 5px 6px; background: var(--tv-surface); cursor: pointer; }
+.st:hover { border-color: var(--tv-text); color: var(--tv-text); }
+.st i { font-style: normal; min-width: 20px; height: 20px; padding: 0 3px; border-radius: 6px; display: grid; place-items: center; font-size: 11px; font-weight: 700; background: var(--tv-bg-subtle); color: var(--tv-text-muted); }
+.st b { font-weight: 600; color: var(--tv-text); }
+.st.done i { background: var(--tv-line); color: var(--tv-text); }
+.st.now { color: var(--tv-text); border-color: var(--tv-text); font-weight: 600; box-shadow: inset 0 0 0 1px var(--tv-text); }
+.st.now i { background: var(--tv-text); color: var(--tv-bg); }
+.st.held b { font-weight: 600; color: var(--tv-text-muted); }
 
-.ask { padding: 36px 0 20px; }
+/* 보류 줄: 후보 아래에 놓인다 */
+.holdrow { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin: 14px 0 0; font-size: 13px; color: var(--tv-text-muted); }
+
+/* 지금 정할 것 */
+.ask { padding: 30px 0 18px; }
 .kicker { font-size: 12px; font-weight: 700; letter-spacing: 0.08em; color: var(--tv-text-muted); margin: 0 0 8px; }
-.ask h1 { font-size: 32px; line-height: 1.2; letter-spacing: -0.03em; margin: 0 0 14px; }
-.ask p { margin: 0 0 8px; max-width: 760px; color: var(--tv-text-muted); }
+.ask h1 { font-size: 32px; line-height: 1.2; letter-spacing: -0.03em; margin: 0 0 12px; }
+.ask h1:focus { outline: none; }
+.ask p { margin: 0 0 8px; max-width: 780px; color: var(--tv-text-muted); }
 .ask p strong { color: var(--tv-text); font-weight: 600; }
-.reco { margin-top: 16px; max-width: 760px; border-left: 3px solid var(--tv-text); padding: 2px 0 2px 14px; color: var(--tv-text); }
+.reco { margin-top: 14px; max-width: 780px; border-left: 3px solid var(--tv-text); padding: 2px 0 2px 14px; color: var(--tv-text) !important; }
 
-.pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; padding-bottom: 12px; }
-.cand { min-width: 0; display: flex; flex-direction: column; gap: 10px; }
-.cand-cap { margin: 0; font-size: 13px; font-weight: 600; color: var(--tv-text-muted); }
-.cand-num { font-size: 12px; color: var(--tv-text-faint); margin: 0; font-variant-numeric: tabular-nums; }
+/* 후보 카드 */
+.opts { display: grid; gap: 16px; padding-bottom: 8px; align-items: start; }
+.opts[data-cols="1"] { grid-template-columns: minmax(0, 1fr); }
+.opts[data-cols="2"] { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.opts[data-cols="3"] { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.opts[data-cols="4"] { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.opt { min-width: 0; display: flex; flex-direction: column; gap: 10px; border: 1px solid var(--tv-line); border-radius: 16px; background: var(--tv-surface); padding: 12px; cursor: pointer; }
+.opt:hover { border-color: var(--tv-line-strong); }
+.opt.is-on { border-color: var(--tv-text); box-shadow: 0 0 0 2px var(--tv-text); }
+.opt-pick { display: flex; align-items: center; gap: 10px; width: 100%; text-align: left; border: 0; background: none; color: inherit; padding: 4px 2px; cursor: pointer; border-radius: 8px; }
+.opt-mark { flex: none; width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--tv-line-strong); display: grid; place-items: center; }
+.opt.is-on .opt-mark { border-color: var(--tv-text); background: var(--tv-text); }
+.opt.is-on .opt-mark::after { content: ""; width: 9px; height: 5px; border-left: 2px solid var(--tv-bg); border-bottom: 2px solid var(--tv-bg); transform: rotate(-45deg) translate(1px, -1px); }
+.opt-name { font-size: 17px; font-weight: 700; letter-spacing: -0.01em; line-height: 1.3; min-width: 0; }
+.opt-tag { font-size: 11px; font-weight: 700; border: 1px solid var(--tv-line-strong); color: var(--tv-text-muted); border-radius: 6px; padding: 1px 7px; white-space: nowrap; }
+.opt-tag.rec { border-color: var(--tv-text); color: var(--tv-text); }
+.opt-state { margin-left: auto; font-size: 12px; font-weight: 600; color: var(--tv-text-faint); white-space: nowrap; }
+.opt.is-on .opt-state { color: var(--tv-text); }
+.opt-line { margin: 0 2px; font-size: 14px; color: var(--tv-text-muted); }
+@media (min-width: 981px) { .opts[data-cols="3"] .opt-line, .opts[data-cols="4"] .opt-line { min-height: 3.2em; } }
+.opt-view { min-width: 0; }
+.opt-cap { margin: 6px 2px 0; font-size: 12px; color: var(--tv-text-faint); }
+.opt-notes { display: grid; gap: 6px; font-size: 13px; margin: 0 2px 2px; }
+.opt-notes div { display: grid; grid-template-columns: 58px minmax(0, 1fr); gap: 8px; }
+.opt-notes .k { font-size: 12px; font-weight: 700; color: var(--tv-text-faint); padding-top: 1px; }
+.stepnote { margin: 14px 0 0; font-size: 13px; color: var(--tv-text-muted); max-width: 820px; }
 
-/* 색을 입혀 보는 임시 화면 조각 */
-.sx { border: 1px solid var(--tv-line); border-radius: 14px; background: var(--tv-bg); color: var(--tv-text); overflow: hidden; }
-.sx-top { display: flex; align-items: center; gap: 8px; padding: 11px 14px; border-bottom: 1px solid var(--tv-line); }
-.sx-brand { display: flex; align-items: center; gap: 8px; font-weight: 700; letter-spacing: 0.28em; font-size: 13px; }
+/* 화면 조각. 모양 값은 전부 변수에서 온다 */
+.sx { container-type: inline-size; border: 1px solid var(--tv-line); border-radius: 14px; background: var(--tv-bg); color: var(--tv-text); overflow: hidden; font-family: var(--tv-font-body); font-size: var(--tv-fs-md); line-height: var(--tv-lh-body); }
+.sx-top { display: flex; align-items: center; gap: 10px; padding: 0 20px; min-height: 56px; border-bottom: 1px solid var(--tv-line); }
+.sx-brand { display: flex; align-items: center; gap: 8px; font-weight: 700; letter-spacing: 0.28em; font-size: 13px; white-space: nowrap; }
 .sx-brand i { width: 16px; height: 16px; border-radius: 50%; border: 2px solid currentColor; }
 .sx-sp { flex: 1; }
-.sx-btn { display: inline-flex; align-items: center; justify-content: center; white-space: nowrap; border-radius: 8px; font-size: 13px; font-weight: 600; padding: 8px 14px; border: 1px solid transparent; cursor: pointer; text-decoration: none; }
-.sx-btn.primary { background: var(--tv-primary); color: var(--tv-on-primary); }
-.sx-btn.primary:hover { background: var(--tv-primary-hover); }
-.sx-btn.ghost { background: var(--tv-surface); border-color: var(--tv-line-strong); color: var(--tv-text); }
-.sx-btn.ghost:hover { border-color: var(--tv-text); }
-.sx-btn.danger { background: var(--tv-surface); border-color: var(--tv-danger-line); color: var(--tv-danger); }
-.sx-btn.plain { padding-left: 6px; padding-right: 6px; color: var(--tv-text-muted); }
-.sx-body { padding: 22px 14px 16px; display: grid; gap: 18px; }
-.sx-h { font-size: 25px; line-height: 1.14; letter-spacing: -0.03em; font-weight: 700; margin: 0 0 14px; }
+.sx-nav { display: flex; align-items: center; gap: 24px; margin-right: 10px; font-size: var(--tv-fs-sm); line-height: 22px; font-weight: 600; color: var(--tv-text-muted); white-space: nowrap; }
+.sx-nav .on { color: var(--tv-text); }
+.sx-burger { display: none; width: 30px; height: 30px; border-radius: 8px; border: 1px solid var(--tv-line-strong); background: var(--tv-surface); place-content: center; gap: 3px; }
+.sx-burger i { display: block; width: 13px; height: 2px; border-radius: 2px; background: var(--tv-text); }
+.sx-body { padding: var(--tv-gap-section) 16px; display: grid; gap: var(--tv-gap-section); }
+.sx-h { font-family: var(--tv-font-heading); font-weight: var(--tv-fw-heading); font-size: clamp(26px, 9cqi, 36px); line-height: 1.12; letter-spacing: var(--tv-ls-display); margin: 0 0 12px; }
+.sx-lead { font-size: var(--tv-fs-lg); color: var(--tv-text-muted); margin: 0 0 16px; max-width: 620px; }
+.sx-h2 { font-family: var(--tv-font-heading); font-weight: var(--tv-fw-heading); font-size: 24px; line-height: var(--tv-lh-heading); letter-spacing: var(--tv-ls-heading); margin: 0 0 8px; }
+.sx-p { margin: 0; max-width: 620px; }
 .sx-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
-.sx-link { color: var(--tv-link); font-weight: 600; font-size: 13px; text-decoration: underline; text-underline-offset: 3px; }
-.sx-tab { font-size: 13px; font-weight: 600; padding: 5px 11px; border-radius: 8px; border: 1px solid var(--tv-line-strong); background: var(--tv-surface); color: var(--tv-text-muted); }
+.sx-btn { display: inline-flex; align-items: center; justify-content: center; white-space: nowrap; height: var(--tv-h-control); padding: 0 var(--tv-pad-control); border-radius: var(--tv-radius-control); font-size: var(--tv-fs-sm); line-height: 1; font-weight: 600; border: 1px solid transparent; }
+.sx-btn.primary { background: var(--tv-primary); color: var(--tv-on-primary); }
+.sx-btn.ghost { background: var(--tv-surface); border-color: var(--tv-line-strong); color: var(--tv-text); }
+.sx-btn.danger { background: var(--tv-surface); border-color: var(--tv-danger-line); color: var(--tv-danger); }
+.sx-btn.off { background: var(--tv-bg-subtle); border-color: var(--tv-line); color: var(--tv-text-faint); }
+.sx-link { color: var(--tv-link); font-weight: 600; font-size: var(--tv-fs-sm); text-decoration: underline; text-underline-offset: 3px; }
+.sx-tab { font-size: var(--tv-fs-sm); line-height: 1.4; font-weight: 600; padding: 5px 11px; border-radius: var(--tv-radius-control); border: 1px solid var(--tv-line-strong); background: var(--tv-surface); color: var(--tv-text-muted); white-space: nowrap; }
 .sx-tab.on { background: var(--tv-accent-bg); border-color: var(--tv-accent-line); color: var(--tv-accent); }
-.sx-card { border: 1px solid var(--tv-line); border-radius: 12px; background: var(--tv-surface); padding: 14px; display: grid; gap: 10px; }
-.sx-dom { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; color: var(--tv-domain-security); }
+.sx-card { border: 1px solid var(--tv-line); border-radius: var(--tv-radius-card); background: var(--tv-surface); padding: var(--tv-pad-card); display: grid; gap: var(--tv-gap); transition: box-shadow 0.2s, transform 0.2s; }
+.sx-dom { display: inline-flex; align-items: center; gap: 6px; font-family: var(--tv-font-data); font-size: var(--tv-fs-xs); font-weight: 600; color: var(--tv-domain-security); }
 .sx-dom svg { width: 18px; height: 18px; }
-.sx-title { font-size: 16px; font-weight: 700; letter-spacing: -0.01em; line-height: 1.3; }
-.sx-meta { font-size: 13px; color: var(--tv-text-muted); }
-.sx-chip { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border: 1px solid var(--tv-line-strong); border-radius: 999px; font-size: 12px; font-weight: 600; color: var(--tv-text-muted); background: var(--tv-surface); white-space: nowrap; }
+.sx-title { font-size: var(--tv-fs-h3); font-weight: 600; letter-spacing: -0.01em; line-height: 1.35; overflow-wrap: anywhere; }
+.sx-title.sm { font-size: var(--tv-fs-md); }
+.sx-meta { font-family: var(--tv-font-data); font-size: var(--tv-fs-sm); color: var(--tv-text-muted); font-variant-numeric: tabular-nums; }
+.sx-label { font-family: var(--tv-font-data); font-size: var(--tv-fs-xs); font-weight: 600; letter-spacing: var(--tv-ls-label); text-transform: uppercase; color: var(--tv-text-muted); }
+.sx-num { font-family: var(--tv-font-data); font-size: 30px; font-weight: 600; letter-spacing: -0.01em; line-height: 1.2; font-variant-numeric: tabular-nums; }
+.sx-hr { height: 1px; background: var(--tv-line); border: 0; margin: 0; }
+.sx-cap { font-size: 11px; font-weight: 700; letter-spacing: 0.04em; color: var(--tv-text-faint); }
+.sx-hovercap { display: none; }
+
+/* 칩. 모양은 알약으로 고정하고 색 배정만 후보에 따라 바뀐다. 기본은 지금 사이트 배정 */
+.sx-chip { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border: 1px solid var(--tv-line-strong); border-radius: var(--tv-radius-pill); font-size: var(--tv-fs-xs); line-height: 1.4; font-weight: 600; color: var(--tv-text-muted); background: var(--tv-surface); white-space: nowrap; }
 .sx-chip::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
 .sx-chip.coming { border-style: dashed; background: var(--tv-bg-subtle); }
+.sx-chip.ended { background: var(--tv-bg-subtle); }
 .sx-chip.open { color: var(--tv-info); border-color: var(--tv-info-line); background: var(--tv-info-bg); }
 .sx-chip.full, .sx-chip.waiting { color: var(--tv-warning); border-color: var(--tv-warning-line); background: var(--tv-warning-bg); }
 .sx-chip.training, .sx-chip.ok { color: var(--tv-success); border-color: var(--tv-success-line); background: var(--tv-success-bg); }
 .sx-chip.no { color: var(--tv-danger); border-color: var(--tv-danger-line); background: var(--tv-danger-bg); }
-.sx-chip.ended { background: var(--tv-bg-subtle); }
-.sx-input { width: 100%; font-size: 14px; padding: 9px 12px; border-radius: 8px; border: 1px solid var(--tv-line-strong); background: var(--tv-surface); color: var(--tv-text); }
-.sx-input::placeholder { color: var(--tv-text-faint); }
-.sx-input.is-focus, .sx-input:focus-visible { outline: 2px solid var(--tv-focus); outline-offset: 1px; border-color: var(--tv-focus); }
-.sx-cap { font-size: 11px; font-weight: 700; letter-spacing: 0.06em; color: var(--tv-text-faint); margin: 0 0 -8px; }
+[data-chips="green"] .sx-chip.open { color: var(--tv-success); border-color: var(--tv-success-line); background: var(--tv-success-bg); }
+[data-chips="green"] .sx-chip.training { color: var(--tv-info); border-color: var(--tv-info-line); background: var(--tv-info-bg); }
+[data-chips="mono"] .sx-chip.full, [data-chips="mono"] .sx-chip.training { color: var(--tv-text-muted); border-color: var(--tv-line-strong); background: var(--tv-bg-subtle); }
+[data-chips="mono"] .sx-chip.open { color: var(--tv-text); border-color: var(--tv-text-faint); background: var(--tv-line); }
 
-.sec { padding: 44px 0 8px; border-top: 1px solid var(--tv-line); margin-top: 36px; }
-.sec h2 { font-size: 22px; letter-spacing: -0.02em; margin: 0 0 6px; }
-.sec > .wrap > p.lead { margin: 0 0 22px; color: var(--tv-text-muted); }
+/* 버튼 후보: 두 번째 버튼의 테두리 */
+[data-btn^="ink"] .sx-btn.ghost { border-color: var(--tv-text); box-shadow: inset 0 0 0 0.5px var(--tv-text); }
+
+/* 입력칸. 높이는 버튼과 같다 */
+.sx-field { display: flex; flex-direction: column; gap: 7px; }
+.sx-flabel { font-size: var(--tv-fs-sm); font-weight: 600; line-height: 1.4; }
+.sx-input { display: flex; align-items: center; min-height: var(--tv-h-control); padding: 0 12px; border-radius: var(--tv-radius-input); border: 1px solid var(--tv-line-strong); background: var(--tv-surface); color: var(--tv-text); font-size: var(--tv-fs-md); line-height: 1.45; min-width: 0; }
+.sx-input.ph { color: var(--tv-text-faint); }
+.sx-input.area { align-items: flex-start; min-height: 76px; padding: 9px 12px; }
+.sx-input.is-focus { outline: 2px solid var(--tv-focus); outline-offset: 1px; border-color: var(--tv-focus); }
+.sx-help { font-size: var(--tv-fs-xs); line-height: 1.5; color: var(--tv-text-muted); }
+[data-field="above"] .sx-field .sx-help { order: 1; }
+[data-field="above"] .sx-field .sx-input { order: 2; }
+
+/* 카드 후보 */
+[data-card="shadow"] .sx-card { border-color: transparent; box-shadow: var(--tv-shadow-sm); }
+[data-card="hover"] .sx-card.can-hover:hover, [data-card="hover"] .sx-card.demo-hover { box-shadow: var(--tv-shadow-hover); transform: translateY(-2px); }
+[data-card="hover"] .sx-hovercap { display: block; margin: -4px 0 -6px; }
+
+/* 헤더 후보 */
+.sx-login-text { display: none; }
+[data-header="site"] .sx-nav .on { box-shadow: inset 0 -2px 0 var(--tv-text); padding: 17px 0; }
+[data-header="figma"] .sx-nav { font-weight: 500; }
+[data-header="figma"] .sx-nav .on { font-weight: 700; }
+[data-header="figma"] .sx-login-text { display: inline; }
+[data-header="figma"] .sx-login-btn { display: none; }
+
+/* 화면 조각이 좁으면 메뉴를 접고 헤더 버튼을 줄인다. 지금 사이트의 좁은 화면 규칙과 같다 */
+@container (max-width: 760px) {
+  .sx-nav { display: none; }
+  .sx-burger { display: grid; }
+  .sx-top { padding: 0 14px; gap: 8px; }
+  .sx-top .sx-btn { height: 30px; padding: 0 10px; font-size: 12px; }
+}
+
+/* 접어 둔 자료 */
+.folds { padding: 26px 0 0; }
+.folds > h2 { font-size: 13px; font-weight: 700; letter-spacing: 0.04em; color: var(--tv-text-muted); margin: 0 0 8px; }
+details.more { border-top: 1px solid var(--tv-line); }
+details.more:last-of-type { border-bottom: 1px solid var(--tv-line); }
+details.more summary { cursor: pointer; padding: 14px 2px; font-weight: 600; list-style-position: inside; }
+details.more summary span { font-weight: 400; color: var(--tv-text-muted); margin-left: 8px; }
+details.more .in { padding: 4px 0 26px; }
+details.more .in > p { margin: 0 0 12px; max-width: 820px; color: var(--tv-text-muted); font-size: 14px; }
+.pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; padding-bottom: 12px; }
+.cand { min-width: 0; display: flex; flex-direction: column; gap: 10px; }
+.cand-cap { margin: 0; font-size: 13px; font-weight: 600; color: var(--tv-text-muted); }
+.cand-num { font-size: 12px; color: var(--tv-text-faint); margin: 0; font-variant-numeric: tabular-nums; }
 .checks { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
 .check { min-width: 0; border: 1px solid var(--tv-line); border-radius: 14px; background: var(--tv-surface); padding: 18px; }
 .check.wide { grid-column: 1 / -1; }
 .check h3 { font-size: 15px; margin: 0 0 4px; }
 .check p { margin: 0 0 12px; font-size: 14px; color: var(--tv-text-muted); }
 .check p:last-child { margin-bottom: 0; }
-
+.spec { display: grid; }
+.spec-row { display: grid; grid-template-columns: 210px minmax(0, 1fr); gap: 20px; align-items: baseline; padding: 14px 0; border-top: 1px solid var(--tv-line); }
+.spec-row:first-child { border-top: 0; }
+.spec-row .m { font-size: 12px; color: var(--tv-text-muted); line-height: 1.5; }
+.spec-row .m b { display: block; font-size: 13px; color: var(--tv-text); }
+.spec-row .s { min-width: 0; overflow-wrap: anywhere; font-family: var(--tv-font-body); }
+.wts { display: grid; gap: 10px; }
+.wts div { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 12px; font-size: 18px; }
+.wts span { font-size: 12px; font-weight: 400; color: var(--tv-text-muted); }
+.rules { margin: 0; padding: 0; list-style: none; display: grid; gap: 8px; font-size: 14px; }
+.rules li { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 10px; }
+.rules li b { font-weight: 600; }
+.rules li span { color: var(--tv-text-muted); }
 .strip { display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); gap: 3px; }
 .strip .col { min-width: 0; }
-.strip .cell { height: 56px; padding: 6px 7px; font-size: 11px; line-height: 1.25; display: flex; flex-direction: column; justify-content: space-between; border-radius: 6px; box-shadow: inset 0 0 0 1px var(--tv-line); }
-.strip .cell b { font-weight: 700; }
-.strip .cell span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* 번호와 값은 색 칸 안이 아니라 칸 아래에 적는다. 칸 색에 따라 글자가 흐려지는 일을 막기 위해서다 */
+.strip .cell { height: 40px; border-radius: 6px; box-shadow: inset 0 0 0 1px var(--tv-line); }
+.strip .lab { margin: 4px 1px 0; font-size: 11px; line-height: 1.3; color: var(--tv-text-muted); }
+.strip .lab b { display: block; font-weight: 700; color: var(--tv-text); }
+.strip .lab span { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .strip .use { margin: 5px 2px 0 1px; font-size: 11px; line-height: 1.3; color: var(--tv-text-muted); min-height: 2.6em; }
 .strip.labeled { margin-bottom: 8px; }
 .cmp { display: grid; gap: 4px; font-size: 14px; font-variant-numeric: tabular-nums; }
@@ -111,12 +221,6 @@ button, input { font: inherit; }
 .doms div { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; }
 .doms svg { width: 28px; height: 28px; }
 .gradbar { height: 10px; border-radius: 6px; max-width: 260px; background: linear-gradient(90deg, #1aa3d9, #5b4ce0 50%, #e0675e); opacity: 0.55; }
-
-details.more { border-top: 1px solid var(--tv-line); }
-details.more:last-of-type { border-bottom: 1px solid var(--tv-line); }
-details.more summary { cursor: pointer; padding: 14px 2px; font-weight: 600; list-style-position: inside; }
-details.more .in { padding: 4px 0 26px; }
-details.more p { margin: 0 0 12px; max-width: 820px; color: var(--tv-text-muted); font-size: 14px; }
 .scale-name { display: flex; align-items: baseline; gap: 10px; margin: 16px 0 6px; font-size: 13px; }
 .scale-name b { font-size: 14px; }
 .scale-name span { color: var(--tv-text-muted); }
@@ -128,16 +232,62 @@ table.roles tr:last-child td { border-bottom: 0; }
 table.roles th { font-size: 12px; color: var(--tv-text-muted); background: var(--tv-bg-subtle); font-weight: 600; }
 .swv { display: inline-flex; align-items: center; gap: 8px; }
 .swv i { width: 18px; height: 18px; border-radius: 5px; border: 1px solid var(--tv-line-strong); flex: none; }
-.foot { padding: 28px 0 60px; font-size: 13px; color: var(--tv-text-faint); }
+
+/* 회의 결과 */
+.result { display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); gap: 24px; align-items: start; padding-bottom: 8px; }
+.result .res-wide { grid-column: 1 / -1; }
+.res-list { border: 1px solid var(--tv-line); border-radius: 14px; background: var(--tv-surface); overflow: hidden; }
+.res-row { display: grid; grid-template-columns: 28px minmax(0, 104px) minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 10px 14px; border-top: 1px solid var(--tv-line); font-size: 14px; }
+.res-row:first-child { border-top: 0; }
+.res-row i { font-style: normal; width: 22px; height: 22px; border-radius: 6px; display: grid; place-items: center; font-size: 11px; font-weight: 700; background: var(--tv-text); color: var(--tv-bg); }
+.res-row.todo i { background: var(--tv-bg-subtle); color: var(--tv-text-muted); }
+.res-row .n { color: var(--tv-text-muted); }
+.res-row .v { font-weight: 600; min-width: 0; }
+.res-row.todo .v { font-weight: 400; color: var(--tv-text-faint); }
+.res-row .v small { display: block; font-size: 12px; font-weight: 400; color: var(--tv-text-muted); }
+.res-row button { border: 0; background: none; color: var(--tv-text); font-size: 13px; font-weight: 600; cursor: pointer; padding: 4px 2px; text-decoration: underline; text-underline-offset: 3px; }
+.res-acts { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 10px; }
+.btnx { border: 1px solid var(--tv-line-strong); background: var(--tv-surface); color: var(--tv-text); border-radius: 8px; padding: 9px 14px; font-size: 14px; font-weight: 600; cursor: pointer; }
+.btnx:hover { border-color: var(--tv-text); }
+.btnx.solid { background: var(--tv-text); border-color: var(--tv-text); color: var(--tv-bg); }
+.btnx:disabled { opacity: 0.4; cursor: not-allowed; }
+.res-text { width: 100%; min-height: 330px; resize: vertical; border: 1px solid var(--tv-line-strong); border-radius: 10px; background: var(--tv-surface); color: var(--tv-text); padding: 12px; font-size: 13px; line-height: 1.6; }
+.res-note { font-size: 13px; color: var(--tv-text-muted); margin: 8px 0 0; }
+.res-h { font-size: 13px; font-weight: 700; letter-spacing: 0.04em; color: var(--tv-text-muted); margin: 0 0 8px; }
+
+/* 아래 고정 막대: 이전, 다음 */
+main { padding-bottom: 104px; }
+.navbar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 10; background: var(--tv-surface); border-top: 1px solid var(--tv-line); }
+.navbar .wrap { display: flex; align-items: center; gap: 12px; min-height: 60px; }
+.navbar .mid { flex: 1; min-width: 0; text-align: center; font-size: 14px; }
+.navbar .mid b { font-variant-numeric: tabular-nums; }
+.navbar .mid span { display: block; font-size: 12px; color: var(--tv-text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.foot { padding: 28px 0 0; font-size: 13px; color: var(--tv-text-faint); }
 
 @media (max-width: 980px) {
-  .pair { grid-template-columns: minmax(0, 1fr); gap: 24px; }
-  .checks { grid-template-columns: minmax(0, 1fr); }
+  .opts[data-cols="3"], .opts[data-cols="4"] { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .result { grid-template-columns: minmax(0, 1fr); }
 }
-@media (max-width: 640px) {
+@media (max-width: 700px) {
   .wrap { padding: 0 16px; }
-  .ask h1 { font-size: 26px; }
+  .ask { padding-top: 22px; }
+  .ask h1 { font-size: 25px; }
+  .steps { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: thin; margin-right: -16px; padding-right: 16px; }
+  .opts[data-cols] { grid-template-columns: minmax(0, 1fr); }
+  .pair, .checks { grid-template-columns: minmax(0, 1fr); }
+  .spec-row { grid-template-columns: minmax(0, 1fr); gap: 4px; }
   .strip { grid-template-columns: repeat(5, minmax(0, 1fr)); row-gap: 8px; }
+  .bar .count { display: none; }
+  .toggle { padding: 7px 9px; font-size: 12px; }
+  .res-row { grid-template-columns: 28px minmax(0, 1fr) auto; }
+  .res-row .n { grid-column: 2; }
+  .res-row .v { grid-column: 2; }
+  .res-row button { grid-column: 3; grid-row: 1 / span 2; }
+}
+/* 좁은 화면이나 손가락으로 쓰는 기기에서는 누르는 곳을 44px 이상으로 키운다 */
+@media (max-width: 700px), (pointer: coarse) {
+  .st, .toggle, .btnx { min-height: 44px; }
+  .res-row button { min-height: 44px; min-width: 44px; }
 }
 </style>
 </head>
@@ -146,96 +296,271 @@ table.roles th { font-size: 12px; color: var(--tv-text-muted); background: var(-
 <header class="bar">
   <div class="wrap">
     <b>TRAVI 디자인 시스템</b>
+    <span class="count" id="count"></span>
     <span class="sp"></span>
+    <button class="toggle" id="resetBtn" type="button">처음 상태로</button>
     <button class="toggle" id="themeBtn" type="button">어둡게 보기</button>
   </div>
 </header>
 
 <main>
   <div class="wrap">
-    <ol class="steps" id="steps" aria-label="진행 순서"></ol>
+    <nav class="steps" id="steps" aria-label="단계"></nav>
 
-    <section class="ask">
-      <p class="kicker">정해진 것 (1단계, 색)</p>
-      <h1>주색은 남색입니다</h1>
-      <p>후보 셋(남색, 먹색, 테라코타) 가운데 남색으로 정했습니다. 가장 중요한 버튼, 글자 링크, 선택 표시가 남색입니다. 아래는 같은 화면 조각을 밝은 화면과 어두운 화면에 나란히 놓은 것입니다. <strong>버튼 모양과 글자 크기는 아직 임시입니다.</strong></p>
-      <p class="reco">다음은 2단계(글자)입니다. 글꼴과 글자 크기를 정합니다.</p>
+    <section class="ask" aria-live="polite">
+      <p class="kicker" id="kicker"></p>
+      <h1 id="askTitle" tabindex="-1"></h1>
+      <div id="askBody"></div>
     </section>
-
-    <section class="pair" id="pair" aria-label="주색을 입힌 화면 조각"></section>
   </div>
 
-  <section class="sec">
-    <div class="wrap">
-      <h2>같이 확인할 것</h2>
-      <p class="lead">아래는 제안한 기본값입니다. 이의가 없으면 이대로 가고, 고칠 것만 말해 주세요.</p>
-      <div class="checks">
-        <div class="check wide">
-          <h3>바탕, 글자, 선</h3>
-          <p>지금 사이트가 쓰는 값에 밝은 순서로 0부터 9까지 번호를 붙였습니다. 새로 채운 칸은 아래에 따로 적었습니다. Figma 와이어프레임의 회색은 글자만 17가지라 따르지 않고 이 열 칸으로 줄입니다.</p>
-          <div class="strip labeled" id="neutralStrip"></div>
-          <p>바뀌는 것은 흐린 글자 하나입니다. 너무 옅어서 조금 진하게 했습니다. 글자는 바탕과의 대비가 4.5를 넘어야 편하게 읽힙니다.</p>
-          <div class="cmp">
-            <span class="old">3 of 8 seats open <span id="oldNum"></span></span>
-            <span class="new">3 of 8 seats open <span id="newNum"></span></span>
-          </div>
-        </div>
-        <div class="check">
-          <h3>상태를 알리는 색</h3>
-          <p>초록, 노랑, 빨강, 남색은 지금 상태 칩에 쓰는 값 그대로입니다. 어느 상태에 어느 색을 붙일지는 6단계에서 다시 봅니다.</p>
-          <div class="sx-row" style="margin-bottom:8px">
-            <span class="sx-chip coming">Coming soon</span><span class="sx-chip open">Open to join</span><span class="sx-chip full">Full</span><span class="sx-chip training">In training</span><span class="sx-chip ended">Ended</span>
-          </div>
-          <div class="sx-row">
-            <span class="sx-chip ok">Approved</span><span class="sx-chip waiting">In review</span><span class="sx-chip no">Declined</span>
-          </div>
-        </div>
-        <div class="check">
-          <h3>어두운 화면</h3>
-          <p>첫 화면 미리보기에서 쓰던 값 그대로입니다. 사이트 전체를 밝게 갈지 어둡게 갈지 아직 정해지지 않아 두 벌을 같이 만듭니다.</p>
-          <p>오른쪽 위 버튼을 누르면 이 페이지 전체가 어두운 값으로 바뀝니다.</p>
-        </div>
-        <div class="check">
-          <h3>도메인 색</h3>
-          <p>도메인 아이콘에 쓰는 낮은 채도의 다섯 색을 그대로 씁니다. Figma 와이어프레임에서는 Security가 강조색과 같은 파랑, Healthcare가 오류색과 같은 빨강이라 뜻이 겹쳤습니다.</p>
-          <div class="doms" id="doms"></div>
-        </div>
-        <div class="check">
-          <h3>그라데이션</h3>
-          <p>제목 글자에 쓰던 세 가지 색 그라데이션은 디자인 시스템에 넣지 않습니다. AI가 만든 티가 난다는 의견이 있었던 요소입니다.</p>
-          <div class="gradbar" aria-hidden="true"></div>
-        </div>
-      </div>
-    </div>
-  </section>
+  <!-- stage: 지금 보는 단계를 뺀 나머지 단계의 고른 값이 여기에 붙는다. 그래서 뒤 단계 화면 조각이 앞에서 고른 값으로 보인다 -->
+  <div class="wrap" id="stage">
+    <section class="opts" id="opts" aria-label="후보"></section>
+    <p class="holdrow" id="holdRow" hidden><button class="btnx" id="holdBtn" type="button">이 단계는 보류로 두기</button><span id="holdNote"></span></p>
 
-  <section class="sec">
-    <div class="wrap">
-      <h2>자세히 보기</h2>
-      <p class="lead">고르는 데는 필요 없습니다. 값이 궁금할 때만 펼쳐 보세요.</p>
-      <details class="more">
-        <summary>색 계단 전체</summary>
-        <div class="in" id="scales"></div>
-      </details>
-      <details class="more">
-        <summary>역할 이름과 지금 값</summary>
-        <div class="in">
-          <p>화면을 만들 때는 계단 번호 대신 역할 이름을 씁니다. 밝은 화면과 어두운 화면에서 같은 이름이 다른 값을 가리키므로, 이름만 맞게 쓰면 두 화면이 함께 맞습니다. 표의 값은 지금 보고 있는 화면 기준입니다.</p>
-          <div class="tbl-wrap"><table class="roles" id="rolesCommon"></table></div>
+    <section class="result" id="result" hidden>
+      <div>
+        <p class="res-h">단계별로 고른 것</p>
+        <div class="res-list" id="resList"></div>
+      </div>
+      <div>
+        <p class="res-h">회의록에 붙일 글</p>
+        <div class="res-acts">
+          <button class="btnx solid" id="copyText" type="button">결과 복사</button>
+          <button class="btnx" id="copyLink" type="button">이 상태의 주소 복사</button>
         </div>
-      </details>
-      <details class="more">
-        <summary>만든 방법</summary>
-        <div class="in">
-          <p>색마다 기준이 되는 값 하나를 6번 칸에 두고, 밝기만 고르게 올리고 내려 열 칸을 채웠습니다. 사이트가 이미 쓰던 값은 계산한 값 대신 그 자리에 그대로 꽂았습니다.</p>
-          <p>글자는 바탕과의 대비 4.5 이상, 버튼이나 입력칸의 경계는 3 이상을 기준으로 삼았습니다. 이 페이지에 적힌 대비 숫자는 화면에 칠해진 색을 읽어 그 자리에서 계산한 값입니다.</p>
-          <p>0부터 9까지 열 칸으로 나누는 방식은 Mantine 같은 화면 부품 도구의 색 구조와 같습니다. 4단계에서 도구를 정할 때 이 값을 그대로 옮기면 됩니다.</p>
-        </div>
-      </details>
+        <textarea class="res-text" id="resText" readonly aria-label="회의 결과 글"></textarea>
+        <p class="res-note" id="resNote"></p>
+      </div>
+      <div class="res-wide">
+        <p class="res-h">고른 값을 모두 입힌 화면</p>
+        <div id="resView"></div>
+        <p class="res-note" id="resViewNote"></p>
+      </div>
+    </section>
+
+    <!-- foldwrap: 지금 보는 단계에서 고른 값이 여기에 붙는다 -->
+    <div id="foldwrap">
+      <p class="stepnote" id="stepNote"></p>
+
+      <section class="folds" data-for="color" hidden>
+        <h2>이 단계의 자료 (필요할 때만 펼쳐 보세요)</h2>
+        <details class="more">
+          <summary>밝은 화면과 어두운 화면에 나란히 <span>고른 주색 기준</span></summary>
+          <div class="in">
+            <p>같은 화면 조각을 밝은 화면과 어두운 화면에 놓았습니다. 아래 숫자는 화면에 칠해진 색을 읽어 그 자리에서 계산한 대비입니다.</p>
+            <div class="pair" id="pair"></div>
+          </div>
+        </details>
+        <details class="more">
+          <summary>같이 정한 기본값 <span>바탕과 글자, 상태색, 도메인 색, 그라데이션</span></summary>
+          <div class="in">
+            <div class="checks">
+              <div class="check wide">
+                <h3>바탕, 글자, 선</h3>
+                <p>지금 사이트가 쓰는 값에 밝은 순서로 0부터 9까지 번호를 붙였습니다. 새로 채운 칸은 아래에 따로 적었습니다. Figma 와이어프레임의 회색은 글자만 17가지라 따르지 않고 이 열 칸으로 줄입니다.</p>
+                <div class="strip labeled" id="neutralStrip"></div>
+                <p>바뀌는 것은 흐린 글자 하나입니다. 너무 옅어서 조금 진하게 했습니다. 글자는 바탕과의 대비가 4.5를 넘어야 편하게 읽힙니다.</p>
+                <div class="cmp">
+                  <span class="old">3 of 8 seats open <span id="oldNum"></span></span>
+                  <span class="new">3 of 8 seats open <span id="newNum"></span></span>
+                </div>
+              </div>
+              <div class="check">
+                <h3>상태를 알리는 색</h3>
+                <p>초록, 노랑, 빨강, 남색은 지금 상태 칩에 쓰는 값 그대로입니다. 어느 상태에 어느 색을 붙일지는 8단계에서 고릅니다.</p>
+                <div class="sx-row" style="margin-bottom:8px">
+                  <span class="sx-chip coming">Coming soon</span><span class="sx-chip open">Open to join</span><span class="sx-chip full">Full</span><span class="sx-chip training">In training</span><span class="sx-chip ended">Ended</span>
+                </div>
+                <div class="sx-row">
+                  <span class="sx-chip ok">Approved</span><span class="sx-chip waiting">In review</span><span class="sx-chip no">Declined</span>
+                </div>
+              </div>
+              <div class="check">
+                <h3>어두운 화면</h3>
+                <p>첫 화면 미리보기에서 쓰던 값 그대로입니다. 처음에 어느 쪽을 보일지는 11단계에서 고르고, 값은 두 벌을 같이 만듭니다.</p>
+                <p>오른쪽 위 버튼을 누르면 이 페이지 전체가 어두운 값으로 바뀝니다.</p>
+              </div>
+              <div class="check">
+                <h3>도메인 색</h3>
+                <p>도메인 아이콘에 쓰는 낮은 채도의 다섯 색을 그대로 씁니다. Figma 와이어프레임에서는 Security가 강조색과 같은 파랑, Healthcare가 오류색과 같은 빨강이라 뜻이 겹쳤습니다.</p>
+                <div class="doms" id="doms"></div>
+              </div>
+              <div class="check">
+                <h3>그라데이션</h3>
+                <p>제목 글자에 쓰던 세 가지 색 그라데이션은 디자인 시스템에 넣지 않습니다. AI가 만든 티가 난다는 의견이 있었던 요소입니다.</p>
+                <div class="gradbar" aria-hidden="true"></div>
+              </div>
+            </div>
+          </div>
+        </details>
+        <details class="more">
+          <summary>색 계단 전체</summary>
+          <div class="in" id="scales"></div>
+        </details>
+        <details class="more">
+          <summary>역할 이름과 지금 값</summary>
+          <div class="in">
+            <p>화면을 만들 때는 계단 번호 대신 역할 이름을 씁니다. 밝은 화면과 어두운 화면에서 같은 이름이 다른 값을 가리키므로, 이름만 맞게 쓰면 두 화면이 함께 맞습니다. 표의 값은 지금 보고 있는 화면과 고른 주색 기준입니다.</p>
+            <div class="tbl-wrap"><table class="roles" id="rolesCommon"></table></div>
+          </div>
+        </details>
+        <details class="more">
+          <summary>만든 방법</summary>
+          <div class="in">
+            <p>색마다 기준이 되는 값 하나를 6번 칸에 두고, 밝기만 고르게 올리고 내려 열 칸을 채웠습니다. 사이트가 이미 쓰던 값은 계산한 값 대신 그 자리에 그대로 꽂았습니다.</p>
+            <p>글자는 바탕과의 대비 4.5 이상, 버튼이나 입력칸의 경계는 3 이상을 기준으로 삼았습니다.</p>
+            <p>0부터 9까지 열 칸으로 나누는 방식은 Mantine의 색 구조와 같습니다. 이 값을 theme.colors 에 그대로 옮기면 됩니다.</p>
+          </div>
+        </details>
+      </section>
+
+      <section class="folds" data-for="type" hidden>
+        <h2>이 단계의 자료 (필요할 때만 펼쳐 보세요)</h2>
+        <details class="more">
+          <summary>같이 확인할 것 <span>굵기 셋, 줄 간격과 자간</span></summary>
+          <div class="in">
+            <p>아래는 제안한 기본값입니다. 이의가 없으면 이대로 가고, 고칠 것만 말해 주세요.</p>
+            <div class="checks">
+              <div class="check">
+                <h3>굵기는 셋</h3>
+                <p>보통, 조금 굵게, 굵게만 씁니다. 사이트에 두 번씩만 쓰인 500과 800은 뺍니다.</p>
+                <div class="wts">
+                  <div style="font-weight:400">Regular 400 <span>본문, 설명</span></div>
+                  <div style="font-weight:600">Semibold 600 <span>버튼, 칩, 카드 제목, 라벨</span></div>
+                  <div style="font-weight:700">Bold 700 <span>큰 제목</span></div>
+                </div>
+              </div>
+              <div class="check">
+                <h3>줄 간격과 자간</h3>
+                <p>지금은 줄 간격을 정하지 않은 글자가 절반이 넘고 자간이 22가지입니다. 아래 규칙으로 묶습니다.</p>
+                <ul class="rules">
+                  <li><b>큰 제목</b><span>줄 간격 1.08, 자간을 조금 좁힘</span></li>
+                  <li><b>구역 제목</b><span>줄 간격 1.25, 자간을 아주 조금 좁힘</span></li>
+                  <li><b>본문</b><span>줄 간격 1.6, 자간 그대로</span></li>
+                  <li><b>버튼과 칩</b><span>줄 간격 1.4, 자간 그대로</span></li>
+                  <li><b>대문자 라벨</b><span>자간을 조금 벌림. 값은 하나만 씀</span></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </details>
+      </section>
+
+      <section class="folds" data-for="size" hidden>
+        <h2>이 단계의 자료 (필요할 때만 펼쳐 보세요)</h2>
+        <details class="more">
+          <summary>같이 확인할 것 <span>글자 크기는 여덟 가지</span></summary>
+          <div class="in">
+            <p>지금 사이트에는 글자 크기가 23가지, Figma 와이어프레임에는 21가지가 섞여 있습니다. 이것을 여덟 가지로 줄이는 제안입니다. 아래 표의 크기는 지금 고른 본문 크기 기준으로 바뀝니다. 제목 네 가지와 칩 크기는 아직 제안 상태입니다.</p>
+            <div class="spec" id="spec"></div>
+          </div>
+        </details>
+      </section>
+
+      <section class="folds" data-for="radius" hidden>
+        <h2>이 단계의 자료 (필요할 때만 펼쳐 보세요)</h2>
+        <details class="more">
+          <summary>지금 값은 얼마나 흩어져 있나</summary>
+          <div class="in">
+            <p>지금 사이트는 카드 모서리가 12, 14, 16, 18 네 가지이고 입력칸은 10인데 관리 화면 입력칸만 8입니다. Figma 와이어프레임은 버튼과 입력칸 8, 카드 12, 칩 알약으로 거의 맞춰져 있고 10이 다섯 곳에 끼어 있습니다.</p>
+            <p>Mantine의 기본 모서리 눈금은 2, 4, 8, 16, 32이고 기본값은 8(md)입니다. 12나 10을 쓰려면 눈금에 값을 더해야 합니다.</p>
+          </div>
+        </details>
+      </section>
+
+      <section class="folds" data-for="density" hidden>
+        <h2>이 단계의 자료 (필요할 때만 펼쳐 보세요)</h2>
+        <details class="more">
+          <summary>지금 값은 얼마나 흩어져 있나</summary>
+          <div class="in">
+            <p>지금 사이트는 간격 값이 34가지이고 카드 안쪽 여백만 14가지입니다. 가장 많이 쓰인 값은 10(83번)과 14(58번)인데 둘 다 4씩 커지는 눈금(4, 8, 12, 16, 24, 32)에 없는 값입니다. Figma 와이어프레임은 카드 안쪽 여백이 7가지입니다.</p>
+            <p>Mantine의 기본 간격 눈금은 10, 12, 16, 20, 32입니다. 24는 없어서 쓰려면 값을 더해야 합니다. 어느 눈금을 쓸지는 부품을 만들 때 다시 정합니다.</p>
+          </div>
+        </details>
+      </section>
+
+      <section class="folds" data-for="btn" hidden>
+        <h2>이 단계의 자료 (필요할 때만 펼쳐 보세요)</h2>
+        <details class="more">
+          <summary>지금 값은 얼마나 흩어져 있나</summary>
+          <div class="in">
+            <p>버튼 높이는 지금 사이트에서 8가지(28부터 52), Figma 와이어프레임에서 11가지(36부터 49)로 재어집니다. Figma에서는 같은 줄의 Decline(43)과 Approve(41)도 높이가 다릅니다.</p>
+            <p>Mantine 9.8.1의 버튼과 입력칸 높이는 크기 이름에 따라 30, 36, 42, 50, 60입니다. 여기서 고른 높이를 기본으로 두고, 표 안에 쓰는 작은 크기와 첫 화면에 쓰는 큰 크기는 부품을 만들 때 하나씩 더합니다.</p>
+            <p>키보드로 짚었을 때의 테 표시는 지금 사이트 버튼에 없습니다. 주색 테 2px로 통일하는 것을 제안합니다.</p>
+          </div>
+        </details>
+      </section>
+
+      <section class="folds" data-for="field" hidden>
+        <h2>이 단계의 자료 (필요할 때만 펼쳐 보세요)</h2>
+        <details class="more">
+          <summary>아직 정해지지 않은 것</summary>
+          <div class="in">
+            <p>오류가 난 입력칸의 모양은 사이트와 Figma 어디에도 없습니다. 지금은 오류 문구만 있습니다. 부품을 만들 때 새로 정해야 합니다.</p>
+            <p>고르는 칸(select)이 지금 사이트에 네 벌(높이 44, 40, 33과 관리 화면용) 있습니다. 입력칸과 같은 높이 하나로 맞추는 것을 제안합니다. 체크 상자는 지금 브라우저 기본 모양입니다.</p>
+          </div>
+        </details>
+      </section>
+
+      <section class="folds" data-for="chips" hidden>
+        <h2>이 단계의 자료 (필요할 때만 펼쳐 보세요)</h2>
+        <details class="more">
+          <summary>같이 확인할 것</summary>
+          <div class="in">
+            <p>Verification needed 칩이 지금 사이트에서 화면에 따라 파랑(verify.html)과 노랑(settings.html)으로 다릅니다. 기다리는 상태는 노랑으로 맞추는 것을 제안합니다.</p>
+            <p>지금 사이트의 칩 이름 9개 가운데 Full과 In review, In training과 Approved는 값이 완전히 같습니다. 실제 모양은 여섯 가지입니다.</p>
+            <p>Figma 와이어프레임의 칩에는 테두리가 없고 지금 사이트의 칩에는 있습니다. 이 페이지는 사이트 쪽 모양으로 그렸습니다.</p>
+          </div>
+        </details>
+      </section>
+
+      <section class="folds" data-for="card" hidden>
+        <h2>이 단계의 자료 (필요할 때만 펼쳐 보세요)</h2>
+        <details class="more">
+          <summary>지금 값은 얼마나 흩어져 있나</summary>
+          <div class="in">
+            <p>지금 사이트의 그림자는 13가지인데 평소 화면의 카드에는 없고, 마우스를 올렸을 때와 메뉴, 팝업처럼 위에 겹치는 것에만 있습니다. Figma 와이어프레임에는 그림자가 Coop 카드 hover 한 곳뿐입니다.</p>
+            <p>메뉴와 팝업의 그림자는 카드와 따로 정합니다. 여기서 고르는 것은 평소 화면의 카드입니다.</p>
+          </div>
+        </details>
+      </section>
+
+      <section class="folds" data-for="header" hidden>
+        <h2>이 단계의 자료 (필요할 때만 펼쳐 보세요)</h2>
+        <details class="more">
+          <summary>같이 확인할 것</summary>
+          <div class="in">
+            <p>Figma 와이어프레임의 헤더 12개 가운데 첫 화면(MF 01)만 높이 45에 Log In, Sign Up으로 적혀 있습니다. 팀이 손으로 고친 표기라 그대로 두었습니다. 나머지 11개는 높이 64에 Log in, Join TRAVI입니다.</p>
+            <p>로그인한 뒤에는 오른쪽이 알림과 프로필로 바뀝니다. 그 모양은 헤더 부품을 만들 때 봅니다.</p>
+          </div>
+        </details>
+      </section>
+
+      <section class="folds" data-for="theme" hidden>
+        <h2>이 단계의 자료 (필요할 때만 펼쳐 보세요)</h2>
+        <details class="more">
+          <summary>지금 상태</summary>
+          <div class="in">
+            <p>지금 사이트의 공통 스타일(style.css)에는 어두운 화면이 없고 첫 화면 미리보기(hero.html)에만 있습니다. 이 페이지의 값 파일에는 두 벌이 모두 들어 있습니다.</p>
+            <p>이 페이지 오른쪽 위의 밝게, 어둡게 버튼은 검토용이고 여기서 고르는 값과는 따로 움직입니다.</p>
+          </div>
+        </details>
+      </section>
+
       <p class="foot">값 파일은 ds/tokens.css 입니다. 이 페이지와 값 파일은 기존 화면이 쓰는 style.css 와 아직 연결되어 있지 않습니다.</p>
     </div>
-  </section>
+  </div>
 </main>
+
+<div class="navbar">
+  <div class="wrap">
+    <button class="btnx" id="prevBtn" type="button">이전</button>
+    <div class="mid"><b id="navPos"></b><span id="navHint"></span></div>
+    <button class="btnx solid" id="nextBtn" type="button">다음</button>
+  </div>
+</div>
 
 <script src="icons/domain-icons.js"></script>
 <script>
@@ -250,32 +575,378 @@ table.roles th { font-size: 12px; color: var(--tv-text-muted); background: var(-
   function read(name, scope) { var p = document.createElement('span'); p.style.color = 'var(' + name + ')'; (scope || document.body).appendChild(p); var c = getComputedStyle(p).color; p.remove(); return toHex(c); }
   function lum(hex) { var c = [1, 3, 5].map(function (i) { var v = parseInt(hex.substr(i, 2), 16) / 255; return v <= 0.04045 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); }); return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2]; }
   function ratio(a, b) { var x = lum(a), y = lum(b); return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05); }
-  function ink(hex) { return ratio(hex, '#ffffff') >= ratio(hex, '#0b0f1a') ? '#ffffff' : '#0b0f1a'; }
 
-  var STEPS = ['색', '글자', '간격과 모서리', '버튼', '입력칸', '칩과 상태', '카드', '헤더와 탭', '팝업과 빈 상태', '페이지 조립'];
-  var DECIDED = ['남색'];   /* 단계마다 정한 것. 길이가 곧 끝난 단계 수 */
-  $('steps').innerHTML = STEPS.map(function (s, i) {
-    if (i < DECIDED.length) return '<li class="done"><i>' + (i + 1) + '</i>' + s + ' <b>' + DECIDED[i] + '</b></li>';
-    return '<li' + (i === DECIDED.length ? ' class="now" aria-current="step"' : '') + '><i>' + (i + 1) + '</i>' + s + '</li>';
-  }).join('');
+  /* ------------------------------------------------------------------
+     단계와 후보. attr 는 화면 조각에 붙이는 이름, def 는 아직 고르지 않았을 때 임시로 보이는 값.
+     후보의 근거는 사이트 집계(audit_site), Figma 집계(audit_figma), Mantine 9.8.1 확인값에서 가져왔다.
+     rec 는 근거가 한쪽으로 모일 때만 붙였다.
+     ------------------------------------------------------------------ */
+  var STEPS = [
+    { id: 'color', name: '색', attr: 'data-primary', def: 'indigo', cols: 3, parts: ['top', 'hero', 'tabs', 'coop1', 'review'],
+      title: '주색을 확인해 주세요',
+      lead: ['11/15에 <strong>남색</strong>으로 정했습니다. 그대로 두려면 남색을 누르거나 다음으로 넘어가세요.', '회의에서 바꾸려면 다른 색을 누르세요. 뒤 단계의 화면이 모두 그 색으로 바뀝니다.'],
+      note: 'Mantine에서는 색 하나를 열 칸 배열로 theme.colors 에 넣고 primaryColor 로 지정합니다.',
+      opts: [
+        { v: 'indigo', name: '남색', short: '남색', tag: '11/15에 고른 값', line: '버튼, 글자 링크, 선택 표시가 모두 남색(#3f4ff0)입니다.', good: '지금 사이트의 강조색과 같은 값이라 새로 익힐 색이 없습니다.', bad: 'Open to join 칩도 남색이라 버튼과 색이 겹칩니다. 8단계에서 다시 봅니다.' },
+        { v: 'ink', name: '먹색', short: '먹색', line: '버튼은 먹색(#0d1220)이고 남색은 글자 링크와 선택 표시에만 씁니다.', good: '지금 사이트와 첫 화면 미리보기의 버튼이 이 방식입니다.', bad: '색이 적어 차분한 대신 눈에 띄는 곳이 줄어듭니다.' },
+        { v: 'terra', name: '테라코타', short: '테라코타', line: '버튼, 글자 링크, 선택 표시가 모두 붉은 주황(#c54f28)입니다.', good: '첫 화면 도식의 따뜻한 팔레트에서 뽑은 색이라 그림과 어울립니다.', bad: '오류를 알리는 빨강과 헷갈려서 오류색을 진분홍(#c9305f)으로 옮겨야 합니다.' }
+      ] },
+    { id: 'type', name: '글꼴', attr: 'data-type', def: 'a', cols: 3, parts: ['hero+', 'hr', 'text', 'stat', 'coop1'],
+      title: '글꼴 조합을 골라 주세요',
+      lead: ['같은 화면 조각에 글꼴만 바꿔 입혔습니다. 셋 다 본문은 Pretendard입니다.', '추천은 붙이지 않았습니다. 팀이 참고로 든 사이트 네 곳(Cosy AI, Ocean, Sahara AI, Vana) 가운데 본문 글꼴에 고정폭 글꼴을 곁들이는 곳은 두 곳(Sahara AI, Vana)입니다. 조사하면서 AI가 더 살펴본 세 곳(Neon, Databricks, Bittensor)도 고정폭 글꼴을 곁들입니다.'],
+      note: 'Mantine에서는 fontFamily(본문), headings.fontFamily(제목), fontFamilyMonospace(고정폭) 세 자리에 나눠 적습니다.',
+      opts: [
+        { v: 'a', name: 'A Pretendard 하나로', short: 'A', line: '제목, 본문, 숫자가 모두 Pretendard입니다. 지금 사이트와 같습니다.', good: '한글과 영어가 한 글꼴이라 섞여도 어긋나지 않고 가장 단순합니다.', bad: '가장 흔한 조합이라 인상이 남지 않습니다.' },
+        { v: 'b', name: 'B 큰 제목만 세리프', short: 'B', line: '큰 제목은 Source Serif 4, 나머지는 Pretendard입니다.', good: '글을 쓰는 기관처럼 믿음직해 보이고 다른 AI 서비스와 구별됩니다. 팀이 참고로 든 사이트 중에는 Sahara AI가 이 방식입니다.', bad: '취향을 탑니다. 한글 제목에는 이 글꼴이 적용되지 않습니다.' },
+        { v: 'c', name: 'C 숫자와 라벨만 고정폭', short: 'C', line: '숫자와 작은 라벨은 Geist Mono, 나머지는 Pretendard입니다.', good: '데이터를 다루는 서비스라는 인상을 주고 숫자가 줄 맞춰 보입니다.', bad: '고정폭 글꼴을 여기저기 쓰면 개발 도구처럼 보입니다. 숫자와 라벨에만 써야 합니다.' }
+      ] },
+    { id: 'size', name: '글자 크기', attr: 'data-size', def: '16', cols: 3, parts: ['text+', 'coop1', 'btnrow'],
+      title: '본문 글자 크기를 골라 주세요',
+      lead: ['본문 크기를 정하면 소개 문단과 보조 글자(버튼, 메뉴, 설명)가 같이 움직입니다. 제목과 칩 크기는 그대로입니다.', '추천은 없습니다. 자료마다 가리키는 크기가 달라 눈으로 보고 정하는 편이 낫습니다.'],
+      opts: [
+        { v: '16', name: '본문 16px', short: '16px', line: '소개 문단 18, 본문 16, 보조 글자 14.', good: 'Mantine 기본 크기(12, 14, 16, 18, 20)와 같아 따로 손댈 것이 없습니다. 지금 사이트의 백서 본문이 16입니다.', bad: '지금 사이트 화면 대부분(14)보다 커서 한 화면에 들어가는 양이 줄어듭니다.' },
+        { v: '15', name: '본문 15px', short: '15px', line: '소개 문단 17, 본문 15, 보조 글자 13.', good: '지금 사이트의 카드 안 문단과 입력값이 15, 버튼이 13입니다.', bad: 'Mantine 기본 크기에 15와 13이 없어 크기 표를 다시 적어야 합니다.' },
+        { v: '14', name: '본문 14px', short: '14px', line: '소개 문단 16, 본문 14, 보조 글자 13.', good: '지금 사이트에서 가장 많이 쓰인 크기이고(보이는 글자의 37%) Figma 와이어프레임 본문도 14입니다.', bad: '백서처럼 길게 읽는 화면에서는 작게 느껴집니다. 13은 Mantine 기본 크기에 없습니다.' }
+      ] },
+    { id: 'radius', name: '모서리', attr: 'data-radius', def: '8', cols: 4, parts: ['btnrow', 'tabs', 'input', 'coop1'],
+      title: '모서리를 얼마나 둥글게 할지 골라 주세요',
+      lead: ['버튼 값을 고르면 입력칸과 카드가 따라갑니다. 칩은 사이트와 Figma 모두 알약 모양이라 그대로 둡니다.', '추천은 없습니다. 지금 사이트(알약)와 Figma, 첫 화면 미리보기(8)가 서로 달라 방향을 정하는 단계입니다.'],
+      opts: [
+        { v: '4', name: '4px', short: '4px', line: '버튼과 입력칸 4, 카드 8.', good: 'Mantine 기본 눈금의 sm 값입니다. 각진 인상이 가장 강합니다.', bad: '지금 사이트와 Figma 어디에서도 버튼에 쓴 적이 없는 값입니다.' },
+        { v: '8', name: '8px', short: '8px', line: '버튼과 입력칸 8, 카드 12.', good: 'Figma 와이어프레임의 버튼 49개와 입력칸이 모두 8, 카드가 12입니다. 첫 화면 미리보기의 버튼도 8이고 Mantine 9의 기본값입니다.', bad: '지금 사이트의 알약 버튼과는 인상이 달라집니다.' },
+        { v: '12', name: '12px', short: '12px', line: '버튼과 입력칸 12, 카드 16.', good: '지금 사이트의 카드가 16, 카드 안쪽 상자가 12입니다.', bad: 'Mantine 기본 눈금에 12가 없어 값을 더해야 합니다. 버튼에 12를 쓴 화면은 지금 없습니다.' },
+        { v: 'pill', name: '알약', short: '알약', line: '버튼은 알약, 입력칸 10, 카드 16.', good: '공통 스타일(style.css)을 쓰는 17개 페이지의 버튼이 이 모양입니다.', bad: 'Figma 와이어프레임과 첫 화면 미리보기는 8로 그려져 있습니다.' }
+      ] },
+    { id: 'density', name: '간격', attr: 'data-density', def: 'normal', cols: 3, parts: ['stat', 'coop1', 'coop2'],
+      title: '간격을 얼마나 넉넉하게 둘지 골라 주세요',
+      lead: ['카드 안쪽 여백과 줄 사이, 덩어리 사이 간격을 함께 바꿉니다.'],
+      reco: '추천은 보통입니다. 사이트와 Figma 양쪽에서 카드 안쪽 여백으로 가장 많이 쓴 값이 24입니다.',
+      opts: [
+        { v: 'compact', name: '촘촘', short: '촘촘', line: '카드 안쪽 16, 줄 사이 8.', good: '한 화면에 정보가 많이 들어갑니다. Figma에서 가장 많이 쓰인 줄 간격이 8입니다.', bad: '카드 안쪽 16은 지금 사이트에서 작은 정보 상자에만 쓰던 값입니다.' },
+        { v: 'normal', name: '보통', short: '보통', rec: true, line: '카드 안쪽 24, 줄 사이 12.', good: '지금 사이트의 기본 카드가 24이고 Figma 카드 62개 중 26개가 24입니다.', bad: '표가 많은 관리 화면에서는 헐겁게 보일 수 있습니다.' },
+        { v: 'roomy', name: '넉넉', short: '넉넉', line: '카드 안쪽 32, 줄 사이 16.', good: '지금 사이트의 로그인과 가입 카드가 32입니다. 첫 화면처럼 읽는 화면에 어울립니다.', bad: '목록 화면에서는 카드 한 장이 길어져 스크롤이 늘어납니다.' }
+      ] },
+    { id: 'btn', name: '버튼', attr: 'data-btn', def: 'gray-36', cols: 2, parts: ['btns'],
+      title: '버튼 모양을 골라 주세요',
+      lead: ['가장 중요한 버튼은 주색으로 채웁니다. 여기서 고를 것은 <strong>두 번째 버튼의 테두리</strong>와 <strong>버튼 높이</strong>입니다. 후보 네 개는 테두리 두 가지(회색, 진한 색)와 높이 두 가지(36, 42)를 짝지은 것입니다.', '모서리는 4단계에서 고른 값을 따릅니다. 추천은 없습니다.'],
+      opts: [
+        { v: 'gray-36', name: '회색 테두리, 높이 36', short: '회색 36', line: '두 번째 버튼은 옅은 회색 테두리입니다.', good: '지금 사이트 버튼 89개 중 46개가 회색 테두리이고 기본 높이가 37입니다. Mantine 버튼과 입력칸의 기본 크기(sm)가 36입니다.', bad: '손가락으로 누르기에는 작은 편입니다.' },
+        { v: 'gray-42', name: '회색 테두리, 높이 42', short: '회색 42', line: '두 번째 버튼은 옅은 회색 테두리입니다.', good: 'Figma 버튼 높이가 41부터 49 사이입니다. Mantine에서는 기본보다 한 단계 큰 크기(md)가 42입니다.', bad: '표 안이나 헤더에서는 크게 보여 작은 크기를 하나 더 써야 합니다. Mantine 기본 크기가 아니라 size 값을 따로 지정해야 합니다.' },
+        { v: 'ink-36', name: '진한 테두리, 높이 36', short: '진한 36', line: '두 번째 버튼은 글자와 같은 색의 테두리입니다.', good: '지금 사이트에 글자색 테두리 버튼이 9개 있습니다. 두 번째 버튼이 또렷하게 보입니다.', bad: '채운 버튼과 무게가 비슷해져 어느 쪽이 먼저인지 덜 분명합니다.' },
+        { v: 'ink-42', name: '진한 테두리, 높이 42', short: '진한 42', line: '두 번째 버튼은 글자와 같은 색의 테두리입니다.', good: '높이는 Figma와 Mantine 크기 md(42)에, 테두리는 사이트의 글자색 테두리 버튼에 근거를 둡니다.', bad: '위의 걸리는 점 두 가지가 함께 있습니다.' }
+      ] },
+    { id: 'field', name: '입력칸', attr: 'data-field', def: 'below', cols: 2, parts: ['form'],
+      title: '입력칸의 도움말 위치를 골라 주세요',
+      lead: ['입력칸 높이는 버튼과 같게 맞춥니다(6단계 값). 라벨은 보조 글자 크기를 따릅니다(3단계 값). 여기서 고를 것은 <strong>도움말을 어디에 둘지</strong>입니다.', '추천은 없습니다. 사이트와 Figma 안에서도 화면마다 다릅니다.'],
+      opts: [
+        { v: 'below', name: '도움말이 입력칸 아래', short: '아래', line: '라벨, 입력칸, 도움말 순서입니다.', good: '지금 사이트와 Figma의 가입, 참여 요청 화면(MF 04, 05)이 이 순서입니다.', bad: '오류 문구도 입력칸 아래에 오므로 두 줄이 겹칠 때의 순서를 정해야 합니다.' },
+        { v: 'above', name: '도움말이 라벨 바로 아래', short: '라벨 아래', line: '라벨, 도움말, 입력칸 순서입니다.', good: 'Figma의 Coop 만들기 화면(MF 10)이 이 순서이고 Mantine의 기본 순서(라벨, 설명, 입력칸, 오류)와 같습니다.', bad: '지금 사이트의 도움말 자리를 모두 옮겨야 합니다.' }
+      ] },
+    { id: 'chips', name: '칩', attr: 'data-chips', def: 'site', cols: 3, parts: ['chips', 'coop1', 'coop2'],
+      title: '상태 칩의 색을 골라 주세요',
+      lead: ['상태 이름 다섯 개(Coming soon, Open to join, Full, In training, Ended)는 정해졌습니다. 여기서는 <strong>어느 상태에 어느 색을 붙일지</strong>만 고릅니다.', '승인, 검토 중, 거절 같은 결과 칩은 세 후보 모두 같습니다. 추천은 없습니다.'],
+      opts: [
+        { v: 'site', name: 'Open to join 남색', short: '남색', line: 'Open to join 남색, In training 초록, Full 노랑.', good: '지금 사이트의 색 그대로입니다.', bad: '주색이 남색이면 이 칩이 버튼, 선택된 탭과 같은 색이 됩니다. 색 하나가 두 가지 뜻을 갖습니다.' },
+        { v: 'green', name: 'Open to join 초록', short: '초록', line: 'Open to join 초록, In training 남색, Full 노랑.', good: '참여 가능한 Coop이 버튼이나 선택 표시와 다른 색으로 구별됩니다.', bad: '지금 사이트와 초록의 뜻이 바뀝니다. Approved 칩도 초록이라 초록이 두 곳에 쓰입니다.' },
+        { v: 'mono', name: '상태는 회색으로', short: '회색', line: '상태 칩은 모두 회색 계열이고 Open to join만 진하게 합니다.', good: 'Figma 와이어프레임이 이 방식입니다. 색은 결과 칩에만 남아 뜻이 겹치지 않습니다.', bad: '목록에서 모집 중인 Coop을 색으로 찾기 어려워집니다.' }
+      ] },
+    { id: 'card', name: '카드', attr: 'data-card', def: 'line', cols: 3, parts: ['coop1h', 'coop2', 'stat'],
+      title: '카드를 무엇으로 구분할지 골라 주세요',
+      lead: ['평소 화면에 놓이는 카드의 모양입니다. 메뉴와 팝업의 그림자는 따로 정합니다. 추천은 없습니다.'],
+      opts: [
+        { v: 'line', name: '테두리만', short: '테두리', line: '얇은 테두리로만 구분합니다.', good: '지금 사이트의 기본 카드와 Figma 카드 62개가 모두 테두리만 있고 그림자가 없습니다.', bad: '누를 수 있는 카드와 읽기만 하는 카드가 같아 보입니다.' },
+        { v: 'hover', name: '테두리, 올리면 그림자', short: '올리면 그림자', line: '평소에는 테두리만 있고, 누를 수 있는 카드에 마우스를 올리면 살짝 떠오릅니다.', good: '지금 사이트의 Coop 카드와 도메인 타일, Figma의 Coop 카드 hover가 이 방식입니다.', bad: '손가락으로 쓰는 화면에서는 올리는 동작이 없어 차이가 보이지 않습니다.' },
+        { v: 'shadow', name: '옅은 그림자', short: '그림자', line: '테두리 없이 옅은 그림자로 띄웁니다.', good: 'Mantine 카드에 그림자 옵션이 있어 값 하나로 적용됩니다.', bad: '지금 사이트와 Figma에는 없는 방식입니다. 어두운 화면에서는 그림자가 거의 보이지 않습니다.' }
+      ] },
+    { id: 'header', name: '헤더', attr: 'data-header', def: 'site', cols: 1, parts: ['top', 'heroh'],
+      title: '헤더의 메뉴 모양을 골라 주세요',
+      lead: ['메뉴 네 개(AI Cooperatives, Dashboard, Wallet, Whitepaper)와 Log in, Join TRAVI는 정해졌습니다. 로고는 왼쪽, 메뉴는 오른쪽에 두는 배치도 사이트와 Figma가 같습니다.', '다른 점은 <strong>지금 있는 메뉴를 알리는 표시</strong>와 <strong>Log in의 모양</strong>입니다. 좁은 화면에서는 두 후보 모두 메뉴가 접힙니다. 추천은 없습니다.'],
+      opts: [
+        { v: 'site', name: '밑줄 표시, Log in은 버튼', short: '밑줄', line: '지금 있는 메뉴 아래에 줄을 긋고 Log in을 테두리 버튼으로 둡니다.', good: '지금 사이트의 공통 헤더입니다.', bad: '오른쪽에 버튼이 두 개 놓여 Join TRAVI가 덜 도드라집니다.' },
+        { v: 'figma', name: '굵은 글자 표시, Log in은 글자', short: '굵은 글자', line: '지금 있는 메뉴를 굵은 글자로 알리고 Log in을 메뉴와 같은 글자로 둡니다.', good: 'Figma 와이어프레임의 헤더가 이 방식이고 첫 화면 미리보기도 Log in을 글자로 둡니다. 버튼이 Join TRAVI 하나입니다.', bad: '굵기만으로는 지금 있는 메뉴가 덜 분명합니다.' }
+      ] },
+    { id: 'theme', name: '밝기', attr: null, def: 'light', cols: 3, parts: ['top', 'hero', 'tabs', 'coop1'],
+      title: '처음 열었을 때의 밝기를 골라 주세요',
+      lead: ['색은 밝은 화면용과 어두운 화면용 두 벌을 이미 만들어 두었습니다. 여기서는 <strong>처음에 보이는 쪽</strong>만 고릅니다. 추천은 없습니다.'],
+      note: 'Mantine에서는 defaultColorScheme 에 light, dark, auto 가운데 하나를 적습니다.',
+      opts: [
+        { v: 'light', name: '밝게', short: '밝게', line: '처음에 밝은 화면을 보이고 어둡게 바꾸는 버튼을 둡니다.', good: '지금 사이트의 화면이 모두 밝은 화면입니다.', bad: '첫 화면 도식의 어두운 판을 쓰려면 그 화면만 따로 어둡게 해야 합니다.' },
+        { v: 'dark', name: '어둡게', short: '어둡게', line: '처음에 어두운 화면을 보이고 밝게 바꾸는 버튼을 둡니다.', good: '첫 화면 도식 후보 가운데 하나(H3)는 어두운 판이 딥테크 인상이 강하다는 검수 의견이 있었습니다.', bad: '지금 사이트 화면 전부를 어두운 값으로 다시 확인해야 합니다.' },
+        { v: 'auto', name: '기기 설정을 따름', short: '기기 설정', line: '보는 사람의 기기가 밝게면 밝게, 어둡게면 어둡게 보입니다.', good: 'Mantine에 이 옵션(auto)이 있습니다.', bad: '사람마다 처음 보는 화면이 달라 캡처와 시연 화면이 엇갈립니다.' }
+      ] }
+  ];
+  var N = STEPS.length;           /* 결과 화면은 N 번째 */
+  var BY = {}; STEPS.forEach(function (s) { BY[s.id] = s; });
+  function optOf(s, v) { for (var i = 0; i < s.opts.length; i++) if (s.opts[i].v === v) return s.opts[i]; return null; }
 
-  var secIcon = (window.TRAVI_ICONS && window.TRAVI_ICONS.security) || '';
-  function sample() {
-    return '<div class="sx">' +
-      '<div class="sx-top"><span class="sx-brand"><i></i>TRAVI</span><span class="sx-sp"></span><span class="sx-btn plain">Log in</span><button class="sx-btn primary" type="button">Join TRAVI</button></div>' +
-      '<div class="sx-body">' +
-        '<div><p class="sx-h">Build AI Together.<br>Share the Value.</p><div class="sx-row"><button class="sx-btn primary" type="button">Explore AI Cooperatives</button><button class="sx-btn ghost" type="button">How it works</button></div></div>' +
-        '<div class="sx-row"><span class="sx-tab">All</span><span class="sx-tab on">Open to join</span><span class="sx-tab">In training</span><span class="sx-tab">Full</span></div>' +
-        '<div class="sx-card"><span class="sx-dom">' + secIcon + 'Security</span><div class="sx-title">SOC Threat Detection Coop</div>' +
-          '<div class="sx-row"><span class="sx-chip open">Open to join · 12 days left</span><span class="sx-meta">3 of 8 seats open</span></div>' +
-          '<div class="sx-row"><button class="sx-btn primary" type="button">Request to join</button><a class="sx-link" href="#pair">View Coop</a></div></div>' +
-        '<div class="sx-card"><div class="sx-row"><span class="sx-title" style="font-size:14px">University A Security Lab</span><span class="sx-chip waiting">In review</span></div>' +
-          '<input class="sx-input is-focus" placeholder="Reason (required)" aria-label="Reason">' +
-          '<div class="sx-row"><button class="sx-btn primary" type="button">Approve</button><button class="sx-btn danger" type="button">Decline</button></div></div>' +
-      '</div></div>';
+  /* ------------------------------------------------------------------
+     상태: 고른 값과 지금 단계. 이 브라우저(localStorage)와 주소 뒤 값(#...)에 남긴다.
+     주소에 고른 값이 있으면 주소가 먼저다(공유받은 주소를 그대로 보여 주기 위해).
+     주소에 단계만 있으면 저장된 고른 값은 그대로 두고 단계만 옮긴다.
+     hold 는 회의에서 보류로 둔 단계. 주소에는 단계이름=hold 로 적는다. 1단계 색은 정해진 값이라 보류가 없다.
+     ------------------------------------------------------------------ */
+  var KEY = 'tv-ds-meeting';
+  var choice = { color: 'indigo' };
+  var hold = {};
+  var step = 0;
+  var back = false;      /* 결과 화면의 바꾸기, 고르기로 들어온 단계면 true. 고르고 나면 결과 화면으로 돌아간다 */
+  var handled = '';      /* 마지막으로 반영한 주소. 같은 주소 변화를 두 번 처리하지 않기 위해 */
+  function cleanHold(list, c) { var out = {}; STEPS.forEach(function (s) { if (s.id !== 'color' && !c[s.id] && list && list.indexOf(s.id) >= 0) out[s.id] = true; }); return out; }
+  function holdCount() { return Object.keys(hold).length; }
+  function clean(obj) { var out = {}; STEPS.forEach(function (s) { var v = obj && obj[s.id]; if (typeof v === 'string' && optOf(s, v)) out[s.id] = v; }); if (!out.color) out.color = 'indigo'; return out; }
+  function clampStep(n) { n = parseInt(n, 10); return isNaN(n) ? 0 : Math.max(0, Math.min(N, n)); }
+  function fromHash() {
+    var h = (location.hash || '').replace(/^#/, ''); if (!h) return false;
+    var got = {}, held = [], any = false, st = null;
+    h.split('&').forEach(function (kv) { var i = kv.indexOf('='); if (i < 1) return; var k, v; try { k = decodeURIComponent(kv.slice(0, i)); v = decodeURIComponent(kv.slice(i + 1)); } catch (e) { return; } if (k === 'step') { st = v; } else if (BY[k]) { if (v === 'hold') held.push(k); else got[k] = v; any = true; } });
+    if (!any && st === null) return false;
+    /* 고른 값이 주소에 하나도 없으면 지금 가진 값을 지우지 않는다 */
+    if (any) { choice = clean(got); hold = cleanHold(held, choice); }
+    if (st !== null) step = st === 'result' ? N : clampStep((parseInt(st, 10) || 1) - 1);
+    return true;
   }
+  function fromStore() { try { var d = JSON.parse(localStorage.getItem(KEY) || 'null'); if (d && d.c) { choice = clean(d.c); hold = cleanHold(d.h, choice); step = clampStep(d.s); return true; } } catch (e) {} return false; }
+  function hashString() {
+    var parts = ['step=' + (step === N ? 'result' : step + 1)];
+    STEPS.forEach(function (s) { if (choice[s.id]) parts.push(s.id + '=' + encodeURIComponent(choice[s.id])); else if (hold[s.id]) parts.push(s.id + '=hold'); });
+    return '#' + parts.join('&');
+  }
+  /* push 가 참이면 방문 기록에 한 칸을 더한다(단계를 옮길 때). 그래야 브라우저의 뒤로 가기가 이전 단계로 간다 */
+  function save(push) {
+    try { localStorage.setItem(KEY, JSON.stringify({ v: 1, c: choice, h: Object.keys(hold), s: step })); } catch (e) {}
+    var h = hashString(), state = { tv: 1, s: step };
+    try { if (push) history.pushState(state, '', h); else history.replaceState(state, '', h); } catch (e) { try { location.hash = h; } catch (e2) {} }
+    handled = location.href;
+  }
+  function shareUrl() { return location.href.split('#')[0] + hashString(); }
+
+  /* ------------------------------------------------------------------
+     화면 조각. 문구는 정해진 것만 쓴다
+     ------------------------------------------------------------------ */
+  var IC = window.TRAVI_ICONS || {};
+  var secIcon = IC.security || '';
+  var P = {
+    top: function () {
+      return '<div class="sx-top"><span class="sx-brand"><i></i>TRAVI</span><span class="sx-sp"></span>' +
+        '<span class="sx-nav"><span class="on">AI Cooperatives</span><span>Dashboard</span><span>Wallet</span><span>Whitepaper</span><span class="sx-login-text">Log in</span></span>' +
+        '<span class="sx-btn ghost sx-login-btn">Log in</span><span class="sx-btn primary">Join TRAVI</span><span class="sx-burger" aria-hidden="true"><i></i><i></i><i></i></span></div>';
+    },
+    hero: function () { return '<div><p class="sx-h">Build AI Together.<br>Share the Value.</p><div class="sx-row"><span class="sx-btn primary">Explore AI Cooperatives</span><span class="sx-btn ghost">How it works</span></div></div>'; },
+    'hero+': function () { return '<div><p class="sx-h">Build AI Together.<br>Share the Value.</p><p class="sx-lead">Turn independent resources into collaborative intelligence, while retaining control of what you own.</p><div class="sx-row"><span class="sx-btn primary">Explore AI Cooperatives</span><span class="sx-btn ghost">How it works</span></div></div>'; },
+    heroh: function () { return '<div><p class="sx-h" style="margin:0">Build AI Together. Share the Value.</p></div>'; },
+    hr: function () { return '<hr class="sx-hr">'; },
+    text: function () { return '<div><p class="sx-h2">How rewards are shared</p><p class="sx-p">Contribution is recorded for each member every round. Points are shared in proportion to each member\'s total contribution and credited when training ends.</p></div>'; },
+    'text+': function () { return '<div><p class="sx-h2">How rewards are shared</p><p class="sx-lead" style="margin-bottom:10px">Turn independent resources into collaborative intelligence, while retaining control of what you own.</p><p class="sx-p">Contribution is recorded for each member every round. Points are shared in proportion to each member\'s total contribution and credited when training ends.</p></div>'; },
+    tabs: function () { return '<div class="sx-row"><span class="sx-tab">All</span><span class="sx-tab on">Open to join</span><span class="sx-tab">In training</span><span class="sx-tab">Full</span></div>'; },
+    stat: function () { return '<div class="sx-card"><span class="sx-label">Points balance</span><div class="sx-num">1,240 pts</div><div class="sx-meta">Round 6 of 12</div></div>'; },
+    coop1: function (hover) {
+      return '<div class="sx-card can-hover' + (hover ? ' demo-hover' : '') + '">' + (hover ? '<span class="sx-cap sx-hovercap">마우스를 올린 모습</span>' : '') + '<span class="sx-dom">' + secIcon + 'Security</span><div class="sx-title">SOC Threat Detection Coop</div>' +
+        '<div class="sx-row"><span class="sx-chip open">Open to join · 12 days left</span><span class="sx-meta">3 of 8 seats open</span></div>' +
+        '<div class="sx-row"><span class="sx-btn primary">Request to join</span><span class="sx-link">View Coop</span></div></div>';
+    },
+    coop1h: function () { return P.coop1(true); },
+    coop2: function () {
+      return '<div class="sx-card can-hover"><span class="sx-dom">' + secIcon + 'Security</span><div class="sx-title">Botnet Traffic Detection Coop</div>' +
+        '<div class="sx-row"><span class="sx-chip training">In training</span><span class="sx-meta">Round 6 of 12</span></div>' +
+        '<div class="sx-row"><span class="sx-link">View Coop</span></div></div>';
+    },
+    review: function () {
+      return '<div class="sx-card"><div class="sx-row"><span class="sx-title sm">University A Security Lab</span><span class="sx-chip waiting">In review</span></div>' +
+        '<div class="sx-input ph is-focus">Reason (required)</div>' +
+        '<div class="sx-row"><span class="sx-btn primary">Approve</span><span class="sx-btn danger">Decline</span></div></div>';
+    },
+    btnrow: function () { return '<div class="sx-row"><span class="sx-btn primary">Request to join</span><span class="sx-btn ghost">Cancel</span></div>'; },
+    input: function () { return '<div class="sx-input ph">Reason (required)</div>'; },
+    btns: function () {
+      return '<div class="sx-card"><div class="sx-row"><span class="sx-btn primary">Request to join</span><span class="sx-btn ghost">Cancel</span></div>' +
+        '<div class="sx-row"><span class="sx-btn primary">Approve</span><span class="sx-btn danger">Decline</span><span class="sx-btn off">No seats left</span></div>' +
+        '<div class="sx-row" style="flex-wrap:nowrap"><div class="sx-input ph" style="flex:1">Reason (required)</div><span class="sx-btn ghost">Send request</span></div></div>';
+    },
+    form: function () {
+      return '<div class="sx-card"><div class="sx-field"><span class="sx-flabel">Organization</span><div class="sx-input">University A Security Lab</div></div>' +
+        '<div class="sx-field"><span class="sx-flabel">Describe your data</span><div class="sx-input ph area is-focus">e.g. Network flow records from Jan to Oct 2026</div><span class="sx-help">The Coop leader reads this to review your request.</span></div>' +
+        '<div class="sx-row"><span class="sx-btn primary">Send request</span><span class="sx-btn ghost">Cancel</span></div></div>';
+    },
+    chips: function () {
+      return '<div class="sx-card"><span class="sx-cap">Coop 상태</span><div class="sx-row"><span class="sx-chip coming">Coming soon</span><span class="sx-chip open">Open to join</span><span class="sx-chip full">Full</span><span class="sx-chip training">In training</span><span class="sx-chip ended">Ended</span></div>' +
+        '<span class="sx-cap">결과 (세 후보 모두 같음)</span><div class="sx-row"><span class="sx-chip ok">Approved</span><span class="sx-chip waiting">In review</span><span class="sx-chip no">Declined</span></div></div>';
+    }
+  };
+  function sample(parts) {
+    var top = '', body = '';
+    parts.forEach(function (k) { if (k === 'top') top = P.top(); else body += P[k](); });
+    return '<div class="sx">' + top + '<div class="sx-body">' + body + '</div></div>';
+  }
+  function deviceDark() { try { return window.matchMedia('(prefers-color-scheme: dark)').matches; } catch (e) { return false; } }
+
+  /* ------------------------------------------------------------------
+     그리기
+     ------------------------------------------------------------------ */
+  var stage = $('stage'), foldwrap = $('foldwrap');
+  var timer = null;
+
+  function setAttrs() {
+    var cur = step < N ? STEPS[step] : null;
+    STEPS.forEach(function (s) {
+      if (!s.attr) return;
+      var v = choice[s.id] || s.def;
+      if (cur && cur.id === s.id) { stage.removeAttribute(s.attr); foldwrap.setAttribute(s.attr, v); }
+      else { stage.setAttribute(s.attr, v); foldwrap.removeAttribute(s.attr); }
+    });
+  }
+  function doneCount() { var n = 0; STEPS.forEach(function (s) { if (choice[s.id]) n++; }); return n; }
+
+  function renderStrip() {
+    var h = STEPS.map(function (s, i) {
+      var o = choice[s.id] ? optOf(s, choice[s.id]) : null, hd = !o && hold[s.id];
+      return '<button type="button" class="st' + (o ? ' done' : '') + (hd ? ' held' : '') + (i === step ? ' now' : '') + '" data-i="' + i + '"' + (i === step ? ' aria-current="step"' : '') + '><i>' + (i + 1) + '</i>' + s.name + (o ? ' <b>' + esc(o.short) + '</b>' : hd ? ' <b>보류</b>' : '') + '</button>';
+    }).join('');
+    h += '<button type="button" class="st' + (step === N ? ' now' : '') + '" data-i="' + N + '"' + (step === N ? ' aria-current="step"' : '') + '><i>끝</i>회의 결과</button>';
+    var el = $('steps'); el.innerHTML = h;
+    var now = el.querySelector('.now');
+    if (now && el.scrollWidth > el.clientWidth) el.scrollLeft = now.offsetLeft - el.offsetLeft - (el.clientWidth - now.offsetWidth) / 2;
+    $('count').textContent = countText();
+  }
+  function countText() { return '고른 것 ' + doneCount() + ' / ' + N + (holdCount() ? ', 보류 ' + holdCount() : ''); }
+
+  function optCard(s, o) {
+    var on = choice[s.id] === o.v;
+    var view;
+    if (s.id === 'theme') {
+      var th = o.v === 'auto' ? (deviceDark() ? 'dark' : 'light') : o.v;
+      view = '<div data-theme="' + th + '">' + sample(s.parts) + '</div>' + (o.v === 'auto' ? '<p class="opt-cap">이 기기는 지금 ' + (th === 'dark' ? '어둡게' : '밝게') + ' 설정되어 있습니다.</p>' : '');
+    } else {
+      view = '<div ' + s.attr + '="' + o.v + '">' + sample(s.parts) + '</div>';
+    }
+    return '<article class="opt' + (on ? ' is-on' : '') + '" data-v="' + o.v + '">' +
+      '<button type="button" class="opt-pick" aria-pressed="' + on + '"><span class="opt-mark"></span><span class="opt-name">' + esc(o.name) + '</span>' +
+        (o.tag ? '<span class="opt-tag">' + esc(o.tag) + '</span>' : '') + (o.rec ? '<span class="opt-tag rec">추천</span>' : '') +
+        '<span class="opt-state">' + (on ? '고름' : '고르기') + '</span></button>' +
+      '<p class="opt-line">' + esc(o.line) + '</p>' +
+      '<div class="opt-view">' + view + '</div>' +
+      '<div class="opt-notes"><div><span class="k">근거</span><span>' + esc(o.good) + '</span></div><div><span class="k">걸리는 점</span><span>' + esc(o.bad) + '</span></div></div>' +
+      '</article>';
+  }
+
+  function resultText() {
+    var d = new Date(), pad = function (n) { return ('0' + n).slice(-2); };
+    var lines = ['TRAVI 디자인 시스템 회의 결과 (' + d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()) + ')', ''];
+    STEPS.forEach(function (s, i) { var o = choice[s.id] ? optOf(s, choice[s.id]) : null; lines.push((i + 1) + ' ' + s.name + ': ' + (o ? o.name + ' (' + o.line + ')' : hold[s.id] ? '보류' : '아직 안 고름')); });
+    lines.push('', countText(), '주소: ' + shareUrl());
+    return lines.join('\n');
+  }
+  function renderResult() {
+    $('resList').innerHTML = STEPS.map(function (s, i) {
+      var o = choice[s.id] ? optOf(s, choice[s.id]) : null;
+      return '<div class="res-row' + (o ? '' : ' todo') + '"><i>' + (i + 1) + '</i><span class="n">' + s.name + '</span>' +
+        '<span class="v">' + (o ? esc(o.name) + '<small>' + esc(o.line) + '</small>' : (hold[s.id] ? '보류' : '아직 안 고름') + '<small>화면에는 임시값(' + esc(optOf(s, s.def).name) + ')으로 보입니다.</small>') + '</span>' +
+        '<button type="button" data-go="' + i + '">' + (o ? '바꾸기' : '고르기') + '</button></div>';
+    }).join('');
+    $('resText').value = resultText();
+    $('resNote').textContent = (location.protocol === 'file:' ? '파일로 연 주소는 이 컴퓨터에서만 열립니다. 다른 사람에게는 위 글을 복사해 보내거나, 페이지를 올린 주소 뒤에 # 뒤쪽 값을 붙여 보내세요. ' : '') + '이 페이지에서 정하지 않는 것: 제목 크기의 세부 값, Next와 Vite 가운데 무엇으로 만들지.';
+    var th = choice.theme === 'auto' ? (deviceDark() ? 'dark' : 'light') : choice.theme;
+    $('resView').innerHTML = '<div' + (th ? ' data-theme="' + th + '"' : '') + '>' + sample(['top', 'hero', 'tabs', 'coop1', 'coop2', 'form']) + '</div>';
+    $('resViewNote').textContent = choice.theme ? '11단계에서 고른 밝기(' + optOf(BY.theme, choice.theme).name + ')로 보입니다.' : '밝기를 아직 고르지 않아 지금 페이지의 밝기로 보입니다.';
+  }
+
+  function render() {
+    if (timer) { clearTimeout(timer); timer = null; }
+    var s = step < N ? STEPS[step] : null;
+    setAttrs();
+    renderStrip();
+    $('kicker').textContent = s ? (step + 1) + '단계 ' + s.name + (choice[s.id] ? ' (고름)' : hold[s.id] ? ' (보류)' : ' (아직 안 고름)') : '마지막';
+    $('askTitle').textContent = s ? s.title : '회의 결과';
+    var body = '';
+    if (s) { body = s.lead.map(function (t) { return '<p>' + t + '</p>'; }).join('') + (s.reco ? '<p class="reco">' + s.reco + '</p>' : ''); }
+    else { var left = N - doneCount(); body = '<p>고른 것 <strong>' + doneCount() + '개</strong>, 남은 것 <strong>' + left + '개</strong>' + (holdCount() ? '(그중 보류 ' + holdCount() + '개)' : '') + '입니다. ' + (left ? '남은 단계는 아래 목록에서 눌러 바로 갈 수 있습니다.' : '모든 단계를 골랐습니다.') + '</p><p>아래 글을 복사해 회의록에 붙이거나 주소를 복사해 같은 상태를 다시 열 수 있습니다.</p>'; }
+    $('askBody').innerHTML = body;
+
+    var opts = $('opts');
+    if (s) { opts.hidden = false; opts.setAttribute('data-cols', s.cols); opts.innerHTML = s.opts.map(function (o) { return optCard(s, o); }).join(''); }
+    else { opts.hidden = true; opts.innerHTML = ''; }
+    $('result').hidden = !!s;
+    if (!s) renderResult();
+    /* 보류 줄. 1단계 색은 정해진 값이라 보류가 없다 */
+    var canHold = !!s && s.id !== 'color';
+    $('holdRow').hidden = !canHold;
+    if (canHold) {
+      $('holdBtn').textContent = hold[s.id] ? '보류 풀기' : '이 단계는 보류로 두기';
+      $('holdNote').textContent = hold[s.id] ? '지금 보류로 두었습니다. 후보를 누르면 보류가 풀리고 그 후보로 정해집니다.' : (choice[s.id] ? '누르면 고른 것을 지우고 결과에 보류로 적습니다.' : '그냥 넘어가면 결과에 아직 안 고름으로, 이 버튼을 누르면 보류로 적힙니다.');
+    }
+    $('stepNote').textContent = s && s.note ? s.note : '';
+    $('stepNote').hidden = !(s && s.note);
+    [].slice.call(document.querySelectorAll('.folds')).forEach(function (f) { f.hidden = !s || f.getAttribute('data-for') !== s.id; });
+
+    $('prevBtn').disabled = step === 0;
+    $('nextBtn').disabled = step === N;
+    $('nextBtn').textContent = step === N - 1 ? '결과 보기' : '다음';
+    $('navPos').textContent = s ? (step + 1) + ' / ' + N + ' ' + s.name : '회의 결과';
+    var after = back ? '결과 화면으로 돌아갑니다.' : '다음으로 넘어갑니다.';
+    $('navHint').textContent = s ? (choice[s.id] ? '고른 것: ' + optOf(s, choice[s.id]).name + '. 다른 후보를 누르면 바뀌고 ' + after : '후보를 누르면 고르고 ' + after + ' 좌우 화살표 키로도 넘깁니다.') : countText();
+    paint();
+  }
+
+  /* 단계를 옮긴 뒤에는 제목으로 포커스를 옮긴다. 키보드로 쓰는 사람이 새 단계의 처음부터 이어 갈 수 있다 */
+  function focusTitle() { try { $('askTitle').focus({ preventScroll: true }); } catch (e) {} }
+  function go(n, fromResult) {
+    n = clampStep(n); if (n === step) return;
+    back = !!fromResult && n < N;
+    step = n; save(true); render();
+    window.scrollTo(0, 0);
+    focusTitle();
+  }
+  /* 고르거나 보류한 뒤 잠깐 뒤에 넘긴다. 결과 화면에서 들어온 단계면 결과 화면으로 돌아간다 */
+  function advance() {
+    if (timer) clearTimeout(timer);
+    var from = step, to = back ? N : from + 1;
+    timer = setTimeout(function () { timer = null; if (step === from) go(to); }, 550);
+  }
+  function toggleHold() {
+    var s = STEPS[step]; if (!s || s.id === 'color') return;
+    if (hold[s.id]) { delete hold[s.id]; save(); render(); return; }
+    delete choice[s.id]; hold[s.id] = true; save(); render();
+    $('navHint').textContent = '보류로 두었습니다. ' + (back ? '결과 화면으로 돌아갑니다.' : '다음으로 넘어갑니다.');
+    advance();
+  }
+  function pick(v) {
+    var s = STEPS[step]; if (!s || !optOf(s, v)) return;
+    choice[s.id] = v; delete hold[s.id]; save();
+    /* 고른 표시를 먼저 보여 주고 잠깐 뒤에 다음 단계로 넘긴다 */
+    [].slice.call(document.querySelectorAll('#opts .opt')).forEach(function (a) {
+      var on = a.getAttribute('data-v') === v;
+      a.classList.toggle('is-on', on);
+      a.querySelector('.opt-pick').setAttribute('aria-pressed', on);
+      a.querySelector('.opt-state').textContent = on ? '고름' : '고르기';
+    });
+    renderStrip();
+    $('kicker').textContent = (step + 1) + '단계 ' + s.name + ' (고름)';
+    $('holdBtn').textContent = '이 단계는 보류로 두기';
+    $('navHint').textContent = '고른 것: ' + optOf(s, v).name + '. ' + (back ? '결과 화면으로 돌아갑니다.' : '다음으로 넘어갑니다.');
+    advance();
+  }
+
+  /* ------------------------------------------------------------------
+     접어 둔 자료: 색 계단, 역할 표, 대비 숫자, 크기 견본. 밝기나 고른 값이 바뀌면 다시 읽는다
+     ------------------------------------------------------------------ */
+  var SPEC = [
+    ['display', '첫 화면 큰 제목. 좁은 화면 36px', 'var(--tv-fs-display)', 'var(--tv-lh-display)', 700, 'var(--tv-ls-display)', 'Build AI Together.'],
+    ['h1', '페이지 제목. 좁은 화면 30px', 'var(--tv-fs-h1)', '1.15', 700, 'var(--tv-ls-heading)', 'AI Cooperatives'],
+    ['h2', '구역 제목', 'var(--tv-fs-h2)', 'var(--tv-lh-heading)', 700, 'var(--tv-ls-heading)', 'How rewards are shared'],
+    ['h3', '카드 제목', 'var(--tv-fs-h3)', '1.35', 600, '-0.01em', 'SOC Threat Detection Coop'],
+    ['lg', '제목 바로 아래 소개 문단', 'var(--tv-fs-lg)', 'var(--tv-lh-body)', 400, '0', 'Turn independent resources into collaborative intelligence.'],
+    ['md', '본문', 'var(--tv-fs-md)', 'var(--tv-lh-body)', 400, '0', 'Contribution is recorded for each member every round.'],
+    ['sm', '보조 설명, 버튼, 메뉴', 'var(--tv-fs-sm)', '1.5', 400, '0', '3 of 8 seats open'],
+    ['xs', '칩, 작은 라벨', 'var(--tv-fs-xs)', 'var(--tv-lh-ui)', 600, '0', 'Open to join · 12 days left']
+  ];
+  $('spec').innerHTML = SPEC.map(function (r) {
+    return '<div class="spec-row"><div class="m"><b>' + r[0] + ' <span data-px></span></b>' + r[1] + '</div>' +
+      '<div class="s" style="font-size:' + r[2] + ';line-height:' + r[3] + ';font-weight:' + r[4] + ';letter-spacing:' + r[5] + '">' + r[6] + '</div></div>';
+  }).join('');
   $('pair').innerHTML = [['light', '밝은 화면'], ['dark', '어두운 화면']].map(function (t) {
-    return '<div class="cand"><p class="cand-cap">' + t[1] + '</p><div data-theme="' + t[0] + '" data-scope>' + sample() + '</div><p class="cand-num" data-num></p></div>';
+    return '<div class="cand"><p class="cand-cap">' + t[1] + '</p><div data-theme="' + t[0] + '" data-scope>' + sample(['top', 'hero', 'tabs', 'coop1', 'review']) + '</div><p class="cand-num" data-num></p></div>';
+  }).join('');
+  $('doms').innerHTML = [['security', 'Security'], ['economy', 'Finance'], ['agriculture', 'Agriculture'], ['healthcare', 'Healthcare'], ['other', 'Other']].map(function (d) {
+    return '<div style="color:var(--tv-domain-' + (d[0] === 'economy' ? 'finance' : d[0]) + ')">' + (IC[d[0]] || '') + '<span>' + esc(d[1]) + '</span></div>';
   }).join('');
 
   var NEUTRAL_USE = {
@@ -283,8 +954,9 @@ table.roles th { font-size: 12px; color: var(--tv-text-muted); background: var(-
     dark: ['본문 글자', '새로 채운 칸', '보조 글자', '흐린 글자 (새 값)', '진한 선', '선', '카드', '페이지 바탕', '새로 채운 칸', '새로 채운 칸']
   };
   var SCALES = [
-    ['gray', '회색, 밝은 화면', '바탕, 선, 글자'], ['dark', '회색, 어두운 화면', '글자, 선, 바탕'], ['indigo', '남색', '주색. 기준은 6번'],
-    ['green', '초록', '잘 됨, 학습 중'], ['amber', '노랑', '기다림, 가득 참'], ['red', '빨강', '오류, 거절, 되돌릴 수 없는 동작']
+    ['gray', '회색, 밝은 화면', '바탕, 선, 글자'], ['dark', '회색, 어두운 화면', '글자, 선, 바탕'], ['indigo', '남색', '주색으로 고른 값. 기준은 6번'],
+    ['terra', '테라코타', '주색 후보. 다시 고를 때만 씀'], ['green', '초록', '잘 됨'], ['amber', '노랑', '기다림, 가득 참'], ['red', '빨강', '오류, 거절, 되돌릴 수 없는 동작'],
+    ['crimson', '진분홍', '주색이 테라코타일 때만 쓰는 오류색']
   ];
   var ROLES = [
     ['--tv-bg', '페이지 바탕'], ['--tv-bg-subtle', '한 단 가라앉은 구역, 표 머리'], ['--tv-surface', '카드, 팝업, 입력칸'],
@@ -293,36 +965,82 @@ table.roles th { font-size: 12px; color: var(--tv-text-muted); background: var(-
     ['--tv-primary', '가장 중요한 버튼'], ['--tv-primary-hover', '그 버튼에 마우스를 올렸을 때'], ['--tv-on-primary', '그 버튼 위의 글자'],
     ['--tv-link', '글자 링크'], ['--tv-accent', '선택된 것의 글자'], ['--tv-accent-bg', '선택된 것의 바탕'], ['--tv-focus', '키보드로 짚은 곳의 테'],
     ['--tv-success', '잘 됨을 알리는 글자'], ['--tv-success-bg', '그 칩의 바탕'], ['--tv-warning', '기다림, 주의를 알리는 글자'], ['--tv-warning-bg', '그 칩의 바탕'],
-    ['--tv-danger', '오류, 거절을 알리는 글자'], ['--tv-danger-bg', '그 칩의 바탕'], ['--tv-info', '모집 중처럼 알림 성격의 글자'], ['--tv-info-bg', '그 칩의 바탕']
+    ['--tv-danger', '오류, 거절을 알리는 글자'], ['--tv-danger-bg', '그 칩의 바탕'], ['--tv-info', '알림 성격의 글자'], ['--tv-info-bg', '그 칩의 바탕']
   ];
   function sw(hex) { return '<span class="swv"><i style="background:' + hex + '"></i><span class="mono">' + hex + '</span></span>'; }
   function strip(name, uses) {
     var h = '';
-    for (var i = 0; i < 10; i++) { var v = read('--tv-' + name + '-' + i); h += '<div class="col"><div class="cell" style="background:' + v + ';color:' + ink(v) + '"><b>' + i + '</b><span class="mono">' + v + '</span></div>' + (uses ? '<div class="use">' + uses[i] + '</div>' : '') + '</div>'; }
+    for (var i = 0; i < 10; i++) { var v = read('--tv-' + name + '-' + i); h += '<div class="col"><div class="cell" style="background:' + v + '"></div><div class="lab"><b>' + i + '</b><span class="mono">' + v + '</span></div>' + (uses ? '<div class="use">' + uses[i] + '</div>' : '') + '</div>'; }
     return h;
   }
-
   function paint() {
     var dark = root.getAttribute('data-theme') === 'dark';
     $('themeBtn').textContent = dark ? '밝게 보기' : '어둡게 보기';
-    var nz = dark ? 'dark' : 'gray';
-    $('neutralStrip').innerHTML = strip(nz, NEUTRAL_USE[dark ? 'dark' : 'light']);
-    var surf = read('--tv-surface');
-    $('oldNum').textContent = '(예전 값, 대비 ' + ratio(read('--ds-old-faint'), surf).toFixed(1) + ')';
-    $('newNum').textContent = '(새 값, 대비 ' + ratio(read('--tv-text-faint'), surf).toFixed(1) + ')';
-    $('scales').innerHTML = SCALES.map(function (s) { return '<div class="scale-name"><b>' + s[1] + '</b><span>' + s[2] + '</span></div><div class="strip">' + strip(s[0]) + '</div>'; }).join('');
-    $('rolesCommon').innerHTML = '<tr><th>이름</th><th>쓰임</th><th>지금 값</th></tr>' + ROLES.map(function (r) { return '<tr><td class="mono">' + r[0] + '</td><td class="use">' + r[1] + '</td><td>' + sw(read(r[0])) + '</td></tr>'; }).join('');
-    [].slice.call(document.querySelectorAll('.cand')).forEach(function (a) {
-      var sc = a.querySelector('[data-scope]');
-      var p = read('--tv-primary', sc), op = read('--tv-on-primary', sc), l = read('--tv-link', sc), bg = read('--tv-surface', sc);
-      a.querySelector('[data-num]').textContent = '버튼 글자 대비 ' + ratio(p, op).toFixed(1) + ', 링크 글자 대비 ' + ratio(l, bg).toFixed(1) + ' (기준 4.5)';
-    });
+    var cur = step < N ? STEPS[step].id : '';
+    if (cur === 'color') {
+      $('neutralStrip').innerHTML = strip(dark ? 'dark' : 'gray', NEUTRAL_USE[dark ? 'dark' : 'light']);
+      var surf = read('--tv-surface');
+      $('oldNum').textContent = '(예전 값, 대비 ' + ratio(read('--ds-old-faint'), surf).toFixed(1) + ')';
+      $('newNum').textContent = '(새 값, 대비 ' + ratio(read('--tv-text-faint'), surf).toFixed(1) + ')';
+      $('scales').innerHTML = SCALES.map(function (s) { return '<div class="scale-name"><b>' + s[1] + '</b><span>' + s[2] + '</span></div><div class="strip">' + strip(s[0]) + '</div>'; }).join('');
+      $('rolesCommon').innerHTML = '<tr><th>이름</th><th>쓰임</th><th>지금 값</th></tr>' + ROLES.map(function (r) { return '<tr><td class="mono">' + r[0] + '</td><td class="use">' + r[1] + '</td><td>' + sw(read(r[0], foldwrap)) + '</td></tr>'; }).join('');
+      [].slice.call(document.querySelectorAll('#pair .cand')).forEach(function (a) {
+        var sc = a.querySelector('[data-scope]');
+        var p = read('--tv-primary', sc), op = read('--tv-on-primary', sc), l = read('--tv-link', sc), bg = read('--tv-surface', sc);
+        a.querySelector('[data-num]').textContent = '버튼 글자 대비 ' + ratio(p, op).toFixed(1) + ', 링크 글자 대비 ' + ratio(l, bg).toFixed(1) + ' (기준 4.5)';
+      });
+    }
+    if (cur === 'size') {
+      [].slice.call(document.querySelectorAll('#spec .spec-row')).forEach(function (r) { r.querySelector('[data-px]').textContent = Math.round(parseFloat(getComputedStyle(r.querySelector('.s')).fontSize)) + 'px'; });
+    }
   }
 
-  var IC = window.TRAVI_ICONS || {};
-  $('doms').innerHTML = [['security', 'Security'], ['economy', 'Finance'], ['agriculture', 'Agriculture'], ['healthcare', 'Healthcare'], ['other', 'Other']].map(function (d) {
-    return '<div style="color:var(--tv-domain-' + (d[0] === 'economy' ? 'finance' : d[0]) + ')">' + (IC[d[0]] || '') + '<span>' + esc(d[1]) + '</span></div>';
-  }).join('');
+  /* ------------------------------------------------------------------
+     누르는 것들
+     ------------------------------------------------------------------ */
+  $('steps').addEventListener('click', function (e) { var b = e.target.closest('.st'); if (b) go(b.getAttribute('data-i')); });
+  $('opts').addEventListener('click', function (e) { var a = e.target.closest('.opt'); if (a) pick(a.getAttribute('data-v')); });
+  $('resList').addEventListener('click', function (e) { var b = e.target.closest('[data-go]'); if (b) go(b.getAttribute('data-go'), true); });
+  $('holdBtn').addEventListener('click', toggleHold);
+  $('prevBtn').addEventListener('click', function () { go(step - 1); });
+  $('nextBtn').addEventListener('click', function () { go(step + 1); });
+  document.addEventListener('keydown', function (e) {
+    if (e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return;
+    var t = e.target, tag = t && t.tagName;
+    if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || (t && t.isContentEditable)) return;
+    if (e.key === 'ArrowRight') { e.preventDefault(); go(step + 1); }
+    else if (e.key === 'ArrowLeft') { e.preventDefault(); go(step - 1); }
+  });
+  /* 주소가 바뀌었을 때. 뒤로 가기, 앞으로 가기는 단계만 옮기고 고른 값은 지금 것을 지킨다(기록 속 주소의 값은 그때 것이라 낡았다).
+     주소창에 직접 적은 주소는 fromHash 규칙을 따른다. */
+  function onNav(st) {
+    back = false;
+    if (st && st.tv === 1) step = clampStep(st.s); else if (!fromHash()) return;
+    save(); render(); window.scrollTo(0, 0); focusTitle();
+  }
+  window.addEventListener('popstate', function (e) { onNav(e.state); });
+  window.addEventListener('hashchange', function () { if (location.href !== handled) onNav(null); });
+
+  function flash(btn, text) { var old = btn.getAttribute('data-label') || btn.textContent; btn.setAttribute('data-label', old); btn.textContent = text; setTimeout(function () { btn.textContent = old; }, 1800); }
+  function copy(text, btn) {
+    function fallback() { var ta = $('resText'), keep = ta.value; ta.value = text; ta.focus(); ta.select(); var ok = false; try { ok = document.execCommand('copy'); } catch (e) {} ta.value = keep; return ok; }
+    function done(ok) { flash(btn, ok ? '복사했습니다' : '복사하지 못했습니다'); if (!ok) $('resNote').textContent = '자동 복사가 막혀 있습니다. 위 글 상자를 눌러 직접 복사해 주세요.'; }
+    try { if (navigator.clipboard && window.isSecureContext) { navigator.clipboard.writeText(text).then(function () { done(true); }, function () { done(fallback()); }); return; } } catch (e) {}
+    done(fallback());
+  }
+  $('copyText').addEventListener('click', function () { copy(resultText(), this); });
+  $('copyLink').addEventListener('click', function () { copy(shareUrl(), this); });
+
+  /* 처음 상태로: 잘못 눌러 지우지 않게 두 번 눌러야 지운다 */
+  var armed = null;
+  $('resetBtn').addEventListener('click', function () {
+    var b = this;
+    if (!armed) { b.textContent = '한 번 더 누르면 지웁니다'; b.classList.add('warn'); armed = setTimeout(function () { armed = null; b.textContent = '처음 상태로'; b.classList.remove('warn'); }, 4000); return; }
+    clearTimeout(armed); armed = null; b.textContent = '처음 상태로'; b.classList.remove('warn');
+    choice = { color: 'indigo' }; hold = {}; back = false; step = 0;
+    try { localStorage.removeItem(KEY); } catch (e) {}
+    save(); render(); window.scrollTo(0, 0);
+  });
 
   $('themeBtn').addEventListener('click', function () {
     var next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
@@ -330,7 +1048,12 @@ table.roles th { font-size: 12px; color: var(--tv-text-muted); background: var(-
     try { localStorage.setItem('tv-ds-theme', next); } catch (e) {}
     paint();
   });
-  paint();
+
+  /* 저장된 값을 먼저 읽고 그 위에 주소 값을 얹는다. 주소에 단계만 있으면 저장된 고른 값이 남는다 */
+  fromStore();
+  fromHash();
+  save();
+  render();
 })();
 </script>
 </body>

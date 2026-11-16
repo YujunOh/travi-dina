@@ -1,11 +1,15 @@
-/* TRAVI 디자인 시스템 값 파일. 지금은 1단계(색)만 들어 있다. design-system.html 이 읽는다.
+/* TRAVI 디자인 시스템 값 파일. design-system.html(회의용 검토 페이지)이 읽는다.
    style.css 와는 아직 연결하지 않았다. 변수 이름 앞의 tv 는 기존 --bg, --text 와 겹치지 않게 붙였다.
 
    읽는 순서
    1) 계단: 색의 원재료. 0이 가장 밝고 9가 가장 어둡다. 화면에서 직접 쓰지 않는다.
    2) 역할: 화면이 실제로 쓰는 이름. 밝은 화면과 어두운 화면에서 같은 이름이 다른 칸을 가리킨다.
+   3) 글자: 글꼴, 크기 여덟 가지, 굵기 셋, 줄 간격, 자간.
+   4) 모양: 모서리, 간격, 높이, 그림자.
+   5) 후보: 회의에서 고르는 값. [data-이름="값"] 을 붙인 곳 안쪽만 바뀐다.
 
-   주색은 남색으로 정했다(1단계). 가장 중요한 버튼, 글자 링크, 선택 표시, 키보드로 짚은 곳의 테가 남색이다.
+   정해진 것은 주색 하나다(남색, 11/15). 나머지 후보는 회의에서 고르기 전이고 :root 의 값은 임시 기본값이다.
+   하나로 정하면 그 값을 :root 로 옮기고 나머지 후보 줄은 지운다.
    대비 기준: 글자는 바탕과 4.5 이상, 버튼이나 입력칸의 경계는 3 이상. */
 
 :root {
@@ -16,12 +20,16 @@
   --tv-dark-0: #e8ecf5; --tv-dark-1: #c5cddc; --tv-dark-2: #a3adc2; --tv-dark-3: #77829a; --tv-dark-4: #34405a; --tv-dark-5: #232c40; --tv-dark-6: #121828; --tv-dark-7: #0b0f1a; --tv-dark-8: #080b14; --tv-dark-9: #05070d;
   /* indigo: 주색. 기준 6번 = 사이트 강조색. 1번, 2번은 '모집 중' 칩의 바탕과 테두리 */
   --tv-indigo-0: #f5f6ff; --tv-indigo-1: #eceefe; --tv-indigo-2: #c8cdfb; --tv-indigo-3: #a8b6ff; --tv-indigo-4: #8598fe; --tv-indigo-5: #6075fd; --tv-indigo-6: #3f4ff0; --tv-indigo-7: #3139d3; --tv-indigo-8: #2529af; --tv-indigo-9: #1a1c88;
+  /* terra: 주색 후보 테라코타. 첫 화면 도식의 따뜻한 팔레트에서 뽑고 흰 글자가 읽히게 어둡게 함. 남색으로 정했지만 회의에서 다시 고를 수 있게 둔다 */
+  --tv-terra-0: #fff4f1; --tv-terra-1: #fee3db; --tv-terra-2: #fccabb; --tv-terra-3: #f7ad97; --tv-terra-4: #ee8e70; --tv-terra-5: #dd6d4a; --tv-terra-6: #c54f28; --tv-terra-7: #ab3c15; --tv-terra-8: #8f2e09; --tv-terra-9: #712307;
   /* green: 기준 6번 = 칩의 초록 글자. 0번, 2번은 그 칩의 바탕과 테두리 */
   --tv-green-0: #eef8f3; --tv-green-1: #ddede3; --tv-green-2: #bfe3cf; --tv-green-3: #99c8ac; --tv-green-4: #71b28d; --tv-green-5: #48996f; --tv-green-6: #1d7d52; --tv-green-7: #006840; --tv-green-8: #015332; --tv-green-9: #003e24;
   /* amber: 8번 = 칩의 노랑 글자. 0번, 2번은 그 칩의 바탕과 테두리 */
   --tv-amber-0: #fdf7ea; --tv-amber-1: #f7eada; --tv-amber-2: #f0d9a8; --tv-amber-3: #e8c496; --tv-amber-4: #deae6f; --tv-amber-5: #cf9748; --tv-amber-6: #bb8022; --tv-amber-7: #a46c07; --tv-amber-8: #8a5a00; --tv-amber-9: #704a07;
   /* red: 기준 6번 = 위험 버튼과 거절 칩. 7번은 그 버튼에 마우스를 올린 색 */
   --tv-red-0: #fdf1f0; --tv-red-1: #fde2de; --tv-red-2: #f2c6c2; --tv-red-3: #f1a89f; --tv-red-4: #e6877b; --tv-red-5: #d36559; --tv-red-6: #b8443b; --tv-red-7: #9d362e; --tv-red-8: #82231e; --tv-red-9: #651915;
+  /* crimson: 주색을 테라코타로 고를 때만 쓰는 오류색. 붉은 주황과 헷갈리지 않게 진분홍 쪽으로 옮김 */
+  --tv-crimson-0: #fff4f5; --tv-crimson-1: #ffe1e5; --tv-crimson-2: #ffc4cd; --tv-crimson-3: #fda2b2; --tv-crimson-4: #f47c96; --tv-crimson-5: #e3567a; --tv-crimson-6: #c9305f; --tv-crimson-7: #ae194d; --tv-crimson-8: #900b3d; --tv-crimson-9: #71072e;
 
   /* 도메인 아이콘 색. icons/domain-icons.js 와 같은 값 */
   --tv-domain-security: #51628e; --tv-domain-finance: #7f643a; --tv-domain-agriculture: #4d7357; --tv-domain-healthcare: #8f565d; --tv-domain-other: #616978;
@@ -50,6 +58,9 @@
   --tv-link: var(--tv-indigo-6);            /* 글자 링크 */
   --tv-focus: var(--tv-indigo-5);           /* 키보드로 짚은 곳의 테 */
   --tv-accent: var(--tv-indigo-6); --tv-accent-bg: var(--tv-indigo-1); --tv-accent-line: var(--tv-indigo-2);   /* 선택된 것의 글자, 바탕, 테두리 */
+
+  /* 도메인 색. 어두운 구역 안에 밝은 구역을 넣었을 때 밝은 값으로 돌아오게 여기에도 적는다 */
+  --tv-domain-security: #51628e; --tv-domain-finance: #7f643a; --tv-domain-agriculture: #4d7357; --tv-domain-healthcare: #8f565d; --tv-domain-other: #616978;
 }
 
 /* 2) 역할: 어두운 화면. 옅은 바탕은 색을 카드 바탕에 조금 섞어 만든다 */
@@ -75,3 +86,123 @@
 
   --tv-domain-security: #a5b7e2; --tv-domain-finance: #d2ba91; --tv-domain-agriculture: #a3c9ac; --tv-domain-healthcare: #dea7ac; --tv-domain-other: #afb8c7;
 }
+
+/* 3) 글자. 크기는 rem 으로 적는다. 1rem = 16px */
+:root {
+  --tv-font-sans: 'Pretendard Variable', Pretendard, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --tv-font-serif: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+  --tv-font-mono: 'Geist Mono', ui-monospace, 'SFMono-Regular', Consolas, monospace;
+
+  /* 쓰임별 글꼴. 글꼴 조합 후보에 따라 바뀌는 것은 heading 과 data 둘이다 */
+  --tv-font-body: var(--tv-font-sans);      /* 본문, 버튼, 칩, 메뉴 */
+  --tv-font-heading: var(--tv-font-sans);   /* 큰 제목 (display, h1, h2) */
+  --tv-font-data: var(--tv-font-sans);      /* 숫자와 작은 라벨 */
+  --tv-fw-heading: 700; --tv-ls-display: -0.03em; --tv-ls-heading: -0.02em;
+
+  /* 크기 여덟 가지. lg, md, sm 은 글자 크기 기준 후보에 따라 바뀐다 */
+  --tv-fs-display: 3.5rem;   /* 56px. 첫 화면 큰 제목. 좁은 화면에서는 36px */
+  --tv-fs-h1: 2.5rem;        /* 40px. 페이지 제목. 좁은 화면에서는 30px */
+  --tv-fs-h2: 1.75rem;       /* 28px. 구역 제목 */
+  --tv-fs-h3: 1.25rem;       /* 20px. 카드 제목 */
+  --tv-fs-lg: 1.125rem;      /* 18px. 제목 바로 아래 소개 문단 */
+  --tv-fs-md: 1rem;          /* 16px. 본문 */
+  --tv-fs-sm: 0.875rem;      /* 14px. 보조 설명, 버튼, 메뉴 */
+  --tv-fs-xs: 0.75rem;       /* 12px. 칩, 작은 라벨 */
+
+  /* 굵기 셋 */
+  --tv-fw-regular: 400; --tv-fw-semibold: 600; --tv-fw-bold: 700;
+
+  /* 줄 간격: 큰 제목은 좁게, 본문은 넉넉하게 */
+  --tv-lh-display: 1.08; --tv-lh-heading: 1.25; --tv-lh-body: 1.6; --tv-lh-ui: 1.4;
+
+  /* 자간: 큰 글자만 조금 좁힌다. 대문자 라벨은 조금 벌린다 */
+  --tv-ls-label: 0.06em;
+}
+
+/* 4) 모양. 아래 값은 임시 기본값이고 회의에서 후보 가운데 고른다 */
+:root {
+  --tv-radius-control: 8px;   /* 버튼, 탭 */
+  --tv-radius-input: 8px;     /* 입력칸 */
+  --tv-radius-card: 12px;     /* 카드 */
+  --tv-radius-pill: 999px;    /* 칩. 사이트와 Figma 모두 알약이라 고정 */
+
+  --tv-pad-card: 24px;        /* 카드 안쪽 여백 */
+  --tv-gap: 12px;             /* 카드 안 줄 사이 */
+  --tv-gap-section: 24px;     /* 덩어리 사이 */
+
+  --tv-h-control: 36px;       /* 버튼과 입력칸 높이 */
+  --tv-pad-control: 14px;     /* 버튼 좌우 여백 */
+
+  /* 옅은 그림자. Mantine 9.8.1 기본 shadows.sm 과 같은 값 */
+  --tv-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05), 0 10px 15px -5px rgba(0, 0, 0, 0.05), 0 7px 7px -5px rgba(0, 0, 0, 0.04);
+  /* 카드에 마우스를 올렸을 때. 지금 사이트 값 */
+  --tv-shadow-hover: 0 14px 30px -20px rgba(13, 18, 32, 0.35);
+}
+
+/* 5) 후보. 붙인 곳 안쪽만 바뀐다 */
+
+/* 주색. 남색이 정해진 값이고 먹색과 테라코타는 다시 고를 때를 위한 것.
+   밝은 구역과 어두운 구역이 서로 안에 들어가도 맞게 보이도록 선택자를 여러 벌 적었다 */
+[data-primary="indigo"], [data-primary="indigo"] [data-theme="light"] {
+  --tv-primary: var(--tv-indigo-6); --tv-primary-hover: var(--tv-indigo-7); --tv-on-primary: var(--tv-white);
+  --tv-link: var(--tv-indigo-6); --tv-focus: var(--tv-indigo-5);
+  --tv-accent: var(--tv-indigo-6); --tv-accent-bg: var(--tv-indigo-1); --tv-accent-line: var(--tv-indigo-2);
+  --tv-danger: var(--tv-red-6); --tv-danger-bg: var(--tv-red-0); --tv-danger-line: var(--tv-red-2);
+}
+[data-theme="dark"] [data-primary="indigo"], [data-theme="dark"][data-primary="indigo"], [data-primary="indigo"] [data-theme="dark"] {
+  --tv-primary: var(--tv-indigo-4); --tv-primary-hover: var(--tv-indigo-3); --tv-on-primary: var(--tv-dark-7);
+  --tv-link: var(--tv-indigo-4); --tv-focus: var(--tv-indigo-4);
+  --tv-accent: var(--tv-indigo-3); --tv-accent-bg: color-mix(in srgb, var(--tv-indigo-6) 26%, var(--tv-dark-6)); --tv-accent-line: color-mix(in srgb, var(--tv-indigo-5) 55%, var(--tv-dark-6));
+  --tv-danger: var(--tv-red-4); --tv-danger-bg: color-mix(in srgb, var(--tv-red-6) 22%, var(--tv-dark-6)); --tv-danger-line: color-mix(in srgb, var(--tv-red-5) 50%, var(--tv-dark-6));
+}
+/* 먹색: 버튼은 먹색, 남색은 링크와 선택 표시에만 */
+[data-primary="ink"], [data-primary="ink"] [data-theme="light"] {
+  --tv-primary: var(--tv-gray-9); --tv-primary-hover: var(--tv-gray-8); --tv-on-primary: var(--tv-white);
+  --tv-link: var(--tv-indigo-6); --tv-focus: var(--tv-indigo-5);
+  --tv-accent: var(--tv-indigo-6); --tv-accent-bg: var(--tv-indigo-1); --tv-accent-line: var(--tv-indigo-2);
+  --tv-danger: var(--tv-red-6); --tv-danger-bg: var(--tv-red-0); --tv-danger-line: var(--tv-red-2);
+}
+[data-theme="dark"] [data-primary="ink"], [data-theme="dark"][data-primary="ink"], [data-primary="ink"] [data-theme="dark"] {
+  --tv-primary: var(--tv-dark-0); --tv-primary-hover: var(--tv-white); --tv-on-primary: var(--tv-dark-7);
+  --tv-link: var(--tv-indigo-4); --tv-focus: var(--tv-indigo-4);
+  --tv-accent: var(--tv-indigo-3); --tv-accent-bg: color-mix(in srgb, var(--tv-indigo-6) 26%, var(--tv-dark-6)); --tv-accent-line: color-mix(in srgb, var(--tv-indigo-5) 55%, var(--tv-dark-6));
+  --tv-danger: var(--tv-red-4); --tv-danger-bg: color-mix(in srgb, var(--tv-red-6) 22%, var(--tv-dark-6)); --tv-danger-line: color-mix(in srgb, var(--tv-red-5) 50%, var(--tv-dark-6));
+}
+/* 테라코타: 버튼, 링크, 선택 표시가 모두 붉은 주황. 오류색은 진분홍(crimson)으로 옮긴다 */
+[data-primary="terra"], [data-primary="terra"] [data-theme="light"] {
+  --tv-primary: var(--tv-terra-6); --tv-primary-hover: var(--tv-terra-7); --tv-on-primary: var(--tv-white);
+  --tv-link: var(--tv-terra-7); --tv-focus: var(--tv-terra-5);
+  --tv-accent: var(--tv-terra-7); --tv-accent-bg: var(--tv-terra-0); --tv-accent-line: var(--tv-terra-2);
+  --tv-danger: var(--tv-crimson-6); --tv-danger-bg: var(--tv-crimson-0); --tv-danger-line: var(--tv-crimson-2);
+}
+[data-theme="dark"] [data-primary="terra"], [data-theme="dark"][data-primary="terra"], [data-primary="terra"] [data-theme="dark"] {
+  --tv-primary: var(--tv-terra-4); --tv-primary-hover: var(--tv-terra-3); --tv-on-primary: var(--tv-dark-7);
+  --tv-link: var(--tv-terra-4); --tv-focus: var(--tv-terra-4);
+  --tv-accent: var(--tv-terra-3); --tv-accent-bg: color-mix(in srgb, var(--tv-terra-6) 24%, var(--tv-dark-6)); --tv-accent-line: color-mix(in srgb, var(--tv-terra-5) 52%, var(--tv-dark-6));
+  --tv-danger: var(--tv-crimson-4); --tv-danger-bg: color-mix(in srgb, var(--tv-crimson-6) 22%, var(--tv-dark-6)); --tv-danger-line: color-mix(in srgb, var(--tv-crimson-5) 50%, var(--tv-dark-6));
+}
+
+/* 글꼴 조합 */
+[data-type="a"] { --tv-font-heading: var(--tv-font-sans); --tv-font-data: var(--tv-font-sans); --tv-fw-heading: 700; --tv-ls-display: -0.03em; --tv-ls-heading: -0.02em; }    /* A Pretendard 하나로 */
+[data-type="b"] { --tv-font-heading: var(--tv-font-serif); --tv-font-data: var(--tv-font-sans); --tv-fw-heading: 600; --tv-ls-display: -0.02em; --tv-ls-heading: -0.01em; }   /* B 큰 제목만 세리프 */
+[data-type="c"] { --tv-font-heading: var(--tv-font-sans); --tv-font-data: var(--tv-font-mono); --tv-fw-heading: 700; --tv-ls-display: -0.03em; --tv-ls-heading: -0.02em; }    /* C 숫자와 라벨만 고정폭 */
+
+/* 글자 크기 기준. 본문 크기에 따라 소개 문단(lg)과 보조 글자(sm)가 같이 움직인다. 제목과 칩(xs 12px)은 그대로 */
+[data-size="16"] { --tv-fs-lg: 1.125rem;  --tv-fs-md: 1rem;      --tv-fs-sm: 0.875rem; }    /* 18, 16, 14 */
+[data-size="15"] { --tv-fs-lg: 1.0625rem; --tv-fs-md: 0.9375rem; --tv-fs-sm: 0.8125rem; }   /* 17, 15, 13 */
+[data-size="14"] { --tv-fs-lg: 1rem;      --tv-fs-md: 0.875rem;  --tv-fs-sm: 0.8125rem; }   /* 16, 14, 13 */
+
+/* 모서리. 버튼 값을 고르면 입력칸과 카드가 따라간다 */
+[data-radius="4"]    { --tv-radius-control: 4px;   --tv-radius-input: 4px;  --tv-radius-card: 8px; }
+[data-radius="8"]    { --tv-radius-control: 8px;   --tv-radius-input: 8px;  --tv-radius-card: 12px; }
+[data-radius="12"]   { --tv-radius-control: 12px;  --tv-radius-input: 12px; --tv-radius-card: 16px; }
+[data-radius="pill"] { --tv-radius-control: 999px; --tv-radius-input: 10px; --tv-radius-card: 16px; }   /* 지금 사이트 값 */
+
+/* 간격 밀도 */
+[data-density="compact"] { --tv-pad-card: 16px; --tv-gap: 8px;  --tv-gap-section: 16px; }
+[data-density="normal"]  { --tv-pad-card: 24px; --tv-gap: 12px; --tv-gap-section: 24px; }
+[data-density="roomy"]   { --tv-pad-card: 32px; --tv-gap: 16px; --tv-gap-section: 32px; }
+
+/* 버튼과 입력칸 높이. 테두리 모양(회색, 진한 색)은 design-system.html 안에서 입힌다 */
+[data-btn$="36"] { --tv-h-control: 36px; --tv-pad-control: 14px; }
+[data-btn$="42"] { --tv-h-control: 42px; --tv-pad-control: 18px; }
