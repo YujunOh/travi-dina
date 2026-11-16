@@ -6,6 +6,11 @@
 <title>Whitepaper · TRAVI</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <link rel="stylesheet" href="style.css">
+<style>
+/* Whitepaper 전용. 왼쪽 목차 없이 본문 한 단 */
+.wp { padding: 32px 0 128px; }
+.wp > h1:first-child { margin-top: 0; }
+</style>
 </head>
 <body>
 
@@ -14,76 +19,31 @@
 <main class="wrap">
   <div class="crumb"><a href="index.html">Home</a><span class="sep">›</span><span class="cur">Whitepaper</span></div>
 
-  <div class="docs">
-    <aside class="side">
-      <p class="grp">WHITEPAPER</p>
-      <ul>
-        <li><a class="on" href="#overview">Overview</a></li>
-        <li><a href="#publications">Selected publications</a></li>
-        <li><a href="#writing">Featured writing</a></li>
-        <li><a href="#code">Code</a></li>
-      </ul>
-    </aside>
+  <article class="doc wp">
+    <h1 id="publications">Publications</h1>
+    <ul class="refs">
+      <li>Batbaatar, E., &amp; Yoon, Y. (2026). TL++: Accuracy and Privacy Preserving Traversal Learning for Distributed Intelligent Systems. arXiv:2606.25627.</li>
+      <li>Batbaatar, E., Kim, J., Kim, Y., &amp; Yoon, Y. (2025). Traversal Learning Coordination for Lossless and Efficient Distributed Learning. <i>Expert Systems</i>, 42(11), e70141.</li>
+      <li>Kim, Y. C., Lee, C., &amp; Yoon, Y. (2025). Payload-aware intrusion detection with CMAE and large language models. <i>ACM Transactions on Privacy and Security</i>, 29(1), 1–30.</li>
+      <li>Seo, J., Lee, Y., &amp; Yoon, Y. (2024). Self-sovereign and secure data sharing through docker containers for machine learning on remote node. <i>Journal of Web Engineering</i>, 23(5), 637–655.</li>
+      <li>Kim, J., &amp; Yoon, Y. (2025). Predicting Machine Learning Training Costs with MLPerf Benchmarks. 2025 IEEE International Conference on Big Data, Macau.</li>
+      <li>Yoon, Y., Kim, J., &amp; Park, S. (2026). Towards Value-Constrained Credit Assignment in Fully Delegated AI Cooperatives. arXiv:2606.28217.</li>
+    </ul>
 
-    <article class="doc">
-      <div class="eyebrow">WHITEPAPER</div>
-      <h1 id="overview">The AI Cooperatives</h1>
-      <p class="lede">Research and writing behind TRAVI and AI Coops.</p>
-      <div class="ph" style="margin-top:28px">Whitepaper PDF 자리. 파일이 정해지면 다운로드 버튼으로 바꿉니다.</div>
+    <h2 id="writing">Featured writing</h2>
+    <ul class="refs">
+      <li>Yoon, Y. (2026). Creating Agentic AI Cooperatives for the Recovery of Economic Self-Sovereignty. Guest essay, Fourth Generation Civilization (Michel Bauwens), 'Civilizational AI' series. <a href="https://4thgenerationcivilization.substack.com/p/creating-agentic-ai-cooperatives" style="text-decoration:underline">Read the essay</a></li>
+      <li><a href="domain-security.html" style="text-decoration:underline">AI Cooperative in action: Cybersecurity</a> (case study)</li>
+    </ul>
 
-      <h2 id="publications">Selected publications</h2>
-      <ul class="refs">
-        <li>Batbaatar, E., &amp; Yoon, Y. (2026). TL++: Accuracy and Privacy Preserving Traversal Learning for Distributed Intelligent Systems. arXiv:2606.25627.</li>
-        <li>Batbaatar, E., Kim, J., Kim, Y., &amp; Yoon, Y. (2025). Traversal Learning Coordination for Lossless and Efficient Distributed Learning. <i>Expert Systems</i>, 42(11), e70141.</li>
-        <li>Kim, Y. C., Lee, C., &amp; Yoon, Y. (2025). Payload-aware intrusion detection with CMAE and large language models. <i>ACM Transactions on Privacy and Security</i>, 29(1), 1–30.</li>
-        <li>Seo, J., Lee, Y., &amp; Yoon, Y. (2024). Self-sovereign and secure data sharing through docker containers for machine learning on remote node. <i>Journal of Web Engineering</i>, 23(5), 637–655.</li>
-        <li>Kim, J., &amp; Yoon, Y. (2025). Predicting Machine Learning Training Costs with MLPerf Benchmarks. 2025 IEEE International Conference on Big Data, Macau.</li>
-        <li>Yoon, Y., Kim, J., &amp; Park, S. (2026). Towards Value-Constrained Credit Assignment in Fully Delegated AI Cooperatives. arXiv:2606.28217.</li>
-      </ul>
+    <h2 id="code">Code</h2>
+    <p>TL++ repository: <a href="https://github.com/neouly-inc/TLplus" style="text-decoration:underline">github.com/neouly-inc/TLplus</a></p>
 
-      <h2 id="writing">Featured writing</h2>
-      <ul class="refs">
-        <li>Yoon, Y. (2026). Creating Agentic AI Cooperatives for the Recovery of Economic Self-Sovereignty. Guest essay, Fourth Generation Civilization (Michel Bauwens), 'Civilizational AI' series. <a href="https://4thgenerationcivilization.substack.com/p/creating-agentic-ai-cooperatives" style="text-decoration:underline">Read the essay</a></li>
-        <li><a href="domain-security.html" style="text-decoration:underline">AI Cooperative in action: Cybersecurity</a> (case study)</li>
-      </ul>
-
-      <h2 id="code">Code</h2>
-      <p>TL++ repository: <a href="https://github.com/neouly-inc/TLplus" style="text-decoration:underline">github.com/neouly-inc/TLplus</a></p>
-
-      <details class="tv-review">
-        <summary>Review notes <span>1 open question</span></summary>
-        <div class="tv-review-body">
-          <h3>미결</h3>
-          <ol>
-            <li>Whitepaper 표기는 팀 확인 전 임시다.</li>
-          </ol>
-          <h3>가정</h3>
-          <ol>
-            <li>정산 단락은 졸전 데모에서 빠져 보류 중이라 화면에서 뺐다. 다시 넣을 때는 구현 상태를 현재형으로 쓰지 않는다.</li>
-            <li>논문과 글 제목은 출판된 그대로 인용한다. 제목 안의 표현은 바꾸지 않는다.</li>
-          </ol>
-        </div>
-      </details>
-    </article>
-  </div>
+  </article>
 </main>
 
 <footer data-travi-footer></footer>
 
 <script src="app.js"></script>
-<script>
-/* 스크롤 위치에 맞춰 왼쪽 목차의 현재 항목을 표시한다 */
-(function () {
-  var links = Array.prototype.slice.call(document.querySelectorAll('.side a[href^="#"]'));
-  var heads = links.map(function (a) { return document.querySelector(a.getAttribute('href')); });
-  function update() {
-    var y = window.scrollY + 140, cur = 0;
-    heads.forEach(function (h, i) { if (h && h.offsetTop <= y) cur = i; });
-    links.forEach(function (a, i) { a.classList.toggle('on', i === cur); });
-  }
-  window.addEventListener('scroll', update, { passive: true });
-  update();
-})();
-</script>
 </body>
 </html>

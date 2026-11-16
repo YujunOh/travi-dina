@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Create a Coop · TRAVI</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="style.css">
+<style>
+/* Create a Coop (MF 10 단계형 양식). Figma에 그려진 2단계 Goal and introduction 한 화면만 있다 */
+.cr-saved { font-size: 13px; color: var(--faint); }
+.cr-grid { display: grid; grid-template-columns: 240px minmax(0, 1fr) 336px; gap: 24px 40px; align-items: start; }
+
+/* 왼쪽 단계 목록 */
+.cr-steps { display: grid; gap: 4px; margin: 0; padding: 0; list-style: none; }
+.cr-steps li { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 8px; font-size: 14px; color: var(--muted); }
+.cr-steps i { flex: none; display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: var(--line); font-style: normal; font-size: 12px; font-weight: 700; color: var(--muted); }
+.cr-steps li.done { color: var(--text); }
+.cr-steps li.now { background: var(--bg-2); font-weight: 700; color: var(--text); }
+.cr-steps li.done i, .cr-steps li.now i { background: var(--text); color: #fff; }
+
+/* 가운데 양식 */
+.cr-form { min-width: 0; padding: 32px; border: 1px solid var(--line); border-radius: 12px; background: var(--card); }
+.cr-form h2 { margin: 0 0 24px; font-size: 22px; letter-spacing: -0.01em; }
+.cr-form .tv-field { margin-bottom: 24px; }
+.cr-form .tv-field textarea { background: var(--card); }
+.cr-form #f-line { min-height: 68px; }
+.cr-form #f-goal { min-height: 150px; }
+.cr-acts { display: flex; align-items: center; gap: 8px; margin-top: 4px; }
+.cr-acts .gap { flex: 1; }
+
+/* 오른쪽 미리보기 */
+.cr-side { min-width: 0; }
+.cr-k { margin: 10px 0 12px; font-size: 14px; font-weight: 500; color: var(--muted); }
+.tag { display: inline-flex; align-items: center; padding: 4px 10px; border-radius: 999px; background: var(--bg-2); font-size: 12px; font-weight: 500; line-height: 1.5; color: var(--text); white-space: nowrap; }
+.tag.dom { background: var(--accent-soft); color: var(--accent); }
+.tags { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.cr-card { display: flex; flex-direction: column; gap: 10px; padding: 20px; border: 1px solid var(--line); border-radius: 12px; background: var(--card); }
+.cr-card h3 { margin: 4px 0 0; font-size: 17px; line-height: 1.3; letter-spacing: -0.01em; }
+.cr-card p { margin: 0; font-size: 13px; line-height: 1.55; color: var(--muted); overflow-wrap: anywhere; }
+.cr-prev { display: inline-block; margin: 16px 0; font-size: 14px; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+.cr-tip { padding: 24px; border: 1px solid var(--line); border-radius: 12px; background: var(--bg-2); }
+.cr-tip h3 { margin: 0 0 8px; font-size: 14px; }
+.cr-tip p { margin: 0; font-size: 13px; line-height: 1.6; color: var(--muted); }
+
+@media (max-width: 1100px) {
+  .cr-grid { grid-template-columns: 200px minmax(0, 1fr); }
+  .cr-side { grid-column: 1 / -1; }
+}
+@media (max-width: 760px) {
+  .cr-grid { grid-template-columns: minmax(0, 1fr); }
+  .cr-form { padding: 20px; }
+  .cr-acts { flex-wrap: wrap; }
+}
+</style>
+</head>
+<body data-auth="required" data-auth-gate="create">
+<header data-travi-header data-active="cooperatives"></header>
+
+<main class="wrap tv-main">
+  <div class="crumb"><a href="index.html">Home</a><span class="sep">›</span><a href="coop.html">AI Cooperatives</a><span class="sep">›</span><span class="cur">Create a Coop</span></div>
+  <div class="tv-head">
+    <div>
+      <h1 class="tv-h1">Create a Coop</h1>
+      <p class="tv-lead">This becomes your Coop page as written. Write it like a job posting.</p>
+    </div>
+    <span class="cr-saved" id="saved" role="status">Autosaved · 2 min ago</span>
+  </div>
+
+  <div class="cr-grid">
+    <ol class="cr-steps" aria-label="Steps">
+      <li class="done"><i aria-hidden="true">✓</i>Basics</li>
+      <li class="now" aria-current="step"><i aria-hidden="true">2</i>Goal and introduction</li>
+      <li><i aria-hidden="true">3</i>AI model</li>
+      <li><i aria-hidden="true">4</i>Roles and seats</li>
+      <li><i aria-hidden="true">5</i>Resources and value range</li>
+      <li><i aria-hidden="true">6</i>Reward rule</li>
+      <li><i aria-hidden="true">7</i>Review and publish</li>
+    </ol>
+
+    <form class="cr-form" id="form" novalidate>
+      <h2>Goal and introduction</h2>
+      <div class="tv-field">
+        <label for="f-line">One-line summary</label>
+        <span class="tv-help">Shown on the list card as written. Up to 80 characters.</span>
+        <textarea id="f-line" maxlength="80">SOCs train one attack classifier together, each on its own network flow records.</textarea>
+      </div>
+      <div class="tv-field">
+        <label for="f-goal">Goal</label>
+        <span class="tv-help">What you'll build, and why it can't be built alone.</span>
+        <textarea id="f-goal">Every security operations center (SOC) sees a different mix of attacks. One organization's logs rarely hold enough examples of the rare attack types to learn them. In this Coop, SOCs train one attack classifier together, each on its own network flow records, so every member can classify a wider range of attacks.</textarea>
+      </div>
+      <div class="tv-field">
+        <label for="f-about">About you</label>
+        <span class="tv-help">Like the company section of a job posting. Give people a reason to trust you.</span>
+        <textarea id="f-about" placeholder="e.g. We run a 24/7 SOC for clients in the financial sector."></textarea>
+      </div>
+      <!-- 1단계와 3단계 이후 화면은 Figma에 아직 없다. Back은 목록으로, Next는 MF 10처럼 켜 두되 넘어갈 화면이 없어 저장 표시만 바꾼다 -->
+      <div class="cr-acts">
+        <a class="btn ghost" href="coop.html">Back</a>
+        <span class="gap"></span>
+        <button class="btn ghost" type="button" id="save">Save draft</button>
+        <button class="btn solid" type="button" id="next">Next: AI model</button>
+      </div>
+    </form>
+
+    <aside class="cr-side">
+      <p class="cr-k">How it looks in the list</p>
+      <div class="cr-card">
+        <div class="tags"><span class="tag dom">Security</span><span class="tag">Coming soon</span></div>
+        <h3>SOC Threat Detection</h3>
+        <p id="pv-line"></p>
+      </div>
+      <a class="cr-prev" href="coop.html?coop=soc">Preview Coop page</a>
+      <div class="cr-tip">
+        <h3>Writing tip</h3>
+        <p>Lead with the value this Coop will create, not with amounts or returns. That's what earns members' trust. You'll add the value range and how you estimated it in step 5.</p>
+      </div>
+    </aside>
+  </div>
+</main>
+
+<footer data-travi-footer></footer>
+
+<script src="app.js"></script>
+<script>
+(function () {
+  'use strict';
+  var line = document.getElementById('f-line');
+  var pv = document.getElementById('pv-line');
+  // 한 줄 소개를 고치면 오른쪽 목록 카드 미리보기도 같이 바뀐다
+  function sync() { pv.textContent = line.value; }
+  line.addEventListener('input', sync);
+  sync();
+  // 시안이라 실제로 저장하지 않는다. 저장 표시만 바꾼다
+  function saved() { document.getElementById('saved').textContent = 'Autosaved · Just now'; }
+  document.getElementById('save').addEventListener('click', saved);
+  document.getElementById('next').addEventListener('click', saved);
+  document.getElementById('form').addEventListener('submit', function (e) { e.preventDefault(); });
+})();
+</script>
+</body>
+</html>

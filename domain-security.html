@@ -6,6 +6,11 @@
 <title>Security case · TRAVI</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <link rel="stylesheet" href="style.css">
+<style>
+/* Whitepaper와 같은 모양: 왼쪽 목차 없이 본문 한 단, 대문자 꼬리표 없음 */
+.wp { padding: 32px 0 128px; }
+.wp > h1:first-child { margin-top: 0; }
+</style>
 </head>
 <body>
 
@@ -14,35 +19,14 @@
 <main class="wrap">
   <div class="crumb"><a href="index.html">Home</a><span class="sep">›</span><a href="whitepaper.html">Whitepaper</a><span class="sep">›</span><span class="cur">Security case</span></div>
 
-  <div class="docs">
-    <aside class="side">
-      <p class="grp">SECURITY CASE</p>
-      <ul>
-        <li><a class="on" href="#introduction">Introduction</a></li>
-        <li><a href="#members">Members &amp; output</a></li>
-        <li><a href="#context">Context</a></li>
-        <li><a href="#cohorts">How cohorts form</a></li>
-        <li><a href="#alignment">Value alignment</a></li>
-        <li><a href="#risk">Beyond prediction</a></li>
-        <li><a href="#practice">In practice: ACA &amp; CMAE</a></li>
-        <li><a href="#references">References</a></li>
-      </ul>
-      <p class="grp">SEE ALSO</p>
-      <ul>
-        <li><a href="whitepaper.html">Whitepaper</a></li>
-        <li><a href="coop.html?domain=security">Security Coops</a></li>
-      </ul>
-    </aside>
-
-    <article class="doc">
-      <div class="eyebrow">CASE STUDY</div>
+    <article class="doc wp">
       <h1 id="introduction">AI Cooperative in action: Cybersecurity</h1>
       <p class="lede">Small and medium businesses rarely have a security operations team, and none of them sees enough attacks alone to train a strong model. In a security Coop, they train one model together, each on its own attack data.</p>
 
       <h2 id="members">Members &amp; output</h2>
       <div class="facts">
-        <div class="fact"><div class="k">MEMBERS</div><div class="v">Small and medium-sized businesses (SMBs) with no security operations team</div></div>
-        <div class="fact"><div class="k">OUTPUT</div><div class="v">A shared attack-prediction model, trained in cohorts</div></div>
+        <div class="fact"><div class="k">Members</div><div class="v">Small and medium-sized businesses (SMBs) with no security operations team</div></div>
+        <div class="fact"><div class="k">Output</div><div class="v">A shared attack-prediction model, trained in cohorts</div></div>
       </div>
 
       <h2 id="context">Context</h2>
@@ -68,7 +52,6 @@
 
       <h2 id="practice">In practice: ACA &amp; CMAE</h2>
       <div class="callout">
-        <div class="eyebrow">WHERE THE DATA COMES FROM</div>
         <p style="margin:0">Our Autonomous Cybersecurity Agent (ACA) screens incoming payloads with CMAE, a classification model we built. Real attack data accumulates per organization, and each contribution is recorded sample by sample. That record is the input Traversal Learning learns from.</p>
       </div>
 
@@ -79,50 +62,19 @@
       </ul>
 
       <div class="callout">
-        <div class="eyebrow">ON TRAVI</div>
-        <p style="margin:0">SOC Threat Detection Coop is open to join on TRAVI. <a href="coop.html?coop=soc" style="text-decoration:underline">See the Coop and request to join →</a> <span class="tv-sample">Sample data</span></p>
+        <p style="margin:0">SOC Threat Detection is open to join on TRAVI. <a href="coop.html?coop=soc" style="text-decoration:underline">See the Coop and join</a></p>
       </div>
 
       <div class="pager">
-        <a href="whitepaper.html">← Whitepaper</a>
-        <a href="coop.html?domain=security">Explore Coops →</a>
+        <a href="whitepaper.html">Whitepaper</a>
+        <a href="coop.html?domain=security">Explore Coops</a>
       </div>
 
-      <details class="tv-review">
-        <summary>Review notes <span>1 open question</span></summary>
-        <div class="tv-review-body">
-          <h3>미결</h3>
-          <ol>
-            <li>이 사례 문서를 Whitepaper 아래에 둘지, 메인의 TRAVI 성과(PoC) 사례로 옮길지 정해야 한다.</li>
-          </ol>
-          <h3>가정</h3>
-          <ol>
-            <li>Domain 메뉴가 없어져 보안 사례는 Whitepaper 쪽 문서로 남긴다.</li>
-            <li>첫 문단은 데이터를 넘기지 않는다는 보장 대신 각자 자기 데이터로 같은 모델을 학습한다는 사실만 적었다.</li>
-            <li>문장 속 참여 기관은 member로 통일했다. 역할 이름 Participant를 살릴지는 아직 정하지 않았다.</li>
-          </ol>
-        </div>
-      </details>
     </article>
-  </div>
 </main>
 
 <footer data-travi-footer></footer>
 
 <script src="app.js"></script>
-<script>
-/* 스크롤 위치에 맞춰 왼쪽 목차의 현재 항목을 표시한다 */
-(function () {
-  var links = Array.prototype.slice.call(document.querySelectorAll('.side a[href^="#"]'));
-  var heads = links.map(function (a) { return document.querySelector(a.getAttribute('href')); });
-  function update() {
-    var y = window.scrollY + 140, cur = 0;
-    heads.forEach(function (h, i) { if (h && h.offsetTop <= y) cur = i; });
-    links.forEach(function (a, i) { a.classList.toggle('on', i === cur); });
-  }
-  window.addEventListener('scroll', update, { passive: true });
-  update();
-})();
-</script>
 </body>
 </html>

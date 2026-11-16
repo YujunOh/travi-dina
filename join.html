@@ -20,7 +20,8 @@
 
 .jn-form { padding: 32px; max-width: 520px; width: 100%; justify-self: end; }
 .jn-google { width: 100%; justify-content: center; letter-spacing: 0.02em; }
-.jn-g { width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; font-weight: 800; font-size: 13px; color: #fff; background: conic-gradient(#ea4335 0 25%, #fbbc05 0 50%, #34a853 0 75%, #4285f4 0); }
+/* 상태 칩의 동그라미 점은 쓰지 않는다 */
+.tv-chip::before { display: none; }
 .jn-form .jn-signed { display: flex; align-items: center; gap: 10px; margin: 0; padding: 12px 14px; border: 1px solid #bfe3cf; border-radius: 10px; background: #eef8f3; font-size: 14px; font-weight: 600; }
 .jn-signed small { margin-left: auto; font-size: 13px; font-weight: 400; color: var(--muted); }
 .jn-sep { display: flex; align-items: center; gap: 12px; margin: 28px 0 18px; font-size: 13px; font-weight: 600; color: var(--muted); }
@@ -58,27 +59,27 @@
   <div class="crumb"><a href="index.html">Home</a><span class="sep">›</span><span class="cur">Join TRAVI</span></div>
 
   <!-- 코옵 상세에서 온 경우만 보인다 (join.html?coop=soc&return=...) -->
-  <div class="tv-banner jn-banner" id="from-coop" hidden>Create an account to send your join request to <b id="from-coop-name">SOC Threat Detection Coop</b>. You'll return to your request afterward.</div>
+  <div class="tv-banner jn-banner" id="from-coop" hidden>Create an account to send your join request to <b id="from-coop-name">SOC Threat Detection</b>. You'll return to your request afterward.</div>
 
   <div class="jn">
     <section class="jn-left" aria-labelledby="jn-h">
       <h1 class="tv-h1" id="jn-h">Join TRAVI</h1>
       <p class="jn-lead">With a TRAVI account, you can:</p>
       <ul class="jn-list">
-        <li>Request to join a Coop.</li>
+        <li>Join a Coop.</li>
         <li>Create a Coop and invite members.</li>
         <li>Track the points you earn by contributing.</li>
       </ul>
     </section>
 
     <form class="tv-card jn-form" id="join-form" novalidate aria-label="Create your TRAVI account">
-      <button class="btn solid lg jn-google" type="button" id="g-btn"><span class="jn-g" aria-hidden="true">G</span>Continue with Google</button>
-      <p class="jn-signed" id="g-done" hidden role="status"><span class="tv-chip ok">Signed in with Google</span><small id="g-mail">soc@univ-a.example</small></p>
+      <button class="btn solid lg jn-google" type="button" id="g-btn">Continue with Google</button>
+      <p class="jn-signed" id="g-done" hidden role="status"><span class="tv-chip ok">Signed in with Google</span><small id="g-mail">yujun@hongik.example</small></p>
 
       <div class="jn-sep">Then complete your profile</div>
 
-      <div class="tv-field"><label for="name">Name</label><input id="name" autocomplete="name" placeholder="Jane Kim"></div>
-      <div class="tv-field"><label for="org">Organization name</label><input id="org" autocomplete="organization" placeholder="e.g. University A Security Lab"></div>
+      <div class="tv-field"><label for="name">Name</label><input id="name" autocomplete="name" placeholder="Yujun Oh"></div>
+      <div class="tv-field"><label for="org">Organization name</label><input id="org" autocomplete="organization" placeholder="e.g. Hongik University"></div>
       <div class="tv-field">
         <fieldset class="jn-chips">
           <legend>Domains of interest</legend>
@@ -98,25 +99,6 @@
     </form>
   </div>
 
-  <details class="tv-review">
-    <summary>Review notes <span>4 open questions</span></summary>
-    <div class="tv-review-body">
-      <h3>미결</h3>
-      <ol>
-        <li>가입 허들을 낮추고 사업자 정보는 Create a Coop 때만 받는 방향으로 그렸다. 가입할 때 기관을 검증해야 한다는 교수님 발언과 어떻게 맞출지는 아직 정하지 않았다. 사업자등록증 업로드 칸은 이 화면에서 빼고 Verify your organization 화면(verify.html)으로 옮겼다.</li>
-        <li>'Account review takes 1 to 2 business days.'(가입 심사에 영업일 기준 1~2일이 걸린다는 뜻) 문장은 화면에 넣지 않고 보류했다. 가입 심사를 둘지는 1번이 정해진 뒤에 결정한다.</li>
-        <li>개인 가입을 허용하는지 근거를 찾지 못했다. 그래서 개인과 기관을 나누는 문장은 넣지 않았고 Organization 칸을 그대로 두었다.</li>
-        <li>이메일과 비밀번호로 가입하는 자체 계정은 나중에 백엔드와 함께 붙인다. 지금 화면에서는 Google만 쓴다. 다른 소셜 로그인을 더할지는 교수님 확인 전이다.</li>
-      </ol>
-      <h3>가정</h3>
-      <ol>
-        <li>시안에서는 Continue with Google을 누르면 Signed in with Google 표시로 바뀌고 Name 칸이 채워진다. 실제 Google 연동은 없다.</li>
-        <li>Create account는 약관 동의를 체크해야 눌린다. 누르면 회원 상태가 되고 주소의 return 값으로 간다. return이 없으면 Dashboard로 가고, 코옵에서 왔으면 참여 요청 페이지(request.html?coop=soc)로 간다.</li>
-        <li>Terms of Service와 Privacy Policy 문서는 아직 없어 링크를 걸지 않았다.</li>
-        <li>Domains of interest는 여러 개 고를 수 있고 안 골라도 가입된다. 코옵에서 온 경우에는 그 코옵의 도메인(Security)을 미리 골라 둔다.</li>
-      </ol>
-    </div>
-  </details>
 </main>
 
 <footer data-travi-footer></footer>
@@ -131,7 +113,7 @@
 
   // 코옵에서 온 경우: 출처 배너
   if (coop) {
-    document.getElementById('from-coop-name').textContent = coop.name;
+    document.getElementById('from-coop-name').textContent = String(coop.name).replace(/ Coop$/, '');
     document.getElementById('from-coop').hidden = false;
     var dom = document.querySelector('input[name="domain"][value="' + String(coop.domain).toLowerCase() + '"]');
     if (dom) dom.checked = true;

@@ -3,19 +3,18 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Cooperatives · TRAVI</title>
+<title>AI Cooperatives · TRAVI</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <link rel="stylesheet" href="style.css">
 <style>
 /* 목록(MF 02)과 상세(MF 03)를 한 파일에서. 주소에 ?coop=가 있으면 상세 */
 [hidden] { display: none !important; }
 
-/* 도메인 색: icons/domain-icons.js의 밝은 판 색과 같다 */
-.cc, .fchip { --dom: #616978; --dom-soft: #f3f4f6; }
-[data-dom="security"] { --dom: #51628e; --dom-soft: #f0f2f8; }
-[data-dom="finance"] { --dom: #7f643a; --dom-soft: #f7f2ea; }
-[data-dom="agriculture"] { --dom: #4d7357; --dom-soft: #eef4ef; }
-[data-dom="healthcare"] { --dom: #8f565d; --dom-soft: #f8eff0; }
+/* 꼬리표: Figma 판처럼 테두리와 점 없이 글자만. 도메인은 주색, 상태는 회색 */
+.tag { display: inline-flex; align-items: center; padding: 4px 10px; border-radius: 999px; background: var(--bg-2); font-size: 12px; font-weight: 500; line-height: 1.5; color: var(--text); white-space: nowrap; }
+.tag.dom { background: var(--accent-soft); color: var(--accent); }
+.tag.off { color: var(--faint); }
+.tags { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
 
 /* 필터 */
 .flt { display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px; }
@@ -25,39 +24,29 @@
 .fchip { display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; border: 1px solid var(--line-2); border-radius: 999px; background: var(--card); font: inherit; font-size: 13px; color: var(--text); cursor: pointer; }
 .fchip:hover { border-color: var(--text); }
 .fchip[aria-pressed="true"] { background: var(--text); border-color: var(--text); color: #fff; }
-.fchip .ic { display: inline-flex; width: 16px; height: 16px; color: var(--dom); }
-.fchip[aria-pressed="true"] .ic { color: #fff; }
-.fchip .ic svg { width: 16px; height: 16px; }
 .fchip .n { font-size: 12px; color: var(--faint); }
 .fchip[aria-pressed="true"] .n { color: #c9cfdb; }
 .sort { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--muted); }
 .sort select { padding: 7px 10px; border: 1px solid var(--line-2); border-radius: 10px; background: var(--card); font: inherit; font-size: 13px; color: var(--text); cursor: pointer; }
-.count { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; font-size: 14px; color: var(--muted); }
+.count { margin-bottom: 14px; font-size: 14px; color: var(--muted); }
 
-/* 코옵 카드: 카드 전체가 링크, 역할 버튼과 화살표 없음 */
+/* 코옵 카드: 카드 전체가 링크. 썸네일과 그라데이션 없이 흰 카드 */
 .cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
-.cc { position: relative; display: flex; flex-direction: column; gap: 10px; min-width: 0; padding: 20px 20px 18px; border: 1px solid var(--line); border-top: 3px solid var(--dom); border-radius: 16px; background: linear-gradient(var(--dom-soft), var(--card) 88px); transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease; }
-.cc:hover, .cc:focus-visible { transform: translateY(-3px); border-color: color-mix(in srgb, var(--dom) 45%, var(--line)); border-top-color: var(--dom); box-shadow: 0 14px 30px -18px rgba(13, 18, 32, .35); outline: none; }
-.cc:focus-visible { box-shadow: 0 0 0 3px var(--accent-soft), 0 14px 30px -18px rgba(13, 18, 32, .35); }
-.cc-top { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
-.cc-dom { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; color: var(--dom); }
-.cc-dom .ic { display: inline-flex; width: 18px; height: 18px; }
-.cc-dom .ic svg { width: 18px; height: 18px; }
-.cc h3 { margin: 2px 0 0; font-size: 18px; line-height: 1.3; letter-spacing: -0.01em; }
+.cc { display: flex; flex-direction: column; gap: 10px; min-width: 0; padding: 20px; border: 1px solid var(--line); border-radius: 12px; background: var(--card); transition: border-color .15s ease; }
+.cc:hover, .cc:focus-visible { border-color: var(--text); outline: none; }
+.cc:focus-visible { box-shadow: 0 0 0 3px var(--accent-soft); }
+.cc h3 { margin: 4px 0 0; font-size: 19px; line-height: 1.3; letter-spacing: -0.01em; }
 .cc p { margin: 0; font-size: 14px; line-height: 1.55; color: var(--muted); }
-.cc-meta { display: flex; justify-content: space-between; gap: 8px 12px; flex-wrap: wrap; margin-top: auto; padding-top: 12px; border-top: 1px solid var(--line); font-size: 13px; color: var(--muted); }
-.cc-meta b { font-weight: 600; color: var(--text); }
-/* Coming soon: 회색 카드 */
-.cc.coming { --dom: #a3abba; background: var(--bg-2); border-style: dashed; border-top-style: solid; }
-.cc.coming h3 { color: var(--muted); }
+.cc-meta { margin-top: auto; padding-top: 12px; border-top: 1px solid var(--line); font-size: 13px; font-weight: 500; color: var(--muted); }
 
-.empty { padding: 48px 24px; border: 1px dashed var(--line-2); border-radius: 16px; text-align: center; background: var(--card); }
+.empty { padding: 48px 24px; border: 1px solid var(--line); border-radius: 12px; text-align: center; background: var(--card); }
 .empty h2 { margin: 0 0 8px; font-size: 20px; }
 .empty p { margin: 0 0 20px; color: var(--muted); font-size: 15px; }
 .empty .acts { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
 
 /* 상세 */
-.cd-sub { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
+.cd-head { display: block; }
+.cd-head .tv-h1 { margin-top: 12px; }
 .cd-tabs { position: sticky; top: var(--header-h); z-index: 5; display: flex; gap: 4px; overflow-x: auto; margin: 0 0 28px; padding: 8px 0 0; border-bottom: 1px solid var(--line); background: var(--bg); scrollbar-width: none; }
 .cd-tabs a { flex: none; padding: 10px 14px; border-bottom: 2px solid transparent; font-size: 14px; font-weight: 600; color: var(--muted); }
 .cd-tabs a:hover { color: var(--text); }
@@ -69,18 +58,17 @@
 .cd-sec p { margin: 0 0 12px; font-size: 15px; line-height: 1.65; color: #2c3446; }
 .facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 18px; }
 .fact { min-width: 0; padding: 14px 16px; border: 1px solid var(--line); border-radius: 12px; background: var(--card); }
+.fact.wide { grid-column: 1 / -1; }
 .fact .v { margin-top: 6px; font-size: 15px; font-weight: 600; line-height: 1.45; }
-.lead-org { display: flex; justify-content: space-between; align-items: center; gap: 10px 16px; flex-wrap: wrap; margin-top: 10px; padding: 14px 16px; border: 1px solid var(--line); border-radius: 12px; background: var(--card); }
-.lead-org .v { margin-top: 4px; font-size: 15px; font-weight: 600; }
-.off-link { font-size: 14px; font-weight: 600; color: var(--faint); text-decoration: underline dotted; text-underline-offset: 3px; cursor: not-allowed; }
 .roles { display: grid; gap: 10px; }
 .role { padding: 16px 18px; border: 1px solid var(--line); border-radius: 12px; background: var(--card); }
-.role.closed { background: var(--bg-2); }
 .role-h { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
 .role-h b { font-size: 16px; }
 .role p { margin: 8px 0 0; font-size: 14px; color: var(--muted); }
 .role .req { margin-top: 6px; font-size: 13px; color: var(--faint); }
-.range { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; margin: 4px 0 10px; }
+.more-btn { padding: 0; border: 0; background: none; font: inherit; font-size: 14px; font-weight: 600; color: var(--text); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.more-btn:hover { color: var(--accent); }
+.range { margin: 4px 0 10px; }
 .range .tv-v { font-size: 28px; margin: 0; }
 .est { margin: 12px 0 0; border: 1px solid var(--line); border-radius: 12px; background: var(--card); }
 .est summary { padding: 12px 16px; font-size: 14px; font-weight: 600; cursor: pointer; }
@@ -91,14 +79,12 @@
 .ask a { font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
 
 /* 오른쪽 고정 패널 */
-.side .tv-chip { margin-bottom: 14px; }
 .side dl { display: grid; gap: 12px; margin: 0 0 18px; }
 .side dd { margin: 3px 0 0; font-size: 16px; font-weight: 600; }
 .side .mbar { height: 4px; margin-top: 8px; border-radius: 99px; background: var(--bg-2); overflow: hidden; }
 .side .mbar i { display: block; height: 100%; border-radius: 99px; background: var(--text); }
 .side .btn { width: 100%; justify-content: center; }
 .side .tv-help { display: block; margin-top: 10px; }
-.side p { margin: 0; font-size: 14px; line-height: 1.55; color: var(--muted); }
 
 @media (max-width: 960px) {
   .cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -117,13 +103,13 @@
 
   <!-- ===== 목록 (MF 02) ===== -->
   <div id="v-list">
-    <div class="crumb"><a href="index.html">Home</a><span class="sep">›</span><span class="cur">Cooperatives</span></div>
+    <div class="crumb"><a href="index.html">Home</a><span class="sep">›</span><span class="cur">AI Cooperatives</span></div>
     <div class="tv-head">
       <div>
-        <h1 class="tv-h1">Cooperatives</h1>
+        <h1 class="tv-h1">AI Cooperatives</h1>
         <p class="tv-lead">Find a Coop, join it, or start your own.</p>
       </div>
-      <a class="btn outline" href="#create" data-gate="create">Create a Coop</a>
+      <a class="btn outline" href="create.html" data-gate="create">Create a Coop</a>
     </div>
 
     <div class="flt">
@@ -131,10 +117,10 @@
         <div class="flt-grp" role="group" aria-label="Domain" id="f-dom">
           <span class="flt-k">Domain</span>
           <button class="fchip" type="button" data-v="all" aria-pressed="true">All</button>
-          <button class="fchip" type="button" data-v="security" data-dom="security" aria-pressed="false"><span class="ic" data-ic="security"></span>Security</button>
-          <button class="fchip" type="button" data-v="finance" data-dom="finance" aria-pressed="false"><span class="ic" data-ic="economy"></span>Finance</button>
-          <button class="fchip" type="button" data-v="agriculture" data-dom="agriculture" aria-pressed="false"><span class="ic" data-ic="agriculture"></span>Agriculture</button>
-          <button class="fchip" type="button" data-v="healthcare" data-dom="healthcare" aria-pressed="false"><span class="ic" data-ic="healthcare"></span>Healthcare</button>
+          <button class="fchip" type="button" data-v="security" aria-pressed="false">Security</button>
+          <button class="fchip" type="button" data-v="finance" aria-pressed="false">Finance</button>
+          <button class="fchip" type="button" data-v="agriculture" aria-pressed="false">Agriculture</button>
+          <button class="fchip" type="button" data-v="healthcare" aria-pressed="false">Healthcare</button>
         </div>
       </div>
       <div class="flt-row">
@@ -158,7 +144,7 @@
       </div>
     </div>
 
-    <div class="count" id="count"><span id="count-n">5 Coops</span><span class="tv-sample">Sample data</span></div>
+    <div class="count" id="count"></div>
     <div class="cards" id="cards"></div>
 
     <div class="empty" id="empty" hidden>
@@ -166,40 +152,18 @@
       <p>Remove a filter to see more Coops, or create your own.</p>
       <div class="acts">
         <button class="btn ghost" type="button" id="clear">Clear filters</button>
-        <a class="btn outline" href="#create" data-gate="create">Create a Coop</a>
+        <a class="btn outline" href="create.html" data-gate="create">Create a Coop</a>
       </div>
     </div>
-
-    <details class="tv-review">
-      <summary>Review notes <span>4 open questions</span></summary>
-      <div class="tv-review-body">
-        <h3>미결</h3>
-        <ol>
-          <li>Create a Coop 폼(MF 10)은 이 시안에 아직 없다. 게스트가 누르면 가입 안내 팝업이 뜨고, 회원이 누르면 아직 만들지 않았다는 안내만 뜬다.</li>
-          <li>상태 이름은 Coming soon, Open to join, Full, In training, Ended 다섯 개로 정했다. 단계 이름 Training과 동사 train은 그대로 쓴다.</li>
-          <li>보상 방식 필터는 넣지 않았다. 보상이 포인트 하나라 고를 값이 없다.</li>
-          <li>Coming soon 코옵이 Open to join으로 바뀌는 지지 기관 수 기준이 아직 없다.</li>
-        </ol>
-        <h3>가정</h3>
-        <ol>
-          <li>코옵 다섯 개와 숫자는 모두 예시다. 졸전 데모는 보안 분야 하나라 Finance, Agriculture, Healthcare를 고르면 빈 결과가 보인다.</li>
-          <li>Most popular는 예시 점수로 정렬한다. 실제로 무엇을 인기로 셀지는 정하지 않았다.</li>
-          <li>예시 기준일은 Nov 20, 2026이다. Joining closes Dec 2와 12 days left는 이 날 기준이다.</li>
-          <li>도메인은 카드 위쪽 테두리 색과 아이콘으로 구분한다.</li>
-        </ol>
-      </div>
-    </details>
   </div>
 
   <!-- ===== 상세 (MF 03) ===== -->
   <div id="v-detail" hidden>
-    <div class="crumb"><a href="index.html">Home</a><span class="sep">›</span><a href="coop.html">Cooperatives</a><span class="sep">›</span><span class="cur" id="d-crumb"></span></div>
-    <div class="tv-head">
-      <div>
-        <h1 class="tv-h1" id="d-name"></h1>
-        <div class="cd-sub"><span id="d-chip"></span><span class="tv-sample" id="d-badge"></span></div>
-        <p class="tv-lead" id="d-line"></p>
-      </div>
+    <div class="crumb"><a href="index.html">Home</a><span class="sep">›</span><a href="coop.html">AI Cooperatives</a><span class="sep">›</span><span class="cur" id="d-crumb"></span></div>
+    <div class="tv-head cd-head">
+      <div class="tags" id="d-tags"></div>
+      <h1 class="tv-h1" id="d-name"></h1>
+      <p class="tv-lead" id="d-line"></p>
     </div>
 
     <nav class="cd-tabs" aria-label="Sections" id="d-tabs">
@@ -217,10 +181,7 @@
           <div class="facts">
             <div class="fact"><div class="tv-k">Task</div><div class="v" id="d-task"></div></div>
             <div class="fact"><div class="tv-k">Input</div><div class="v" id="d-input"></div></div>
-          </div>
-          <div class="lead-org">
-            <div><div class="tv-k">Coop leader</div><div class="v" id="d-leader"></div></div>
-            <a class="off-link" href="#" aria-disabled="true" title="Not active in this mock" onclick="return false">View Coop leader profile →</a>
+            <div class="fact wide"><div class="tv-k">Coop leader</div><div class="v" id="d-leader"></div></div>
           </div>
         </section>
 
@@ -232,7 +193,7 @@
         <section class="cd-sec" id="members">
           <h2>Members</h2>
           <p id="d-mem-note"></p>
-          <div class="tv-tbl-wrap" id="d-mem-wrap">
+          <div class="tv-tbl-wrap">
             <table class="tv-tbl">
               <thead><tr><th>Member</th><th>Role</th></tr></thead>
               <tbody id="d-mem"></tbody>
@@ -242,19 +203,16 @@
 
         <section class="cd-sec" id="value">
           <h2>Value</h2>
-          <div id="d-range-wrap">
-            <div class="tv-k">Expected points per member</div>
-            <div class="range"><div class="tv-v" id="d-range"></div><span class="tv-sample">Sample data</span></div>
-            <p class="tv-help">Shown as a range, not a single number. No one knows how well the model will perform until training ends.</p>
-            <details class="est">
-              <summary>How the Coop leader estimated this</summary>
-              <div>
-                <h4>The Coop leader's assumptions</h4>
-                <ul id="d-assume"></ul>
-              </div>
-            </details>
-          </div>
-          <p id="d-norange" hidden>The Coop leader hasn't estimated a range yet.</p>
+          <div class="tv-k">Expected points per member</div>
+          <div class="range"><div class="tv-v" id="d-range"></div></div>
+          <p class="tv-help">Shown as a range, not a single number. No one knows how well the model will perform until training ends.</p>
+          <details class="est">
+            <summary>How the Coop leader estimated this</summary>
+            <div>
+              <h4>The Coop leader's assumptions</h4>
+              <ul id="d-assume"></ul>
+            </div>
+          </details>
           <h3>How rewards are shared</h3>
           <p>Contribution is recorded for each member every round. Points are shared in proportion to each member's total contribution and credited when training ends. Points can't be withdrawn.</p>
           <p class="ask">Questions about this Coop? Email the Coop leader at <a id="d-mail" href="#"></a>.</p>
@@ -263,36 +221,11 @@
 
       <aside class="tv-card tv-sticky side" id="d-side" aria-label="Join this Coop"></aside>
     </div>
-
-    <details class="tv-review">
-      <summary>Review notes <span>5 open questions</span></summary>
-      <div class="tv-review-body">
-        <h3>미결</h3>
-        <ol>
-          <li>공격 유형 클래스 수는 CIC-IDS 판이 정해지지 않아 Task에 숫자를 쓰지 않았다.</li>
-          <li>상세 순서를 Goal, 창출 가치, 참여자로 하자는 의견과 mid-fi 탭 순서(Overview, Open roles, Members, Value)가 다르다. 지금은 탭 순서를 따랐다.</li>
-          <li>학습 중인 코옵이 새 참여 요청을 받을지 정하지 않았다. 지금은 상태만 보이고 요청 버튼이 없다.</li>
-          <li>Coop leader 프로필 화면이 없어 링크는 비활성으로 두었다.</li>
-          <li>관심 코옵 저장은 저장 목록을 볼 화면이 정해지지 않아 넣지 않았다.</li>
-        </ol>
-        <h3>가정</h3>
-        <ol>
-          <li>참여 요청은 Coop leader가 승인한다. 그 전에 TRAVI가 기관을 한 번 확인하는 단계는 Verify your organization 화면에 두었다.</li>
-          <li>Expected points 범위는 Coop leader가 적은 추정값이다. TRAVI가 계산한 값이 아니다.</li>
-          <li>Create a Coop 폼(MF 10)은 아직 만들지 않았다.</li>
-          <li>Members 표에는 공개에 동의한 기관만 이름이 보인다. 동의하지 않은 기관은 Unlisted member로 보인다.</li>
-          <li>FAQ와 Contact 탭은 지우고 문의는 Coop leader 메일 한 줄로 바꿨다.</li>
-          <li>SOC Threat Detection Coop의 20석은 Data provider 10, Compute provider 4, Model user 6으로 나눈 예시다. 빈자리 8개는 Manage 화면의 8 seats open과 맞춘다.</li>
-          <li>포인트는 라운드마다 적립된다고 보고 Wallet 내역과 맞췄다. 분배 규칙(reward rule)의 식은 화면에 쓰지 않는다.</li>
-        </ol>
-      </div>
-    </details>
   </div>
 </main>
 
 <footer data-travi-footer></footer>
 
-<script src="icons/domain-icons.js"></script>
 <script src="app.js"></script>
 <script>
 (function () {
@@ -300,104 +233,41 @@
   /* 시안용 예시 데이터. 실제 코옵이 아니다. 예시 기준일 Nov 20, 2026 */
   var CHIP = { coming: 'Coming soon', open: 'Open to join', full: 'Full', training: 'In training', ended: 'Ended' };
   var DOM = { security: 'Security', finance: 'Finance', agriculture: 'Agriculture', healthcare: 'Healthcare' };
-  var ICON = { security: 'security', finance: 'economy', agriculture: 'agriculture', healthcare: 'healthcare' };
-  var NO_SEATS = 'No seats left';
 
+  // 코옵은 하나만 남겼다. 20석 = Data 12, Computing Resource 4, Model 4. 모집 중에는 12곳이 차 있고 빈자리 8.
+  // 상태는 app.js의 참여 상태를 따른다. 내가 들어간 뒤(member)에는 In training, 13곳, Join 없음
+  var T = window.TRAVI || {};
+  var SOC = (T.coops && T.coops.soc) || {};
+  var JOIN = T.join || 'none';
+  var IN = JOIN === 'member';
+  var ME = (T.user && T.user.org) || 'Hongik University';
+  var MY_ROLE = (T.role && T.role.role) || 'Data Provider';
+  var LEADER_ROLE = 'Computing Resource Provider (Leader)';
+  var UNLISTED = 'Unlisted member';
+  function unlisted(role, n) { var a = []; for (var i = 0; i < n; i++) a.push([UNLISTED, role]); return a; }
   var COOPS = {
     soc: {
-      name: 'SOC Threat Detection Coop', dom: 'security', status: 'open',
-      pop: 95, seats: 8, mem: 12, closeIn: 12,
+      name: 'SOC Threat Detection', dom: 'security', status: IN ? 'training' : 'open',
+      pop: 95, seats: IN ? 7 : 8, mem: IN ? 13 : 12, closeIn: 12,
       line: 'SOCs train one attack classifier together, each on its own network flow records.',
-      card: ['12 of 20 members · 2 open roles', '12 days left'],
-      badge: 'Sample data based on the CIC-IDS dataset',
+      card: IN ? '13 of 20 members' : '12 of 20 members · 3 open roles',
       goal: "Every security operations center (SOC) sees a different mix of attacks. One organization's logs rarely hold enough examples of the rare attack types to learn them. In this Coop, SOCs train one attack classifier together, each on its own network flow records, so every member can classify a wider range of attacks.",
       task: 'Classify network flows as benign or by attack type',
       input: 'Network flow features (CIC-IDS format)',
-      leader: 'Org B', contact: 'soc-coop@org-b.example',
+      leader: SOC.leader, contact: SOC.contact,
       roles: [
-        { n: 'Data provider', s: '6 of 10 seats open', open: true, d: 'Train the model on your own network flow records.', r: 'Requirements: 3+ months of labeled network flow records, 10,000+ flows a day' },
-        { n: 'Compute provider', s: '2 of 4 seats open', open: true, d: 'Provide the GPUs used for training.', r: 'Two A100 GPUs, available throughout training' },
-        { n: 'Model user', s: NO_SEATS, open: false, d: 'Get the finished model and use it in your own SOC.' }
+        { n: 'Data Provider', s: '4 of 12 seats open', open: true, d: 'Train the model on your own network flow records.', r: 'Requirements: 3+ months of labeled network flow records, 10,000+ flows a day' },
+        { n: 'Computing Resource Provider', s: '2 of 4 seats open', open: true, d: 'Provide the GPUs used for training.', r: 'Two A100 GPUs, available throughout training' },
+        { n: 'Model Provider', s: '2 of 4 seats open', open: true }
       ],
-      members: [['Org B', 'Leader'], ['Org D', 'Compute provider'], ['Org E', 'Data provider'], ['Unlisted member', 'Data provider']],
-      more: '8 more members', memNote: 'Members are named only if they agreed to be listed. This Coop has 20 seats.',
-      membersLine: '12 of 20 members', fill: 60,
+      // 찬 자리 12 = Data 8, Computing Resource 2, Model 2. 리더 이름은 Coop leader 칸과 같다
+      members: (IN ? [[ME + ' (You)', MY_ROLE]] : []).concat([[SOC.leader, LEADER_ROLE], [UNLISTED, 'Computing Resource Provider'], [UNLISTED, 'Data Provider'], [UNLISTED, 'Data Provider']]),
+      // "8 more members"를 누르면 펼쳐지는 줄
+      rest: unlisted('Data Provider', 6).concat(unlisted('Model Provider', 2)),
+      memNote: 'Members are named only if they agreed to be listed. This Coop has 20 seats.',
+      membersLine: IN ? '13 of 20 members' : '12 of 20 members', fill: IN ? 65 : 60,
       range: '180 to 260 pts',
       assume: ['· Members spend 10 to 30% less time handling false positives', '· 5 to 12 organizations use the finished model', '· This range is an estimate, not a guarantee. It changes with model performance.']
-    },
-    botnet: {
-      name: 'Botnet Traffic Detection Coop', dom: 'security', status: 'training',
-      pop: 85, seats: 0, mem: 5, closeIn: Infinity,
-      line: 'Members train one botnet traffic classifier together, each on its own network flow records.',
-      card: ['In training · Round 6 of 12', '5 members'],
-      badge: 'Sample data based on the CIC-IDS dataset',
-      goal: 'Botnet traffic hides inside ordinary flows, and each network sees only part of it. In this Coop, members train one classifier together from their own network flow records, so each member can recognize a wider range of botnet traffic.',
-      task: 'Classify network flows as benign or botnet traffic',
-      input: 'Network flow features (CIC-IDS format)',
-      leader: 'Org D', contact: 'botnet-coop@org-d.example',
-      roles: [
-        { n: 'Data provider', s: NO_SEATS, open: false, d: 'Train the model on your own network flow records.' },
-        { n: 'Compute provider', s: NO_SEATS, open: false, d: 'Provide the GPUs used for training.' },
-        { n: 'Model user', s: NO_SEATS, open: false, d: 'Get the finished model and use it in your own network.' }
-      ],
-      members: [['Org D', 'Leader'], ['University A Security Lab', 'Data provider'], ['Org B', 'Data provider']],
-      more: '2 more members', memNote: 'Members are named only if they agreed to be listed. This Coop has 5 seats.',
-      membersLine: '5 members', round: 'In training · Round 6 of 12',
-      range: '120 to 190 pts',
-      assume: ['· Members flag botnet hosts earlier than with their own rules alone', '· 3 to 6 organizations use the finished model', '· This range is an estimate, not a guarantee. It changes with model performance.']
-    },
-    malware: {
-      name: 'Malware Classification Coop', dom: 'security', status: 'full',
-      pop: 60, seats: 0, mem: 7, closeIn: Infinity,
-      line: 'Members train a malware family classifier on features from their own samples.',
-      card: ['7 of 7 members · Full', ''],
-      goal: 'Each organization collects a different set of malware samples. In this Coop, members train one classifier together on features from their own samples, so each member can sort new samples by family.',
-      task: 'Classify malware samples by family',
-      input: 'Static features of malware samples',
-      leader: 'Org D', contact: 'malware-coop@org-d.example',
-      roles: [
-        { n: 'Data provider', s: NO_SEATS, open: false, d: 'Train the model on features from your own samples.' },
-        { n: 'Compute provider', s: NO_SEATS, open: false, d: 'Provide the GPUs used for training.' }
-      ],
-      members: [['Org D', 'Leader'], ['Org C', 'Data provider']],
-      more: '5 more members', memNote: 'Members are named only if they agreed to be listed. This Coop has 7 seats.',
-      membersLine: '7 of 7 members', fill: 100,
-      range: '150 to 210 pts',
-      assume: ['· 4 to 8 organizations use the finished model', '· This range is an estimate, not a guarantee. It changes with model performance.']
-    },
-    phishing: {
-      name: 'Phishing URL Classification Coop', dom: 'security', status: 'ended',
-      pop: 40, seats: 0, mem: 9, closeIn: Infinity,
-      line: 'Trained on phishing URLs collected by each member. Training is complete.',
-      card: ['9 of 9 members · Training complete', ''],
-      goal: 'Phishing sites change their addresses quickly, and one organization sees only a few of them. In this Coop, members trained one URL classifier together on the phishing URLs each of them collected.',
-      task: 'Classify URLs as phishing or benign',
-      input: 'URL strings and page features',
-      leader: 'Org C', contact: 'phishing-coop@org-c.example',
-      roles: [
-        { n: 'Data provider', s: NO_SEATS, open: false, d: 'Train the model on phishing URLs you collected.' }
-      ],
-      members: [['Org C', 'Leader'], ['Org B', 'Data provider']],
-      more: '7 more members', memNote: 'Members are named only if they agreed to be listed.',
-      membersLine: '9 of 9 members', fill: 100,
-      range: '90 to 140 pts',
-      assume: ['· This range is an estimate, not a guarantee. It changes with model performance.']
-    },
-    ddos: {
-      name: 'DDoS Early Warning Coop', dom: 'security', status: 'coming',
-      pop: 70, seats: 0, mem: 0, closeIn: Infinity,
-      line: 'Telecom and hosting providers plan to train a DDoS early warning model on their traffic statistics.',
-      card: ['Not accepting join requests yet. Joining opens once enough organizations show interest.'],
-      goal: 'A DDoS attack often shows early signs in traffic statistics before it peaks. This Coop plans to train one early warning model together from the traffic statistics of each member.',
-      task: 'Flag traffic that looks like the start of a DDoS attack',
-      input: 'Traffic statistics per time window',
-      leader: 'Org C', contact: 'ddos-coop@org-c.example',
-      roles: [
-        { n: 'Data provider', s: 'Coming soon', open: false, d: 'Train the model on your own traffic statistics.' },
-        { n: 'Compute provider', s: 'Coming soon', open: false, d: 'Provide the GPUs used for training.' }
-      ],
-      members: [], memNote: 'No members yet. Joining opens once enough organizations show interest.',
-      range: ''
     }
   };
 
@@ -406,25 +276,14 @@
     return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; });
   }
   function param(n) { try { return new URLSearchParams(location.search).get(n); } catch (e) { return null; } }
-  function chip(st) { return '<span class="tv-chip ' + st + '">' + CHIP[st] + '</span>'; }
-  function icon(dom) {
-    var I = window.TRAVI_ICONS;
-    return I && I[ICON[dom]] ? I[ICON[dom]] : '';
+  // 도메인과 상태 꼬리표. 아이콘과 점 없이 글자만
+  function tags(c) {
+    var st = CHIP[c.status] + (c.status === 'open' ? ' · ' + c.closeIn + ' days left' : '');
+    return '<span class="tag dom">' + DOM[c.dom] + '</span><span class="tag">' + esc(st) + '</span>';
   }
-  var T = window.TRAVI || { isGuest: true, isLeader: false, toast: function () {} };
-
-  // 아이콘 채우기 (icons/domain-icons.js가 없으면 비워 둔다)
-  document.querySelectorAll('[data-ic]').forEach(function (el) {
-    var I = window.TRAVI_ICONS; if (I && I[el.getAttribute('data-ic')]) el.innerHTML = I[el.getAttribute('data-ic')];
-  });
-
-  // 회원이 Create a Coop을 누르면 안내만 (게스트는 app.js가 가입 안내 팝업을 띄운다)
-  document.addEventListener('click', function (e) {
-    var a = e.target.closest('[data-gate="create"]');
-    if (!a || T.isGuest) return;
-    e.preventDefault();
-    T.toast('Create a Coop is not built in this mock yet.');
-  });
+  function rows(list) {
+    return list.map(function (m) { return '<tr><td>' + esc(m[0]) + '</td><td>' + esc(m[1]) + '</td></tr>'; }).join('');
+  }
 
   var id = param('coop');
   if (id && COOPS[id]) showDetail(id, COOPS[id]); else showList();
@@ -445,13 +304,11 @@
       } catch (e) {}
     }
     function card(k, c) {
-      var meta = c.status === 'coming'
-        ? '<p>' + esc(c.card[0]) + '</p>'
-        : '<div class="cc-meta"><span><b>' + esc(c.card[0]) + '</b></span>' + (c.card[1] ? '<span>' + esc(c.card[1]) + '</span>' : '') + '</div>';
-      return '<a class="cc' + (c.status === 'coming' ? ' coming' : '') + '" href="coop.html?coop=' + k + '" data-dom="' + c.dom + '">' +
-        '<div class="cc-top"><span class="cc-dom"><span class="ic">' + icon(c.dom) + '</span>' + DOM[c.dom] + '</span>' + chip(c.status) + '</div>' +
+      return '<a class="cc" href="coop.html?coop=' + k + '">' +
+        '<div class="tags">' + tags(c) + '</div>' +
         '<h3>' + esc(c.name) + '</h3>' +
-        (c.status === 'coming' ? meta : '<p>' + esc(c.line) + '</p>' + meta) +
+        '<p>' + esc(c.line) + '</p>' +
+        '<div class="cc-meta">' + esc(c.card) + '</div>' +
         '</a>';
     }
     function sorter(a, b) {
@@ -470,7 +327,7 @@
       });
       var list = inDom.filter(function (k) { return state.st === 'all' || COOPS[k].status === state.st; }).sort(sorter);
       $('#cards').innerHTML = list.map(function (k) { return card(k, COOPS[k]); }).join('');
-      $('#count-n').textContent = list.length + (list.length === 1 ? ' Coop' : ' Coops');
+      $('#count').textContent = list.length + (list.length === 1 ? ' Coop' : ' Coops');
       $('#cards').hidden = !list.length;
       $('#count').hidden = !list.length;
       $('#empty').hidden = !!list.length;
@@ -498,76 +355,51 @@
     $('#v-detail').hidden = false;
     document.title = c.name + ' · TRAVI';
     $('#d-crumb').textContent = c.name;
+    $('#d-tags').innerHTML = tags(c);
     $('#d-name').textContent = c.name;
-    $('#d-chip').innerHTML = chip(c.status);
-    $('#d-badge').textContent = c.badge || 'Sample data';
     $('#d-line').textContent = c.line;
     $('#d-goal').textContent = c.goal;
     $('#d-task').textContent = c.task;
     $('#d-input').textContent = c.input;
     $('#d-leader').textContent = c.leader;
 
-    $('#d-roles').innerHTML = c.roles.map(function (r) {
-      var st = r.open ? 'open' : (r.s === 'Coming soon' ? 'coming' : 'no');
-      return '<div class="role' + (r.open ? '' : ' closed') + '">' +
-        '<div class="role-h"><b>' + esc(r.n) + '</b><span class="tv-chip ' + st + '">' + esc(r.s) + '</span></div>' +
-        '<p>' + esc(r.d) + '</p>' + (r.r ? '<div class="req">' + esc(r.r) + '</div>' : '') +
+    // 학습이 시작되면 새 참여를 받지 않는다. Open roles 구역과 탭을 뺀다
+    if (c.status !== 'open') {
+      $('#roles').remove();
+      $('#d-tabs a[href="#roles"]').remove();
+    }
+    if ($('#d-roles')) $('#d-roles').innerHTML = c.roles.map(function (r) {
+      return '<div class="role">' +
+        '<div class="role-h"><b>' + esc(r.n) + '</b><span class="tag' + (r.open ? '' : ' off') + '">' + esc(r.s) + '</span></div>' +
+        (r.d ? '<p>' + esc(r.d) + '</p>' : '') + (r.r ? '<div class="req">' + esc(r.r) + '</div>' : '') +
         '</div>';
     }).join('');
 
+    // Members: 나머지는 "8 more members"를 눌러 펼친다
     $('#d-mem-note').textContent = c.memNote;
-    if (c.members.length) {
-      $('#d-mem').innerHTML = c.members.map(function (m) {
-        return '<tr><td>' + esc(m[0]) + '</td><td>' + esc(m[1]) + '</td></tr>';
-      }).join('') + (c.more ? '<tr><td colspan="2" style="color:var(--muted)">' + esc(c.more) + '</td></tr>' : '');
-    } else {
-      $('#d-mem-wrap').hidden = true;
-    }
+    $('#d-mem').innerHTML = rows(c.members) +
+      '<tr id="d-more-row"><td colspan="2"><button class="more-btn" type="button" id="d-more" aria-expanded="false">' + c.rest.length + ' more members</button></td></tr>';
+    $('#d-more').addEventListener('click', function () {
+      $('#d-more-row').remove();
+      $('#d-mem').insertAdjacentHTML('beforeend', rows(c.rest));
+    });
 
-    if (c.range) {
-      $('#d-range').textContent = c.range;
-      $('#d-assume').innerHTML = c.assume.map(function (a) { return '<li>' + esc(a) + '</li>'; }).join('');
-    } else {
-      $('#d-range-wrap').hidden = true;
-      $('#d-norange').hidden = false;
-    }
+    $('#d-range').textContent = c.range;
+    $('#d-assume').innerHTML = c.assume.map(function (a) { return '<li>' + esc(a) + '</li>'; }).join('');
     $('#d-mail').textContent = c.contact;
     $('#d-mail').href = 'mailto:' + c.contact;
 
-    renderSide(k, c);
-    tabs();
-  }
+    // 오른쪽 패널: 게스트가 Join을 누르면 app.js가 로그인으로 보낸다.
+    // 양식을 이미 냈으면(requested) 인증으로, 참여 중이면(member) Dashboard로 잇는다
+    var act = '<a class="btn solid lg" href="request.html?coop=' + k + '" data-gate="login" data-gate-extra="coop=' + k + '">Join</a>';
+    if (JOIN === 'requested') act = '<a class="btn solid lg" href="verify.html?coop=' + k + '">Verify your organization</a>';
+    if (IN) act = '<a class="btn solid lg" href="dashboard.html">Dashboard</a>';
+    $('#d-side').setAttribute('aria-label', IN ? 'Coop summary' : 'Join this Coop');
+    $('#d-side').innerHTML =
+      '<dl><div><dt class="tv-k">Members</dt><dd>' + esc(c.membersLine) + '<div class="mbar"><i style="width:' + c.fill + '%"></i></div></dd></div>' +
+      (c.status === 'open' ? '<div><dt class="tv-k">Joining closes in</dt><dd>' + esc(c.closeIn) + ' days</dd></div>' : '') + '</dl>' + act;
 
-  function renderSide(k, c) {
-    var h = chip(c.status);
-    if (c.status === 'open') {
-      h += '<dl><div><dt class="tv-k">Members</dt><dd>' + esc(c.membersLine) + '<div class="mbar"><i style="width:' + c.fill + '%"></i></div></dd></div>' +
-        '<div><dt class="tv-k">Joining closes in</dt><dd>' + esc(c.closeIn) + ' days</dd></div></dl>';
-      if (T.isLeader && k === 'soc') {
-        h += '<p style="margin-bottom:14px">You lead this Coop.</p><a class="btn outline lg" href="coop-manage.html?coop=soc">Manage Coop</a>';
-      } else {
-        h += '<a class="btn outline lg" href="request.html?coop=' + k + '" data-gate="login" data-gate-extra="coop=' + k + '">Request to join</a>' +
-          '<p class="only-guest tv-help">Log in to send a join request. You\'ll return to this Coop afterward.</p>';
-      }
-    } else if (c.status === 'training') {
-      h += '<dl><div><dt class="tv-k">Status</dt><dd>' + esc(c.round) + '</dd></div>' +
-        '<div><dt class="tv-k">Members</dt><dd>' + esc(c.membersLine) + '</dd></div></dl>';
-      if (!T.isGuest && !T.isLeader && k === 'botnet') {
-        h += '<p style="margin-bottom:14px">You\'re in this Coop as a data provider.</p><a class="btn outline lg" href="dashboard.html">Open Dashboard</a>';
-      } else {
-        h += '<p>This Coop is training. It isn\'t taking join requests.</p>';
-      }
-    } else if (c.status === 'full') {
-      h += '<dl><div><dt class="tv-k">Members</dt><dd>' + esc(c.membersLine) + '<div class="mbar"><i style="width:100%"></i></div></dd></div></dl>' +
-        '<button class="btn outline lg" type="button" disabled>' + NO_SEATS + '</button>';
-    } else if (c.status === 'ended') {
-      h += '<dl><div><dt class="tv-k">Members</dt><dd>' + esc(c.membersLine) + '</dd></div>' +
-        '<div><dt class="tv-k">Status</dt><dd>Training complete</dd></div></dl>' +
-        '<p>This Coop has finished training. It isn\'t taking join requests.</p>';
-    } else {
-      h += '<p>Not accepting join requests yet. Joining opens once enough organizations show interest.</p>';
-    }
-    $('#d-side').innerHTML = h;
+    tabs();
   }
 
   // 탭: 앵커 이동, 지금 보이는 구역에 밑줄

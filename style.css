@@ -10,9 +10,6 @@
   --faint: #8e97a9;
   --accent: #3f4ff0;
   --accent-soft: #eceefe;
-  --g1: #1aa3d9;
-  --g2: #5b4ce0;
-  --g3: #e0675e;
   --header-h: 64px;
   --wrap: 1200px;
 }
@@ -63,7 +60,8 @@ a { color: inherit; text-decoration: none; }
 .sec + .sec { border-top: 1px solid var(--line); }
 .sec-title { font-size: 44px; line-height: 1.12; letter-spacing: -0.025em; margin: 14px 0 18px; font-weight: 700; }
 .sec-lead { font-size: 18px; line-height: 1.7; color: var(--muted); max-width: 720px; margin: 0; }
-.grad { background: linear-gradient(90deg, var(--g1), var(--g2) 50%, var(--g3)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+/* 글자 그라데이션은 없앴다. 옛 마크업의 .grad는 주변 글자색을 그대로 쓴다 */
+.grad { color: inherit; }
 
 /* 스크롤하면서 천천히 드러난다. 스크립트가 없으면 처음부터 보인다 */
 .js .reveal { opacity: 0; transform: translateY(24px); transition: opacity .8s ease, transform .8s ease; }
@@ -76,19 +74,6 @@ a { color: inherit; text-decoration: none; }
 .st.research { color: #8a5a00; border-color: #f0d9a8; background: #fdf7ea; }
 .st.road { color: #586276; border-color: var(--line-2); background: var(--bg-2); }
 .st.ill { color: #b8443b; border-color: #f2c6c2; background: #fdf1f0; }
-
-/* 바닥글 */
-.foot { background: var(--bg-2); border-top: 1px solid var(--line); padding: 72px 0 32px; }
-.foot-top { display: flex; justify-content: space-between; align-items: flex-end; gap: 32px; flex-wrap: wrap; }
-.foot h3 { font-size: 30px; letter-spacing: -0.02em; margin: 10px 0 18px; }
-.foot .mail { font-size: 17px; color: var(--muted); display: inline-flex; align-items: center; gap: 10px; }
-.foot .mail:hover { color: var(--text); }
-.foot .social { display: flex; gap: 12px; margin-top: 18px; }
-.foot .social a { width: 40px; height: 40px; border: 1px solid var(--line-2); border-radius: 10px; display: grid; place-items: center; color: var(--muted); }
-.foot .social a:hover { color: var(--text); border-color: var(--text); }
-.foot .social svg { width: 18px; height: 18px; }
-.foot-bottom { margin-top: 56px; padding-top: 22px; border-top: 1px solid var(--line); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; font-size: 13px; color: var(--faint); }
-.todo { font-size: 11px; color: var(--g3); border: 1px dashed var(--g3); border-radius: 4px; padding: 1px 6px; margin-left: 6px; letter-spacing: 0; }
 
 /* 문서형 페이지(도메인 상세, 백서): 왼쪽 목차, 오른쪽 본문 */
 .docs { display: grid; grid-template-columns: 240px minmax(0, 1fr); gap: 64px; padding: 32px 0 128px; }
@@ -112,7 +97,7 @@ a { color: inherit; text-decoration: none; }
 .doc .fact { border: 1px solid var(--line); border-radius: 12px; padding: 18px; background: var(--card); }
 .doc .fact .k { font-size: 11px; letter-spacing: 0.16em; color: var(--faint); font-weight: 700; }
 .doc .fact .v { margin-top: 6px; font-size: 16px; font-weight: 600; line-height: 1.5; }
-.doc .ph { border: 1px dashed var(--line-2); border-radius: 12px; padding: 28px; color: var(--faint); text-align: center; }
+.doc .ph { border: 1px solid var(--line); border-radius: 12px; padding: 28px; color: var(--faint); text-align: center; }
 .doc .pager { display: flex; justify-content: space-between; gap: 16px; margin-top: 72px; padding-top: 24px; border-top: 1px solid var(--line); font-size: 14px; }
 .doc .pager a { color: var(--muted); }
 .doc .pager a:hover { color: var(--text); }
@@ -123,12 +108,8 @@ a { color: inherit; text-decoration: none; }
   .doc .facts { grid-template-columns: 1fr; }
 }
 
-/* 앱 화면(로그인 후) 헤더: 역할 전환(Viewing as)과 계정 메뉴. 동작은 app.js */
+/* 앱 화면(로그인 후) 헤더: 계정 메뉴. 동작은 app.js */
 .dd { position: relative; }
-.va { display: inline-flex; align-items: center; gap: 6px; font: inherit; font-size: 12px; font-weight: 500; letter-spacing: 0.02em; color: var(--muted); background: var(--card); border: 1px solid var(--line-2); border-radius: 999px; padding: 7px 12px 7px 14px; cursor: pointer; white-space: nowrap; }
-.va b { color: var(--text); font-weight: 700; }
-.va .short { display: none; }
-.va:hover, .va[aria-expanded="true"] { border-color: var(--text); }
 .me { display: inline-flex; align-items: center; gap: 6px; background: none; border: 0; padding: 0; font: inherit; cursor: pointer; color: var(--muted); }
 .me i { width: 34px; height: 34px; border-radius: 50%; background: var(--text); color: #fff; font-style: normal; font-size: 12px; font-weight: 700; letter-spacing: 0.04em; display: grid; place-items: center; }
 .me:hover i, .me[aria-expanded="true"] i { box-shadow: 0 0 0 3px var(--accent-soft); }
@@ -146,9 +127,6 @@ a { color: inherit; text-decoration: none; }
 .menu .who b { display: block; }
 .menu .who span { font-size: 12px; color: var(--faint); }
 @media (max-width: 760px) {
-  .va .long { display: none; }
-  .va .short { display: inline; }
-  .va { padding: 6px 10px; }
   .menu, .menu.sm { position: fixed; top: calc(var(--header-h) + 6px); right: 16px; width: min(330px, calc(100vw - 32px)); }
 }
 
@@ -178,7 +156,7 @@ a { color: inherit; text-decoration: none; }
 .tv-bell { position: relative; width: 36px; height: 36px; padding: 0; border-radius: 50%; border: 1px solid var(--line-2); background: var(--card); color: var(--text); display: grid; place-items: center; cursor: pointer; }
 .tv-bell svg { width: 18px; height: 18px; }
 .tv-bell:hover, .tv-bell[aria-expanded="true"] { border-color: var(--text); }
-.tv-bell-n { position: absolute; top: -5px; right: -5px; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 999px; border: 2px solid var(--bg); background: var(--g3); color: #fff; font-size: 10px; font-weight: 700; line-height: 14px; text-align: center; }
+.tv-bell-n { position: absolute; top: -5px; right: -5px; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 999px; border: 2px solid var(--bg); background: var(--text); color: #fff; font-size: 10px; font-weight: 700; line-height: 14px; text-align: center; }
 .menu.tv-notif { width: 360px; padding: 0; }
 .tv-n-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 14px 16px 12px; border-bottom: 1px solid var(--line); font-size: 14px; font-weight: 700; }
 .tv-n-list { max-height: min(420px, 70vh); overflow: auto; padding: 6px; }
@@ -205,14 +183,11 @@ a { color: inherit; text-decoration: none; }
 .btn.outline { background: var(--card); border: 1.5px solid var(--text); color: var(--text); }
 .btn.outline:hover { background: var(--bg-2); }
 
-/* 보기 상태별로 보이기: <html data-as="guest|member|leader"> */
+/* 보기 상태별로 보이기: <html data-as="guest|member">. 리더 보기는 없어서 .only-leader는 늘 숨긴다 */
 html[data-as="guest"] .only-signed,
 html[data-as="guest"] .only-member,
-html[data-as="guest"] .only-leader,
 html[data-as="member"] .only-guest,
-html[data-as="member"] .only-leader,
-html[data-as="leader"] .only-guest,
-html[data-as="leader"] .only-member { display: none !important; }
+.only-leader { display: none !important; }
 
 /* 공통 모달: <dialog class="tv-modal"><div class="tv-modal-box">...</div></dialog> */
 dialog.tv-modal { border: 0; padding: 0; border-radius: 18px; width: min(520px, calc(100% - 32px)); max-height: calc(100vh - 48px); overflow: auto; background: var(--card); color: var(--text); box-shadow: 0 24px 64px rgba(13, 18, 32, 0.25); }
@@ -231,17 +206,28 @@ dialog.tv-modal::backdrop { background: rgba(13, 18, 32, 0.45); }
 .tv-toast { position: fixed; left: 50%; bottom: 28px; z-index: 60; max-width: calc(100% - 32px); transform: translate(-50%, 16px); padding: 12px 18px; border-radius: 12px; background: var(--text); color: #fff; font-size: 14px; line-height: 1.45; box-shadow: 0 16px 40px -16px rgba(13, 18, 32, 0.5); opacity: 0; pointer-events: none; transition: opacity 0.2s ease, transform 0.2s ease; }
 .tv-toast.show { opacity: 1; transform: translate(-50%, 0); }
 
-/* 시안 전용 보기 전환 막대 (오른쪽 아래). ?demo=0이면 숨는다 */
-.tv-demo { position: fixed; right: 16px; bottom: 16px; z-index: 40; display: flex; align-items: center; gap: 2px; padding: 4px; border: 1px dashed var(--line-2); border-radius: 999px; background: var(--card); font-size: 12px; box-shadow: 0 8px 24px -12px rgba(13, 18, 32, 0.3); }
-.tv-demo-k { padding: 0 8px 0 10px; color: var(--faint); }
-.tv-demo button { padding: 5px 10px; border: 0; border-radius: 999px; background: none; font: inherit; color: var(--muted); cursor: pointer; }
-.tv-demo button[aria-pressed="true"] { background: var(--text); color: #fff; }
-@media print { .tv-demo, .tv-toast { display: none; } }
+@media print { .tv-toast { display: none; } }
 
-/* 작은 푸터 (메인 밖 모든 페이지). 큰 Contact 푸터는 메인만 */
-.tv-foot { border-top: 1px solid var(--line); background: var(--bg-2); padding: 22px 0 72px; font-size: 13px; color: var(--faint); }
-.tv-foot .wrap { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 20px; }
+/* 푸터 (Figma Footer / Minimal, Footer / Full). 아랫줄은 모든 페이지가 같고, 메인만 위에 로고와 링크 묶음이 붙는다 */
+.tv-foot { border-top: 1px solid var(--line); background: var(--bg-2); font-size: 12px; color: var(--faint); }
 .tv-foot a:hover { color: var(--text); }
+.tv-foot-bottom { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px 20px; min-height: 64px; padding: 20px 0; }
+.tv-foot-copy { display: flex; flex-wrap: wrap; gap: 4px 8px; }
+.tv-foot-links { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 20px; color: var(--muted); }
+.tv-foot-social { display: flex; align-items: center; gap: 18px; }
+.tv-foot-social a { display: grid; place-items: center; width: 20px; height: 20px; }
+.tv-foot-social svg { width: 20px; height: 20px; }
+.tv-foot.full .tv-foot-main { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 32px 36px; padding: 38px 0 34px; border-bottom: 1px solid var(--line); }
+.tv-foot-brand { max-width: 208px; }
+.tv-foot-logo { display: inline-flex; align-items: center; gap: 7px; font-size: 21px; font-weight: 700; color: var(--text); }
+.tv-foot-logo svg { width: 18px; height: 18px; }
+.tv-foot-brand p { margin: 14px 0 0; max-width: 160px; font-size: 15px; line-height: 1.5; color: var(--muted); }
+.tv-foot-nav { display: flex; flex-wrap: wrap; gap: 24px; }
+.tv-foot-nav > div { display: flex; flex-direction: column; gap: 8px; width: 169px; font-size: 14px; color: var(--muted); }
+.tv-foot-nav b { font-size: 15px; font-weight: 500; color: var(--text); }
+@media (max-width: 760px) {
+  .tv-foot-nav > div { width: auto; min-width: 120px; }
+}
 
 /* 새 페이지용 뼈대: 경로(.crumb) 아래 제목, 본문 카드 */
 .tv-main { padding-bottom: 96px; }
@@ -260,18 +246,14 @@ body > main.tv-main { flex: 1 0 auto; width: 100%; }
 .tv-k { font-size: 12px; font-weight: 600; color: var(--faint); }
 .tv-v { margin-top: 4px; font-size: 20px; font-weight: 700; letter-spacing: -0.01em; }
 
-/* 상태 칩: Coming soon / Open to join / Full / Training / Ended / Waiting to start, 요청 상태 */
-.tv-chip { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border: 1px solid var(--line-2); border-radius: 999px; background: var(--card); font-size: 12px; font-weight: 600; color: var(--muted); white-space: nowrap; }
-.tv-chip::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
-.tv-chip.coming { border-style: dashed; color: var(--faint); background: var(--bg-2); }
-.tv-chip.open { color: var(--accent); border-color: #c8cdfb; background: var(--accent-soft); }
-.tv-chip.full { color: #8a5a00; border-color: #f0d9a8; background: #fdf7ea; }
-.tv-chip.training { color: #1d7d52; border-color: #bfe3cf; background: #eef8f3; }
-.tv-chip.ended { color: var(--muted); background: var(--bg-2); }
-.tv-chip.waiting { color: #8a5a00; border-color: #f0d9a8; background: #fdf7ea; }
-.tv-chip.ok { color: #1d7d52; border-color: #bfe3cf; background: #eef8f3; }
-.tv-chip.no { color: #b8443b; border-color: #f2c6c2; background: #fdf1f0; }
-.tv-sample { display: inline-block; padding: 2px 8px; border: 1px dashed var(--line-2); border-radius: 6px; font-size: 11px; font-weight: 600; color: var(--faint); white-space: nowrap; vertical-align: 2px; }
+/* 상태 칩: Coming soon / Open to join / Full / Training / Ended / Waiting to start, 요청 상태.
+   앞의 점, 테두리, 점선 없이 회색 톤만 쓴다 (Figma MF 02, MF 08의 Chip) */
+.tv-chip { display: inline-flex; align-items: center; padding: 4px 10px; border-radius: 999px; background: #f4f4f4; font-size: 12px; font-weight: 500; color: #444; white-space: nowrap; }
+.tv-chip.open, .tv-chip.coming { background: #ededed; color: #111; }
+.tv-chip.training, .tv-chip.ended { color: #646464; }
+.tv-chip.no { color: #b8443b; }
+/* Sample data 표시는 뺐다. 옛 마크업에 남아 있어도 보이지 않는다 */
+.tv-sample { display: none !important; }
 
 /* 안내 띠: 출처 배너, 완료 배너, 대기 배너 */
 .tv-banner { padding: 14px 16px; border: 1px solid #c8cdfb; border-radius: 12px; background: var(--accent-soft); font-size: 14px; line-height: 1.55; color: var(--text); }
@@ -310,17 +292,8 @@ body > main.tv-main { flex: 1 0 auto; width: 100%; }
 .tv-tbl tr:last-child td { border-bottom: 0; }
 .tv-tbl .num { text-align: right; font-variant-numeric: tabular-nums; }
 
-/* 검토 메모 (페이지 맨 아래, 한국어 가능) */
-.tv-review { margin: 48px 0 0; border: 1px solid var(--line); border-radius: 16px; background: var(--card); }
-.tv-review summary { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 18px 24px; font-weight: 600; cursor: pointer; list-style: none; }
-.tv-review summary::-webkit-details-marker { display: none; }
-.tv-review summary::after { content: "+"; font-size: 20px; color: var(--faint); }
-.tv-review[open] summary::after { content: "\2212"; }
-.tv-review summary span { margin-left: auto; font-size: 13px; font-weight: 400; color: var(--faint); }
-.tv-review .tv-review-body { padding: 4px 24px 24px; border-top: 1px solid var(--line); }
-.tv-review h3 { margin: 20px 0 10px; font-size: 13px; color: var(--faint); }
-.tv-review ol { margin: 0; padding-left: 20px; }
-.tv-review li { margin-bottom: 10px; font-size: 14px; line-height: 1.6; color: #2c3446; }
+/* 검토 메모는 없앴다. 옛 마크업에 남아 있어도 보이지 않는다 */
+.tv-review { display: none !important; }
 
 @media (max-width: 960px) {
   .tv-grid { grid-template-columns: 1fr; }
@@ -336,7 +309,4 @@ body > main.tv-main { flex: 1 0 auto; width: 100%; }
   .menu.tv-notif { width: min(360px, calc(100vw - 32px)); }
   .tv-h1 { font-size: 28px; }
   .tv-modal-box { padding: 22px; }
-  .tv-review summary, .tv-review .tv-review-body { padding-left: 18px; padding-right: 18px; }
-  .tv-demo { right: 8px; bottom: 8px; }
-  .tv-demo-k { display: none; }
 }

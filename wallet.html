@@ -18,6 +18,9 @@
 .w-tbl td:first-child { white-space: nowrap; color: var(--muted); }
 .w-tbl th:last-child, .w-tbl td:last-child { padding-left: 24px; }
 .w-empty { padding: 28px 0 8px; font-size: 15px; color: var(--muted); }
+/* 상태 칩: Figma MF 08과 같은 회색 한 톤. 점과 테두리 없음 */
+.w-tbl .tv-chip { border-color: transparent; background: #f4f4f4; color: #444; font-weight: 500; }
+.w-tbl .tv-chip::before { content: none; }
 
 /* 게스트판: 회원판 예시를 흐리게 깔고 가운데 안내 카드 */
 .w-pre-k { display: flex; align-items: center; gap: 8px; margin: 0 0 12px; font-size: 13px; font-weight: 600; color: var(--muted); }
@@ -54,10 +57,10 @@
     </div>
   </div>
 
-  <!-- 회원판 (member, leader) -->
-  <section class="only-signed" aria-label="Points">
+  <!-- 회원판 (member) -->
+  <section class="only-signed" id="w-member" aria-label="Points">
     <div class="tv-card w-bal">
-      <div class="w-bal-k"><span class="tv-k">Points balance</span><span class="tv-sample">Sample data</span></div>
+      <div class="w-bal-k"><span class="tv-k">Points balance</span></div>
       <div class="w-bal-v" id="w-bal">1,240 <small>pts</small></div>
       <p class="tv-help">Points can't be withdrawn.</p>
       <p class="tv-help">Recording on Hedera is planned.</p>
@@ -76,8 +79,8 @@
   </section>
 
   <!-- 게스트판 (MF 08g) -->
-  <section class="only-guest" aria-labelledby="w-promo-h">
-    <div class="w-pre-k">What you see after you join <span class="tv-sample">Sample data</span></div>
+  <section class="only-guest" id="w-guest" aria-labelledby="w-promo-h">
+    <div class="w-pre-k">What you see after you join</div>
     <div class="w-pre">
       <div class="w-blur" aria-hidden="true" inert>
         <div class="tv-card w-bal">
@@ -103,24 +106,6 @@
     </div>
   </section>
 
-  <details class="tv-review">
-    <summary>Review notes <span>2 open questions</span></summary>
-    <div class="tv-review-body">
-      <h3>미결</h3>
-      <ol>
-        <li>Hedera는 예정 안내 한 줄만 둔다(Recording on Hedera is planned. Hedera 기록은 예정이라는 뜻). 링크는 두지 않는다.</li>
-        <li>Processing이 Credited로 바뀌는 시점은 정하지 않았다. 지금은 가장 최근 라운드 한 줄만 Processing이다.</li>
-      </ol>
-      <h3>가정</h3>
-      <ol>
-        <li>출금 불가 안내는 지금 실제 정산이 기술적으로 불가하다는 팀 판단에 따랐다. 출금 버튼은 두지 않는다.</li>
-        <li>Wallet에는 Coop 내용을 넣지 않는다. 내역에도 Coop 이름 없이 라운드만 적었다.</li>
-        <li>잔액 1,240 pts는 Credited 다섯 줄의 합이다. 빈 내역(wallet.html?empty=1)에서는 잔액도 0 pts로 보인다.</li>
-        <li>게스트판은 회원판 예시 숫자를 흐리게 깔아 둔 안내 화면이다. 예시 기준일은 Nov 20, 2026이다.</li>
-        <li>내역 날짜는 예시 회원의 참여 승인(Oct 28)과 키트 전달(Oct 29) 뒤로 잡았다. 라운드 간격은 실제 학습 주기가 아니다.</li>
-      </ol>
-    </div>
-  </details>
 </main>
 
 <footer data-travi-footer></footer>
@@ -129,24 +114,30 @@
 (function () {
   'use strict';
   var ROWS = [
-    ['Nov 20', 'Training contribution, round 6', 110, 'Processing'],
-    ['Nov 18', 'Training contribution, round 5', 120, 'Credited'],
-    ['Nov 12', 'Training contribution, round 4', 300, 'Credited'],
-    ['Nov 7', 'Training contribution, round 3', 280, 'Credited'],
-    ['Nov 2', 'Training contribution, round 2', 270, 'Credited'],
-    ['Oct 30', 'Training contribution, round 1', 270, 'Credited']
+    // 모집 마감(Dec 2) 뒤에 시작한 학습 1~6라운드. Dashboard의 Round 6 of 12, 1,240 pts와 같은 이야기다
+    ['Jan 2', 'Training contribution, round 6', 110, 'Processing'],
+    ['Dec 31', 'Training contribution, round 5', 120, 'Credited'],
+    ['Dec 25', 'Training contribution, round 4', 300, 'Credited'],
+    ['Dec 20', 'Training contribution, round 3', 280, 'Credited'],
+    ['Dec 15', 'Training contribution, round 2', 270, 'Credited'],
+    ['Dec 12', 'Training contribution, round 1', 270, 'Credited']
   ];
   function rowsHtml(list) {
     return list.map(function (r) {
-      var cls = r[3] === 'Credited' ? 'ok' : 'waiting';
       return '<tr><td>' + r[0] + '</td><td>' + r[1] + '</td><td class="num pts">+' + r[2] + ' pts</td>' +
-        '<td><span class="tv-chip ' + cls + '">' + r[3] + '</span></td></tr>';
+        '<td><span class="tv-chip">' + r[3] + '</span></td></tr>';
     }).join('');
   }
   document.getElementById('w-rows').innerHTML = rowsHtml(ROWS);
   document.getElementById('w-pre-rows').innerHTML = rowsHtml(ROWS.slice(0, 4));
 
-  if (window.TRAVI.param('empty') === '1') {
+  /* 보는 사람에게 맞지 않는 판은 아예 뺀다 (기본은 member) */
+  var drop = document.getElementById(window.TRAVI.isGuest ? 'w-member' : 'w-guest');
+  if (drop) drop.remove();
+
+  // 아직 Coop에 참여하지 않았으면(app.js 참여 상태가 member가 아니면) 쌓인 포인트가 없다
+  var none = window.TRAVI.join !== 'member' || window.TRAVI.param('empty') === '1';
+  if (none && document.getElementById('w-hist')) {
     document.getElementById('w-hist').hidden = true;
     document.getElementById('w-empty').hidden = false;
     document.getElementById('w-bal').innerHTML = '0 <small>pts</small>';

@@ -1,5 +1,5 @@
 /* TRAVI 시안 공통 스크립트.
-   1) 보기 상태(guest, member, leader)를 정한다
+   1) 보기 상태를 정한다. 사용자는 member로 고정이고, 로그아웃했을 때만 guest다
    2) 공통 헤더와 푸터를 그린다 (<header data-travi-header>, <footer data-travi-footer>)
    3) 게스트 가입 안내 팝업, 알림 패널, 아바타 메뉴, 드롭다운, 모달, 토스트
    네트워크 요청은 하지 않는다. <head>에서 불러도 되고 </body> 앞에서 불러도 된다. */
@@ -8,7 +8,7 @@
 
   /* ---------- 보기 상태 ---------- */
   var KEY = 'travi.as';
-  var STATES = ['guest', 'member', 'leader'];
+  var STATES = ['guest', 'member'];
 
   function param(name) {
     try { return new URLSearchParams(location.search).get(name); } catch (e) { return null; }
@@ -22,13 +22,14 @@
     return b ? (b.getAttribute('data-auth') || '') : '';
   }
 
-  // 우선순위: 주소의 ?as= > 저장된 값 > 기본값 guest.
+  // 우선순위: 주소의 ?as= > 저장된 값 > 기본값 member.
+  // 역할 전환은 없다. guest는 로그아웃했거나 ?as=guest를 직접 줬을 때만이다.
   // 로그인이 필요한 페이지(body data-auth="required")는 ?as=guest를 직접 주지 않는 한 member로 본다.
   function resolve() {
     var p = param('as');
     if (STATES.indexOf(p) > -1) { store(p); return { as: p, explicit: true }; }
     var s = stored();
-    return { as: STATES.indexOf(s) > -1 ? s : 'guest', explicit: false };
+    return { as: STATES.indexOf(s) > -1 ? s : 'member', explicit: false };
   }
   var R = resolve();
   var AS = R.as;
@@ -36,34 +37,66 @@
   if (authMode() === 'required' && AS === 'guest' && !R.explicit) AS = 'member';
   document.documentElement.setAttribute('data-as', AS);
 
+  /* ---------- 참여 상태 ----------
+     같은 Coop이 화면마다 다른 말을 하지 않게 상태 하나를 모든 페이지가 같이 읽는다.
+     none      아직 참여 전. Coop은 모집 중이고 Dashboard와 Wallet은 비어 있다 (기본값)
+     requested Join 양식을 냈고 기관 인증이 남았다
+     member    승인되어 학습이 진행 중인 뒤 시점. Coop은 In training이고 포인트가 쌓여 있다
+     Join 양식 제출 > 인증 제출 순서로 넘어가고, Dashboard의 Leave Coop이 none으로 되돌린다.
+     주소에 ?join=none|requested|member를 주면 그 상태로 바로 본다. guest는 언제나 none이다 */
+  var JKEY = 'travi.join', RKEY = 'travi.role';
+  var JSTATES = ['none', 'requested', 'member'];
+  function get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+  function put(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+  var JOIN = (function () {
+    var p = param('join');
+    if (JSTATES.indexOf(p) > -1) { put(JKEY, p); return p; }
+    var s = get(JKEY);
+    return JSTATES.indexOf(s) > -1 ? s : 'none';
+  })();
+  if (AS === 'guest') JOIN = 'none';
+  var IN = JOIN === 'member';
+
   /* ---------- 공통 예시 데이터 (모든 페이지가 같은 값을 쓴다) ---------- */
   var USERS = {
-    member: { name: 'Jane Kim', org: 'University A Security Lab', email: 'soc@univ-a.example', initials: 'JK' },
-    leader: { name: 'Alex Park', org: 'Org B', email: 'soc-coop@org-b.example', initials: 'AP' }
+    member: { name: 'Yujun Oh', org: 'Hongik University', email: 'yujun@hongik.example', initials: 'YO' }
   };
+  // Coop은 SOC Threat Detection 하나만 둔다. 이름 끝에 Coop을 붙이지 않는다
+  // 20석 = Data 12, Computing Resource 4, Model 4. 모집 중에는 12곳이 찼고, 내가 들어간 뒤(member)에는 13곳이다
   var COOPS = {
     soc: {
-      id: 'soc', name: 'SOC Threat Detection Coop', domain: 'Security', status: 'Open to join',
+      id: 'soc', name: 'SOC Threat Detection', domain: 'Security',
+      status: IN ? 'In training' : 'Open to join', statusKey: IN ? 'training' : 'open',
       line: 'SOCs train one attack classifier together, each on its own network flow records.',
-      members: '12 of 20 members', closes: 'Joining closes Dec 2', daysLeft: '12 days left',
-      leader: 'Org B', contact: 'soc-coop@org-b.example'
-    },
-    botnet: {
-      id: 'botnet', name: 'Botnet Traffic Detection Coop', domain: 'Security', status: 'In training',
-      round: 'Round 6 of 12', members: '5 members'
+      memberCount: IN ? 13 : 12, seats: 20,
+      members: (IN ? 13 : 12) + ' of 20 members', closes: 'Joining closes Dec 2', daysLeft: '12 days left',
+      round: 'Round 6 of 12',
+      leader: 'Soyeon Park', contact: 'soyeon@hongik.example'
     }
   };
-  // 예시 기준일: Nov 20, 2026 (회의 날짜와 겹치지 않게). "Joining closes Dec 2"와 "12 days left"는 이 날 기준
-
-  var NOTIFS = {
-    member: [
-      { unread: true, href: 'verify.html?coop=soc', text: 'Verify your organization to continue your request to join SOC Threat Detection Coop.', when: 'Today' },
-      { unread: false, href: 'dashboard.html', text: "Your request to join Botnet Traffic Detection Coop was approved. You're in as a data provider.", when: 'Oct 28' }
-    ],
-    leader: [
-      { unread: true, href: 'coop-manage.html?coop=soc#requests', text: 'Org C asked to join SOC Threat Detection Coop as a data provider.', when: 'Today' }
-    ]
-  };
+  // Join 양식의 자원 선택지. id는 주소와 저장에 쓰고 label은 선택지 글자, role은 역할 이름이다
+  var RESOURCES = [
+    { id: 'data', label: 'Data', role: 'Data Provider' },
+    { id: 'compute', label: 'Computing resource', role: 'Computing Resource Provider' },
+    { id: 'model', label: 'Model', role: 'Model Provider' }
+  ];
+  // 예시 기준일: Nov 20, 2026 (회의 날짜와 겹치지 않게). "Joining closes Dec 2"와 "12 days left"는 이 날 기준.
+  // member 상태는 모집이 끝나고 학습 6라운드까지 간 뒤 시점이다 (Wallet 내역 Dec 12 ~ Jan 2)
+  function myRole() {
+    var id = get(RKEY), r = RESOURCES[0];
+    RESOURCES.forEach(function (x) { if (x.id === id) r = x; });
+    return r;
+  }
+  function notifsFor(as) {
+    if (as === 'guest') return [];
+    if (JOIN === 'requested') return [
+      { unread: true, href: 'verify.html?coop=soc', text: 'Verify your organization to join SOC Threat Detection.', when: 'Today' }
+    ];
+    if (JOIN === 'member') return [
+      { unread: false, href: 'dashboard.html', text: "Your request to join SOC Threat Detection was approved. You're in as a " + myRole().role + '.', when: 'Dec 2' }
+    ];
+    return [];
+  }
 
   /* ---------- 작은 도구 ---------- */
   function esc(s) {
@@ -174,34 +207,55 @@
       '</div>';
   }
 
-  /* ---------- 푸터 ---------- */
+  /* ---------- 푸터 (Figma Footer / Full, Footer / Minimal) ----------
+     아랫줄(Footer Bottom)은 모든 페이지가 같다. 메인만 그 위에 로고와 링크 묶음이 붙는다.
+     Terms, Privacy, FAQ, LinkedIn, GitHub는 아직 갈 곳이 없어 #로 둔다 */
   var LINKEDIN_SVG = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4.98 3.5C4.98 4.88 3.87 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.22 8h4.56v14H.22V8zm7.4 0h4.37v1.92h.06c.61-1.15 2.1-2.36 4.32-2.36 4.62 0 5.47 3.04 5.47 7V22h-4.56v-6.6c0-1.57-.03-3.6-2.2-3.6-2.2 0-2.53 1.72-2.53 3.49V22H7.62V8z"/></svg>';
+  var GITHUB_SVG = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.36-3.88-1.36-.52-1.33-1.28-1.69-1.28-1.69-1.05-.71.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.78 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.42-2.69 5.39-5.25 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5z"/></svg>';
+  var MAIL_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 8l9 6 9-6"/></svg>';
   var MAIL = 'contact@travi.example';
-  var TODO = '<span class="todo">교체 필요</span>';
   var ORG_LINE = 'Operated by DINA Lab &amp; Neouly Inc.';
+  var FOOT_COLS = [
+    { h: 'Explore', links: [['AI Cooperatives', 'coop.html'], ['How It Works', 'index.html#how']] },
+    { h: 'Resources', links: [['Whitepaper', 'whitepaper.html']] },
+    { h: 'Help', links: [['FAQ', '#'], ['Contact Us', 'mailto:' + MAIL]] }
+  ];
+
+  function footBottom() {
+    return '<div class="tv-foot-bottom">' +
+      '<div class="tv-foot-copy"><span>© 2026 TRAVI</span><span>' + ORG_LINE + '</span></div>' +
+      '<div class="tv-foot-links">' +
+        '<a href="#">Terms of Service</a><a href="#">Privacy Policy</a>' +
+        '<span class="tv-foot-social">' +
+          '<a href="#" aria-label="LinkedIn" title="LinkedIn">' + LINKEDIN_SVG + '</a>' +
+          '<a href="#" aria-label="GitHub" title="GitHub">' + GITHUB_SVG + '</a>' +
+          '<a href="mailto:' + MAIL + '" aria-label="Email" title="Email">' + MAIL_SVG + '</a>' +
+        '</span>' +
+      '</div>' +
+    '</div>';
+  }
 
   function renderFooter(el) {
     var full = el.getAttribute('data-travi-footer') === 'full';
+    el.className = full ? 'tv-foot full' : 'tv-foot';
+    if (full && !el.id) el.id = 'contact';
+    var main = '';
     if (full) {
-      el.className = 'foot';
-      if (!el.id) el.id = 'contact';
-      el.innerHTML =
-        '<div class="wrap">' +
-          '<div class="foot-top"><div>' +
-            '<div class="eyebrow">CONTACT</div><h3>Contact TRAVI</h3>' +
-            '<a class="mail" href="mailto:' + MAIL + '">' + MAIL + ' ' + TODO + '</a>' +
-            '<div class="social"><a href="#" aria-label="LinkedIn" title="LinkedIn (주소 교체 필요)">' + LINKEDIN_SVG + '</a></div>' +
-          '</div><a class="btn solid lg" href="mailto:' + MAIL + '">Contact us</a></div>' +
-          '<div class="foot-bottom"><span>© 2026 TRAVI</span><span>' + ORG_LINE + '</span></div>' +
-        '</div>';
-    } else {
-      el.className = 'tv-foot';
-      el.innerHTML =
-        '<div class="wrap">' +
-          '<span>© 2026 TRAVI</span><span>' + ORG_LINE + '</span>' +
-          '<a href="mailto:' + MAIL + '">' + MAIL + '</a>' + TODO +
-        '</div>';
+      main = '<div class="tv-foot-main">' +
+        '<div class="tv-foot-brand">' +
+          '<a class="tv-foot-logo" href="index.html" aria-label="TRAVI home">' + BRAND_SVG.replace('tv-lg', 'tv-lg-f').replace('#tv-lg', '#tv-lg-f') + 'TRAVI</a>' +
+          '<p>Build AI Together. Share the Value.</p>' +
+        '</div>' +
+        '<nav class="tv-foot-nav" aria-label="Footer">' +
+          FOOT_COLS.map(function (c) {
+            return '<div><b>' + c.h + '</b>' + c.links.map(function (l) {
+              return '<a href="' + l[1] + '">' + l[0] + '</a>';
+            }).join('') + '</div>';
+          }).join('') +
+        '</nav>' +
+      '</div>';
     }
+    el.innerHTML = '<div class="wrap">' + main + footBottom() + '</div>';
   }
 
   /* ---------- 드롭다운 (기존 페이지의 data-dd 메뉴도 같은 방식으로 동작) ---------- */
@@ -238,8 +292,6 @@
     if (mc) { e.preventDefault(); TRAVI.closeModal(mc.closest('dialog, .tv-modal')); return; }
     if (e.target.closest('[data-tv-logout]')) { e.preventDefault(); TRAVI.signOut(); return; }
     if (e.target.closest('[data-tv-readall]')) { e.preventDefault(); TRAVI.markAllRead(); return; }
-    var dm = e.target.closest('[data-tv-as]');
-    if (dm) { e.preventDefault(); TRAVI.view(dm.getAttribute('data-tv-as')); }
   }
 
   /* ---------- 모달 (<dialog class="tv-modal">) ---------- */
@@ -344,31 +396,24 @@
     toastTimer = setTimeout(function () { t.classList.remove('show'); }, ms || 4000);
   }
 
-  /* ---------- 보기 전환 (시안 전용 작은 막대, 왼쪽 아래) ---------- */
-  function renderDemo() {
-    // 공통 헤더를 쓰는 페이지에만 띄운다 (옛 복붙 헤더 페이지에는 띄우지 않는다)
-    if (param('demo') === '0' || document.getElementById('tv-demo') || !document.querySelector('[data-travi-header]')) return;
-    var el = document.createElement('div');
-    el.id = 'tv-demo';
-    el.className = 'tv-demo';
-    el.setAttribute('role', 'group');
-    el.setAttribute('aria-label', 'Mock view');
-    el.innerHTML = '<span class="tv-demo-k">Viewing as</span>' +
-      STATES.map(function (s) {
-        return '<button type="button" data-tv-as="' + s + '" aria-pressed="' + (s === AS) + '">' + s.charAt(0).toUpperCase() + s.slice(1) + '</button>';
-      }).join('');
-    document.body.appendChild(el);
-  }
-
   /* ---------- 공개 객체 ---------- */
   var TRAVI = window.TRAVI = {
     as: AS,
     isGuest: AS === 'guest',
-    isLeader: AS === 'leader',
+    isLeader: false, // 리더 보기는 없앴다. 옛 코드가 읽어도 깨지지 않게 값만 남긴다
     user: AS === 'guest' ? null : USERS[AS],
     users: USERS,
     coops: COOPS,
-    notifications: (NOTIFS[AS] || []).slice(),
+    resources: RESOURCES,
+    notifications: notifsFor(AS),
+    // 참여 상태와 고른 자원. 값을 바꾼 쪽이 화면을 다시 그리거나 다른 페이지로 넘어간다
+    join: JOIN,
+    role: myRole(),
+    setJoin: function (v, roleId) {
+      if (JSTATES.indexOf(v) < 0) return;
+      put(JKEY, v);
+      if (roleId) put(RKEY, roleId);
+    },
     param: param,
     toast: toast,
     gate: gate,
@@ -376,18 +421,10 @@
     closeModal: closeModal,
     // 로그인 흉내: 상태를 저장하고 return 주소(없으면 기본값)로 간다
     signIn: function (role, fallback) {
-      store(STATES.indexOf(role) > -1 && role !== 'guest' ? role : 'member');
+      store('member');
       location.href = safeReturn(param('return')) || fallback || 'dashboard.html';
     },
     signOut: function () { store('guest'); location.href = 'index.html'; },
-    // 시안 보기 전환: 같은 페이지를 ?as=로 다시 연다
-    view: function (s) {
-      if (STATES.indexOf(s) < 0) return;
-      store(s);
-      var u = new URL(location.href);
-      u.searchParams.set('as', s);
-      location.href = u.toString();
-    },
     notify: function (item) {
       TRAVI.notifications.unshift({ unread: true, href: item.href || '#', text: item.text, when: item.when || 'Just now' });
       refreshHeader();
@@ -415,10 +452,10 @@
     // 로그인이 필요한 페이지: 주소로 guest를 고르지 않았으면 회원으로 본다
     var mode = authMode();
     if (mode === 'required' && AS === 'guest' && !R.explicit) {
-      AS = stored() === 'leader' ? 'leader' : 'member';
+      AS = 'member';
       document.documentElement.setAttribute('data-as', AS);
-      TRAVI.as = AS; TRAVI.isGuest = false; TRAVI.isLeader = AS === 'leader';
-      TRAVI.user = USERS[AS]; TRAVI.notifications = (NOTIFS[AS] || []).slice();
+      TRAVI.as = AS; TRAVI.isGuest = false;
+      TRAVI.user = USERS[AS]; TRAVI.notifications = notifsFor(AS);
     }
 
     document.querySelectorAll('[data-travi-header]').forEach(renderHeader);
@@ -426,7 +463,6 @@
     document.querySelectorAll('dialog.tv-modal').forEach(bindBackdrop);
     document.addEventListener('click', onDocClick);
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeMenus(); });
-    renderDemo();
 
     // 게스트가 로그인 필요 페이지를 ?as=guest로 열었을 때
     if (mode === 'required' && AS === 'guest') {

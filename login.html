@@ -14,7 +14,6 @@
 .li-card .tv-banner { margin: 18px 0 0; }
 .li-card .li-err { margin: 18px 0 0; padding: 10px 12px; border: 1px solid #f2c6c2; border-radius: 10px; background: #fdf1f0; font-size: 14px; color: #b8443b; }
 .li-google { width: 100%; justify-content: center; margin-top: 24px; letter-spacing: 0.02em; }
-.li-g { width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; font-weight: 800; font-size: 13px; color: #fff; background: conic-gradient(#ea4335 0 25%, #fbbc05 0 50%, #34a853 0 75%, #4285f4 0); }
 .li-or { display: flex; align-items: center; gap: 12px; margin: 24px 0 18px; font-size: 13px; color: var(--faint); }
 .li-or::before, .li-or::after { content: ""; flex: 1; height: 1px; background: var(--line); }
 .li-card .tv-field > label { color: var(--faint); }
@@ -22,7 +21,6 @@
 .li-submit { width: 100%; justify-content: center; letter-spacing: 0.02em; }
 .li-card .li-alt { margin: 24px 0 0; padding-top: 20px; border-top: 1px solid var(--line); text-align: center; font-size: 14px; color: var(--muted); }
 .li-alt a { color: var(--text); font-weight: 600; text-decoration: underline; }
-.li-main .tv-review { max-width: 760px; margin-left: auto; margin-right: auto; }
 @media (max-width: 760px) {
   .li-card { margin-top: 24px; padding: 22px; }
 }
@@ -38,13 +36,13 @@
   <section class="tv-card li-card" aria-labelledby="li-h">
     <h1 class="tv-h1" id="li-h">Log in to TRAVI</h1>
 
-    <!-- 코옵 상세에서 Request to join을 누른 게스트만 보인다 (login.html?coop=soc&return=...) -->
-    <div class="tv-banner" id="from-coop" hidden>Log in to send your join request to <b id="from-coop-name">SOC Threat Detection Coop</b>. You'll return to your request afterward.</div>
+    <!-- 코옵 상세에서 Join을 누른 게스트만 보인다 (login.html?coop=soc&return=...) -->
+    <div class="tv-banner" id="from-coop" hidden>Log in to send your join request to <b id="from-coop-name">SOC Threat Detection</b>. You'll return to your request afterward.</div>
 
     <!-- login.html?error=1 -->
     <p class="tv-err li-err" id="g-err" role="alert" hidden>We couldn't log you in with Google. Try again.</p>
 
-    <button class="btn solid lg li-google" type="button" id="g-btn"><span class="li-g" aria-hidden="true">G</span>Continue with Google</button>
+    <button class="btn solid lg li-google" type="button" id="g-btn">Continue with Google</button>
 
     <div class="li-or"><span>or</span></div>
 
@@ -58,23 +56,6 @@
     <p class="li-alt">New to TRAVI? <a id="to-join" href="join.html">Create an account</a></p>
   </section>
 
-  <details class="tv-review">
-    <summary>Review notes <span>2 open questions</span></summary>
-    <div class="tv-review-body">
-      <h3>미결</h3>
-      <ol>
-        <li>로그인을 Google 하나에 기대는 것에 대한 우려가 있었다. 다른 소셜 로그인을 더할지, 이메일 자체 로그인을 언제 열지는 교수님 확인 전이다.</li>
-        <li>이메일과 비밀번호 칸을 숨길지 비활성으로 보여 줄지 정하지 않았다. 지금은 비활성으로 보여 주고 나중에 열린다는 안내를 단다.</li>
-      </ol>
-      <h3>가정</h3>
-      <ol>
-        <li>로그인 페이지는 가입(join.html)과 나눴다. Google 우선이고 자체 로그인은 나중 백엔드에서 붙인다.</li>
-        <li>비로그인 상태에서 코옵 상세의 Request to join을 누르면 이 화면으로 온다(login.html?coop=soc&amp;return=request.html%3Fcoop%3Dsoc). 출처 배너는 상세 페이지 게스트 도움말 'Log in to send a join request. You'll return to this Coop afterward.'(로그인하면 참여 요청을 보낼 수 있고 로그인 뒤 이 코옵으로 돌아온다는 뜻)와 같은 틀로 썼다.</li>
-        <li>시안에서는 Continue with Google을 누르면 바로 회원 상태가 되어 주소의 return 값으로 간다. return이 없으면 Dashboard로, 코옵에서 왔으면 참여 요청 페이지로 간다.</li>
-        <li>Google 로그인 실패 상태는 login.html?error=1로 본다.</li>
-      </ol>
-    </div>
-  </details>
 </main>
 
 <footer data-travi-footer></footer>
@@ -88,7 +69,7 @@
   var coop = coopId && T.coops[coopId] && T.coops[coopId].status === 'Open to join' ? T.coops[coopId] : null;
 
   if (coop) {
-    document.getElementById('from-coop-name').textContent = coop.name;
+    document.getElementById('from-coop-name').textContent = String(coop.name).replace(/ Coop$/, '');
     document.getElementById('from-coop').hidden = false;
   }
   if (q.get('error') === '1') document.getElementById('g-err').hidden = false;
