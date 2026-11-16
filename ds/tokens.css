@@ -10,6 +10,7 @@
 
    정해진 것은 주색 하나다(남색, 11/15). 나머지 후보는 회의에서 고르기 전이고 :root 의 값은 임시 기본값이다.
    하나로 정하면 그 값을 :root 로 옮기고 나머지 후보 줄은 지운다.
+   조절 막대와 색 고르개로 직접 넣은 값은 이 파일에 없다. design-system.html 이 같은 변수 이름을 그 자리에 바로 적어 넣는다.
    대비 기준: 글자는 바탕과 4.5 이상, 버튼이나 입력칸의 경계는 3 이상. */
 
 :root {
@@ -30,6 +31,16 @@
   --tv-red-0: #fdf1f0; --tv-red-1: #fde2de; --tv-red-2: #f2c6c2; --tv-red-3: #f1a89f; --tv-red-4: #e6877b; --tv-red-5: #d36559; --tv-red-6: #b8443b; --tv-red-7: #9d362e; --tv-red-8: #82231e; --tv-red-9: #651915;
   /* crimson: 주색을 테라코타로 고를 때만 쓰는 오류색. 붉은 주황과 헷갈리지 않게 진분홍 쪽으로 옮김 */
   --tv-crimson-0: #fff4f5; --tv-crimson-1: #ffe1e5; --tv-crimson-2: #ffc4cd; --tv-crimson-3: #fda2b2; --tv-crimson-4: #f47c96; --tv-crimson-5: #e3567a; --tv-crimson-6: #c9305f; --tv-crimson-7: #ae194d; --tv-crimson-8: #900b3d; --tv-crimson-9: #71072e;
+
+  /* 아래 넷은 주색 후보로만 쓰는 계단이다. 기준 6번 하나에서 밝기만 바꿔 계산했고 6번은 흰 글자 대비 4.5 이상이다 */
+  /* blue: 주색 후보 파랑. 기준 6번 = Figma 와이어프레임의 강조색 */
+  --tv-blue-0: #f3f7ff; --tv-blue-1: #dfeaff; --tv-blue-2: #c2d7ff; --tv-blue-3: #a0c1fe; --tv-blue-4: #7aa7fd; --tv-blue-5: #598bf0; --tv-blue-6: #3b6fd9; --tv-blue-7: #2b5bbe; --tv-blue-8: #1f489f; --tv-blue-9: #16387d;
+  /* teal: 주색 후보 청록 */
+  --tv-teal-0: #f0f9f9; --tv-teal-1: #dcedee; --tv-teal-2: #bcddde; --tv-teal-3: #97cacc; --tv-teal-4: #6db4b8; --tv-teal-5: #429ca1; --tv-teal-6: #0c8287; --tv-teal-7: #086c70; --tv-teal-8: #03575b; --tv-teal-9: #024346;
+  /* violet: 주색 후보 보라 */
+  --tv-violet-0: #f9f4ff; --tv-violet-1: #efe3ff; --tv-violet-2: #e1c9ff; --tv-violet-3: #d1aafe; --tv-violet-4: #be88f7; --tv-violet-5: #a865e9; --tv-violet-6: #8f43d1; --tv-violet-7: #7a2fb7; --tv-violet-8: #632198; --tv-violet-9: #4c1776;
+  /* pink: 주색 후보 자주 */
+  --tv-pink-0: #fff3f8; --tv-pink-1: #ffe0ed; --tv-pink-2: #ffc4de; --tv-pink-3: #fea1cd; --tv-pink-4: #f67cb9; --tv-pink-5: #e655a3; --tv-pink-6: #cd2e8b; --tv-pink-7: #b21676; --tv-pink-8: #950761; --tv-pink-9: #76064c;
 
   /* 도메인 아이콘 색. icons/domain-icons.js 와 같은 값 */
   --tv-domain-security: #51628e; --tv-domain-finance: #7f643a; --tv-domain-agriculture: #4d7357; --tv-domain-healthcare: #8f565d; --tv-domain-other: #616978;
@@ -90,8 +101,9 @@
 /* 3) 글자. 크기는 rem 으로 적는다. 1rem = 16px */
 :root {
   --tv-font-sans: 'Pretendard Variable', Pretendard, system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --tv-font-serif: 'Source Serif 4', Georgia, 'Times New Roman', serif;
-  --tv-font-mono: 'Geist Mono', ui-monospace, 'SFMono-Regular', Consolas, monospace;
+  /* serif 와 mono 에는 한글이 없다. 바로 뒤에 Pretendard 를 적어 한글은 Pretendard 로 보이게 한다 */
+  --tv-font-serif: 'Source Serif 4', 'Pretendard Variable', Pretendard, Georgia, 'Times New Roman', serif;
+  --tv-font-mono: 'Geist Mono', 'Pretendard Variable', Pretendard, ui-monospace, 'SFMono-Regular', Consolas, monospace;
 
   /* 쓰임별 글꼴. 글꼴 조합 후보에 따라 바뀌는 것은 heading 과 data 둘이다 */
   --tv-font-body: var(--tv-font-sans);      /* 본문, 버튼, 칩, 메뉴 */
@@ -99,7 +111,9 @@
   --tv-font-data: var(--tv-font-sans);      /* 숫자와 작은 라벨 */
   --tv-fw-heading: 700; --tv-ls-display: -0.03em; --tv-ls-heading: -0.02em;
 
-  /* 크기 여덟 가지. lg, md, sm 은 글자 크기 기준 후보에 따라 바뀐다 */
+  /* 크기 여덟 가지. lg, md, sm 은 글자 크기 기준 후보에 따라 바뀐다.
+     조절 막대로 고르면 제목 넷도 본문 크기에 비례해 바뀐다. 그때의 배율이 --tv-hscale 이다(1이면 아래 값 그대로) */
+  --tv-hscale: 1;
   --tv-fs-display: 3.5rem;   /* 56px. 첫 화면 큰 제목. 좁은 화면에서는 36px */
   --tv-fs-h1: 2.5rem;        /* 40px. 페이지 제목. 좁은 화면에서는 30px */
   --tv-fs-h2: 1.75rem;       /* 28px. 구역 제목 */
@@ -182,23 +196,52 @@
   --tv-danger: var(--tv-crimson-4); --tv-danger-bg: color-mix(in srgb, var(--tv-crimson-6) 22%, var(--tv-dark-6)); --tv-danger-line: color-mix(in srgb, var(--tv-crimson-5) 50%, var(--tv-dark-6));
 }
 
-/* 글꼴 조합 */
+/* 주색 후보를 한 틀로 입히는 규칙. data-primary 가 p- 로 시작하면 --tv-p-0 부터 --tv-p-9 까지의 열 칸을 주색 계단으로 쓴다.
+   직접 넣은 색(p-custom)은 design-system.html 이 계산한 열 칸을 그 자리에 적어 넣는다.
+   글자 링크와 선택 표시는 옅은 바탕 위에서도 대비 4.5를 넘도록 7번을 쓴다.
+   어두운 화면은 4번과 3번을 쓴다. 직접 넣은 색이 아주 어두우면 4번, 3번도 어두워 대비가 모자라므로
+   design-system.html 이 더 밝게 계산한 --tv-p-d(버튼, 링크)와 --tv-p-dh(올렸을 때, 선택 표시)를 같이 적어 넣고, 있으면 그 값을 먼저 쓴다 */
+[data-primary="p-blue"]   { --tv-p-0: var(--tv-blue-0); --tv-p-1: var(--tv-blue-1); --tv-p-2: var(--tv-blue-2); --tv-p-3: var(--tv-blue-3); --tv-p-4: var(--tv-blue-4); --tv-p-5: var(--tv-blue-5); --tv-p-6: var(--tv-blue-6); --tv-p-7: var(--tv-blue-7); --tv-p-8: var(--tv-blue-8); --tv-p-9: var(--tv-blue-9); }
+[data-primary="p-teal"]   { --tv-p-0: var(--tv-teal-0); --tv-p-1: var(--tv-teal-1); --tv-p-2: var(--tv-teal-2); --tv-p-3: var(--tv-teal-3); --tv-p-4: var(--tv-teal-4); --tv-p-5: var(--tv-teal-5); --tv-p-6: var(--tv-teal-6); --tv-p-7: var(--tv-teal-7); --tv-p-8: var(--tv-teal-8); --tv-p-9: var(--tv-teal-9); }
+[data-primary="p-green"]  { --tv-p-0: var(--tv-green-0); --tv-p-1: var(--tv-green-1); --tv-p-2: var(--tv-green-2); --tv-p-3: var(--tv-green-3); --tv-p-4: var(--tv-green-4); --tv-p-5: var(--tv-green-5); --tv-p-6: var(--tv-green-6); --tv-p-7: var(--tv-green-7); --tv-p-8: var(--tv-green-8); --tv-p-9: var(--tv-green-9); }
+[data-primary="p-violet"] { --tv-p-0: var(--tv-violet-0); --tv-p-1: var(--tv-violet-1); --tv-p-2: var(--tv-violet-2); --tv-p-3: var(--tv-violet-3); --tv-p-4: var(--tv-violet-4); --tv-p-5: var(--tv-violet-5); --tv-p-6: var(--tv-violet-6); --tv-p-7: var(--tv-violet-7); --tv-p-8: var(--tv-violet-8); --tv-p-9: var(--tv-violet-9); }
+[data-primary="p-pink"]   { --tv-p-0: var(--tv-pink-0); --tv-p-1: var(--tv-pink-1); --tv-p-2: var(--tv-pink-2); --tv-p-3: var(--tv-pink-3); --tv-p-4: var(--tv-pink-4); --tv-p-5: var(--tv-pink-5); --tv-p-6: var(--tv-pink-6); --tv-p-7: var(--tv-pink-7); --tv-p-8: var(--tv-pink-8); --tv-p-9: var(--tv-pink-9); }
+[data-primary^="p-"], [data-primary^="p-"] [data-theme="light"] {
+  --tv-primary: var(--tv-p-6); --tv-primary-hover: var(--tv-p-7); --tv-on-primary: var(--tv-white);
+  --tv-link: var(--tv-p-7); --tv-focus: var(--tv-p-5);
+  --tv-accent: var(--tv-p-7); --tv-accent-bg: var(--tv-p-0); --tv-accent-line: var(--tv-p-2);
+  --tv-danger: var(--tv-red-6); --tv-danger-bg: var(--tv-red-0); --tv-danger-line: var(--tv-red-2);
+}
+[data-theme="dark"] [data-primary^="p-"], [data-theme="dark"][data-primary^="p-"], [data-primary^="p-"] [data-theme="dark"] {
+  --tv-primary: var(--tv-p-d, var(--tv-p-4)); --tv-primary-hover: var(--tv-p-dh, var(--tv-p-3)); --tv-on-primary: var(--tv-dark-7);
+  --tv-link: var(--tv-p-d, var(--tv-p-4)); --tv-focus: var(--tv-p-d, var(--tv-p-4));
+  --tv-accent: var(--tv-p-dh, var(--tv-p-3)); --tv-accent-bg: color-mix(in srgb, var(--tv-p-6) 24%, var(--tv-dark-6)); --tv-accent-line: color-mix(in srgb, var(--tv-p-5) 52%, var(--tv-dark-6));
+  --tv-danger: var(--tv-red-4); --tv-danger-bg: color-mix(in srgb, var(--tv-red-6) 22%, var(--tv-dark-6)); --tv-danger-line: color-mix(in srgb, var(--tv-red-5) 50%, var(--tv-dark-6));
+}
+/* 직접 넣은 주색이 빨강과 가까우면 오류색을 진분홍으로 옮긴다. 테라코타와 같은 처리다 */
+[data-danger="crimson"], [data-danger="crimson"] [data-theme="light"] { --tv-danger: var(--tv-crimson-6); --tv-danger-bg: var(--tv-crimson-0); --tv-danger-line: var(--tv-crimson-2); }
+[data-theme="dark"] [data-danger="crimson"], [data-theme="dark"][data-danger="crimson"], [data-danger="crimson"] [data-theme="dark"] {
+  --tv-danger: var(--tv-crimson-4); --tv-danger-bg: color-mix(in srgb, var(--tv-crimson-6) 22%, var(--tv-dark-6)); --tv-danger-line: color-mix(in srgb, var(--tv-crimson-5) 50%, var(--tv-dark-6));
+}
+
+/* 글꼴 조합. 세 자리를 따로 고른 조합(data-type="mix")은 design-system.html 이 --tv-font-body, heading, data 를 그 자리에 적어 넣는다 */
 [data-type="a"] { --tv-font-heading: var(--tv-font-sans); --tv-font-data: var(--tv-font-sans); --tv-fw-heading: 700; --tv-ls-display: -0.03em; --tv-ls-heading: -0.02em; }    /* A Pretendard 하나로 */
 [data-type="b"] { --tv-font-heading: var(--tv-font-serif); --tv-font-data: var(--tv-font-sans); --tv-fw-heading: 600; --tv-ls-display: -0.02em; --tv-ls-heading: -0.01em; }   /* B 큰 제목만 세리프 */
 [data-type="c"] { --tv-font-heading: var(--tv-font-sans); --tv-font-data: var(--tv-font-mono); --tv-fw-heading: 700; --tv-ls-display: -0.03em; --tv-ls-heading: -0.02em; }    /* C 숫자와 라벨만 고정폭 */
 
-/* 글자 크기 기준. 본문 크기에 따라 소개 문단(lg)과 보조 글자(sm)가 같이 움직인다. 제목과 칩(xs 12px)은 그대로 */
+/* 글자 크기 기준. 본문 크기에 따라 소개 문단(lg)과 보조 글자(sm)가 같이 움직인다. 제목과 칩(xs 12px)은 그대로.
+   조절 막대로 고른 값(data-size="custom")은 design-system.html 이 크기 일곱 가지와 --tv-hscale 을 그 자리에 적어 넣는다 */
 [data-size="16"] { --tv-fs-lg: 1.125rem;  --tv-fs-md: 1rem;      --tv-fs-sm: 0.875rem; }    /* 18, 16, 14 */
 [data-size="15"] { --tv-fs-lg: 1.0625rem; --tv-fs-md: 0.9375rem; --tv-fs-sm: 0.8125rem; }   /* 17, 15, 13 */
 [data-size="14"] { --tv-fs-lg: 1rem;      --tv-fs-md: 0.875rem;  --tv-fs-sm: 0.8125rem; }   /* 16, 14, 13 */
 
-/* 모서리. 버튼 값을 고르면 입력칸과 카드가 따라간다 */
+/* 모서리. 버튼 값을 고르면 입력칸과 카드가 따라간다. 조절 막대 값(data-radius="custom")은 버튼과 입력칸이 같은 값, 카드가 4 큰 값이다 */
 [data-radius="4"]    { --tv-radius-control: 4px;   --tv-radius-input: 4px;  --tv-radius-card: 8px; }
 [data-radius="8"]    { --tv-radius-control: 8px;   --tv-radius-input: 8px;  --tv-radius-card: 12px; }
 [data-radius="12"]   { --tv-radius-control: 12px;  --tv-radius-input: 12px; --tv-radius-card: 16px; }
 [data-radius="pill"] { --tv-radius-control: 999px; --tv-radius-input: 10px; --tv-radius-card: 16px; }   /* 지금 사이트 값 */
 
-/* 간격 밀도 */
+/* 간격 밀도. 조절 막대 값(data-density="custom")은 카드 안쪽 여백을 정하면 줄 사이가 그 절반, 덩어리 사이가 같은 값이다 */
 [data-density="compact"] { --tv-pad-card: 16px; --tv-gap: 8px;  --tv-gap-section: 16px; }
 [data-density="normal"]  { --tv-pad-card: 24px; --tv-gap: 12px; --tv-gap-section: 24px; }
 [data-density="roomy"]   { --tv-pad-card: 32px; --tv-gap: 16px; --tv-gap-section: 32px; }
