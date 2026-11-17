@@ -53,7 +53,7 @@ button, select, input { font: inherit; }
 .copy h1 { margin: 18px 0 20px; font-family: Outfit, Inter, system-ui, sans-serif; font-weight: 600; line-height: 1.12; }
 .hero[data-layout="center"] .copy h1 { font-size: clamp(34px, 4.4vw, 56px); }
 .hero[data-layout="left"] .copy h1 { font-size: clamp(44px, 5.8vw, 86px); line-height: 1.0; }
-.copy .lead { font-size: 18px; line-height: 1.65; color: var(--muted); margin: 0 0 30px; }
+.copy .lead { font-size: 18px; line-height: 1.65; color: var(--text); opacity: 0.92; margin: 0 0 30px; }
 .hero[data-layout="center"] .copy .lead { max-width: 620px; margin-left: auto; margin-right: auto; }
 .hero[data-layout="left"] .copy .lead { max-width: 520px; }
 .ctas { display: flex; gap: 12px; flex-wrap: wrap; }
@@ -138,6 +138,13 @@ button, select, input { font: inherit; }
   <div class="g"><span class="l">테마</span><div class="seg" id="segT"><button type="button" data-k="light">밝게</button><button type="button" data-k="dark">어둡게</button></div></div>
   <div class="g"><span class="l">글 배치</span><div class="seg" id="segL"><button type="button" data-k="center">가운데</button><button type="button" data-k="left">왼쪽 크게</button></div></div>
   <div class="g"><span class="l">팔레트</span><select id="selP"></select></div>
+  <div class="g" id="gStar" style="flex-wrap:wrap;row-gap:6px"><span class="l">별자리 색</span>
+    <span class="seg" id="segSP"><button type="button" data-k="warm">빨주노</button><button type="button" data-k="wide">따뜻하게 넓게</button><button type="button" data-k="rainbow">무지개</button><button type="button" data-k="cool">푸른 계열</button><button type="button" data-k="one">한 가지 색</button></span>
+    <span id="starStrip" style="display:inline-flex;height:18px;width:150px;border-radius:9px;overflow:hidden;outline:1px solid var(--line-2)"></span></div>
+  <div class="g" style="flex-wrap:wrap;row-gap:6px"><span class="l">계열</span><input type="range" id="rngSB" min="0" max="360" step="1"><input type="number" id="numSB" min="0" max="360" step="1" style="width:58px">
+    <span class="l">다양하게</span><input type="range" id="rngSP" min="0" max="360" step="1"><input type="number" id="numSP" min="0" max="360" step="1" style="width:58px">
+    <span class="l">채도</span><input type="range" id="rngSS" min="0" max="100" step="1"><input type="number" id="numSS" min="0" max="100" step="1" style="width:52px">
+    <span class="l">밝기</span><input type="range" id="rngSL" min="30" max="90" step="1"><input type="number" id="numSL" min="30" max="90" step="1" style="width:52px"></div>
   <div class="g" id="gSw" style="flex-wrap:wrap;row-gap:6px"><span class="l">색 고르기</span><span id="swRow" style="display:inline-flex;flex-wrap:wrap;gap:10px 14px;align-items:center"></span></div>
   <div class="g" id="gCustom" hidden><span class="l">색상</span><input type="range" id="rngH" min="0" max="360" step="1"><input type="number" id="numH" min="0" max="360" step="1" style="width:58px">
     <span class="l">진하기</span><input type="range" id="rngSa" min="0" max="100" step="1"><input type="number" id="numSa" min="0" max="100" step="1" style="width:52px">
@@ -197,11 +204,14 @@ button, select, input { font: inherit; }
   };
   /* 로고에 써 볼 굵은 글꼴. 뒤의 숫자는 그 글꼴이 낼 수 있는 가장 굵은 값이다 (그보다 큰 값을 주면 가장 굵은 값으로 그려진다) */
   var LOGO_FONTS = [['Outfit', 900], ['Inter', 900], ['Sora', 800], ['Manrope', 800], ['Montserrat', 900], ['Archivo', 900], ['Lexend', 900], ['Urbanist', 900], ['Plus Jakarta Sans', 800], ['Red Hat Display', 900], ['Unbounded', 900], ['Syne', 800], ['Space Grotesk', 700]];
+  /* 별자리 색 묶음: 이름, 계열(시작 색상), 다양함(색상 폭) */
+  var STAR_PRESETS = [['warm', 340, 66], ['wide', 320, 110], ['rainbow', 0, 360], ['cool', 190, 80], ['one', 20, 0]];
   var q = new URLSearchParams(location.search);
   function byId(id) { for (var i = 0; i < V.length; i++) if (V[i].id === id) return V[i]; return null; }
+  function num(key, def, lo, hi) { var v = q.get(key); v = v == null || v === '' || isNaN(+v) ? def : +v; return Math.max(lo, Math.min(hi, v)); }
   var st = {
     v: (byId(q.get('v')) || HERO[0] || V[0] || {}).id,
-    theme: q.get('theme') === 'dark' ? 'dark' : 'light',
+    theme: q.get('theme') === 'light' ? 'light' : 'dark',
     layout: q.get('layout') === 'left' ? 'left' : 'center',
     pal: q.get('pal') || '',
     speed: Math.max(40, Math.min(200, +(q.get('speed') || 100))),
@@ -209,9 +219,11 @@ button, select, input { font: inherit; }
     copy: COPY[q.get('copy')] ? q.get('copy') : 'd',
     h: q.get('h') || '',
     lines: q.get('lines') === '1' ? '1' : '2',
-    lead: q.get('lead') || '',
+    lead: q.has('lead') ? q.get('lead') : 'self',
     /* 로고 글꼴, 굵기(400~900), 크기(px) */
-    depth: q.get('depth') === '1',
+    depth: q.get('depth') !== '0',
+    /* 별자리 색: 계열(시작 색상 0~360), 다양함(색상 폭 0~360), 채도(0~100), 밝기(30~90) */
+    sb: num('sb', 340, 0, 360), sp: num('sp', 66, 0, 360), ss: num('ss', 52, 0, 100), sl: num('sl', 76, 30, 90),
     lc: q.get('lc') === 'u' ? 'u' : 't', fnt: q.get('fnt') !== '0',
     lf: q.get('lf') || 'Outfit', lw: Math.max(400, Math.min(900, +(q.get('lw') || 650))), ls: Math.max(16, Math.min(36, +(q.get('ls') || 22))),
     /* 직접 조절하는 팔레트의 색상(0~360), 진하기(0~100), 밝기(20~90) */
@@ -269,6 +281,7 @@ button, select, input { font: inherit; }
     /* 별자리 후보는 늘 따뜻한 무지개 파스텔로 그린다. 고른 팔레트는 버튼 색만 바꾼다 */
     P = LAB.makeP(st.v === 'h1-constellation' ? 'rainbow' : palOf(), st.theme);
     P.layout = st.layout; P.quiet = QUIET[st.layout]; P.depth = st.depth;
+    P.star = { base: st.sb, spread: st.sp, sat: st.ss / 100, lit: st.sl / 100 };
     state = null; stats.frames = 0; stats.sumMs = 0; stats.maxMs = 0;
   }
   function fit() {
@@ -320,6 +333,13 @@ button, select, input { font: inherit; }
     seg(document.getElementById('segLC'), st.lc, function (k) { st.lc = k; sync(); });
     document.getElementById('selLF').value = st.lf; document.getElementById('rngLW').value = st.lw; document.getElementById('numLW').value = st.lw;
     document.getElementById('rngLS').value = st.ls; document.getElementById('valLS').textContent = st.ls + 'px';
+    /* 별자리 색 조절: 막대와 숫자 칸을 맞추고, 지금 범위의 색을 띠로 보여 준다 */
+    [['SB', st.sb], ['SP', st.sp], ['SS', st.ss], ['SL', st.sl]].forEach(function (x) { document.getElementById('rng' + x[0]).value = x[1]; document.getElementById('num' + x[0]).value = x[1]; });
+    var strip = document.getElementById('starStrip'), cells = '';
+    for (var si = 0; si < 12; si++) { var sh = st.sb + (st.sp * si / 11); cells += '<i style="flex:1;background:' + hex(hsl(sh, st.ss, st.sl)) + '"></i>'; }
+    strip.innerHTML = cells;
+    var preset = STAR_PRESETS.filter(function (x) { return x[1] === st.sb && x[2] === st.sp; })[0];
+    seg(document.getElementById('segSP'), preset ? preset[0] : '', function (k) { var pz = STAR_PRESETS.filter(function (x) { return x[0] === k; })[0]; st.sb = pz[1]; st.sp = pz[2]; apply(); });
     var hi = HERO.indexOf(v);
     document.getElementById('cap').textContent = (hi >= 0 ? 'CANDIDATE ' + (hi + 1) + ' OF ' + HERO.length + ' · ' : 'LAB · ') + (v.en || v.id || '');
     seg(document.getElementById('segV'), st.v, function (k) { st.pal = palOf(); st.v = k; apply(); });
@@ -336,6 +356,7 @@ button, select, input { font: inherit; }
     });
     /* 첫 버튼(Explore AI Cooperatives)은 지금 팔레트의 가운데 색을 따른다. 글자는 바탕 밝기에 따라 검정이나 흰색 */
     var pc = (LAB.PALETTES[palOf()] || {}).stops, cta1 = document.getElementById('cta1');
+    if (!st.pal) pc = [null, [27, 45, 106]];
     if (pc && pc[1]) {
       var c1 = pc[1], lum = (0.2126 * c1[0] + 0.7152 * c1[1] + 0.0722 * c1[2]) / 255;
       cta1.style.background = 'rgb(' + c1.join(',') + ')'; cta1.style.borderColor = 'transparent'; cta1.style.color = lum > 0.5 ? '#0d1220' : '#ffffff';
@@ -350,8 +371,9 @@ button, select, input { font: inherit; }
     var p = new URLSearchParams(); p.set('v', st.v); p.set('theme', st.theme); p.set('layout', st.layout);
     if (st.pal) p.set('pal', st.pal); if (st.speed !== 100) p.set('speed', st.speed);
     if (st.copy !== 'd') p.set('copy', st.copy);
-    if (st.lines === '1') p.set('lines', '1'); if (st.lead) p.set('lead', st.lead);
-    if (st.depth) p.set('depth', '1');
+    if (st.lines === '1') p.set('lines', '1'); if (st.lead !== 'self') p.set('lead', st.lead);
+    if (st.sb !== 340) p.set('sb', st.sb); if (st.sp !== 66) p.set('sp', st.sp); if (st.ss !== 52) p.set('ss', st.ss); if (st.sl !== 76) p.set('sl', st.sl);
+    if (!st.depth) p.set('depth', '0');
     if (st.lc === 'u') p.set('lc', 'u'); if (!st.fnt) p.set('fnt', '0');
     if (st.lf !== 'Outfit') p.set('lf', st.lf); if (st.lw !== 650) p.set('lw', st.lw); if (st.ls !== 22) p.set('ls', st.ls);
     if (st.pal === 'custom') { p.set('hue', st.hue); p.set('sat', st.sat); p.set('lit', st.lit); }
@@ -379,6 +401,12 @@ button, select, input { font: inherit; }
   selC.innerHTML = Object.keys(COPY).map(function (k) { return '<option value="' + k + '">' + COPY[k].label + '</option>'; }).join('');
   selC.onchange = function () { st.copy = selC.value; st.h = ''; sync(); };
   document.getElementById('chkF').onchange = function () { st.fnt = this.checked; sync(); };
+  [['SB', 'sb'], ['SP', 'sp'], ['SS', 'ss'], ['SL', 'sl']].forEach(function (x) {
+    ['rng', 'num'].forEach(function (kind) {
+      var el = document.getElementById(kind + x[0]);
+      el.oninput = function () { var v = +el.value; if (isNaN(v)) return; st[x[1]] = Math.max(+el.min, Math.min(+el.max, v)); apply(); };
+    });
+  });
   var selLF = document.getElementById('selLF');
   selLF.innerHTML = LOGO_FONTS.map(function (f) { return '<option value="' + f[0] + '">' + f[0] + ' (최대 ' + f[1] + ')</option>'; }).join('');
   selLF.onchange = function () { st.lf = selLF.value; sync(); };

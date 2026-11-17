@@ -68,10 +68,12 @@
     function f(n) { var k = (n + h / 30) % 12; return Math.round(255 * (l - a * Math.max(-1, Math.min(k - 3, Math.min(9 - k, 1))))); }
     return [f(0), f(8), f(4)];
   }
-  /* 따뜻한 파스텔 색. k 를 0~66 사이로 접어 색상 340도(분홍)에서 46도(노랑)까지만 쓴다. 연두와 초록은 나오지 않는다.
+  /* 별자리 색. 계열(시작 색상 각도)에서 다양함(색상 폭, 도)만큼의 범위 안에서 k 자리의 색을 만든다.
+     기본은 340도(분홍)에서 66도 폭이라 분홍, 빨강, 주황, 노랑까지만 나온다. 값은 P.star 로 바꿀 수 있고 init 이 아래 두 변수에 옮겨 적는다.
      주황에서 노랑 사이는 진하기와 밝기를 조금 올려 누렇게 탁해 보이지 않게 한다 */
+  var STAR_BASE = 340, STAR_SPREAD = 66;
   function warmRgb(k, s, l) {
-    var h = (340 + ((k % 66) + 66) % 66) % 360, y = h > 24 && h < 52;
+    var sp = Math.max(1, STAR_SPREAD), h = (((STAR_BASE + ((k % sp) + sp) % sp) % 360) + 360) % 360, y = h > 24 && h < 52;
     return hslRgb(h, y ? Math.min(1, s + 0.24) : s, y ? Math.min(0.86, l + 0.06) : l);
   }
   function rng(seed) { var a = seed >>> 0; return function () { a = (a + 0x6D2B79F5) >>> 0; var t = a; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
@@ -119,6 +121,10 @@
       function colS(c, a) { return 'rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',' + r3(a) + ')'; }
       /* 알록달록 팔레트(rainbow)일 때 별자리마다 차례로 쓰는 색: 빨강, 주황, 노랑, 초록, 청록, 파랑, 남보라, 보라, 분홍 */
       var multi = P.pal === 'rainbow';
+      /* 바깥에서 정한 별자리 색 (없으면 기본값). base 계열, spread 다양함, sat 채도, lit 밝기 */
+      var SC = P.star || {};
+      STAR_BASE = SC.base == null ? 340 : SC.base; STAR_SPREAD = SC.spread == null ? 66 : SC.spread;
+      var scS = SC.sat == null ? (dark ? 0.52 : 0.42) : SC.sat, scL = SC.lit == null ? (dark ? 0.76 : 0.5) : SC.lit, scU = Math.max(1, STAR_SPREAD) / 66;
       var MULTI = [[255, 107, 107], [255, 169, 77], [255, 212, 59], [105, 219, 124], [56, 217, 169], [77, 171, 247], [132, 148, 255], [218, 119, 242], [247, 131, 172]];
       /* 밝은 배경에서는 같은 색을 조금 어둡게 써야 선이 보인다 */
       if (multi && !dark) MULTI = MULTI.map(function (c) { return [Math.round(c[0] * 0.78), Math.round(c[1] * 0.78), Math.round(c[2] * 0.78)]; });
@@ -357,9 +363,9 @@
         }
         if (!best) continue;
         /* 점과 선을 그리기 좋은 꼴로 옮기고, 선마다 시작 시각을 매긴다 */
-        var deg = [], Pp = [], Ee = [], cxs = 0, cys = 0, hue0 = (F.length * 29) % 66, /* 따뜻한 색 범위 안에서의 시작 자리(0~66) */ hueS = dark ? 0.52 : 0.42, hueL = dark ? 0.76 : 0.5, fcol = multi ? warmRgb(hue0, hueS, hueL) : acc; /* 파스텔: 진하기를 낮추고 밝기를 올린다 */
+        var deg = [], Pp = [], Ee = [], cxs = 0, cys = 0, hue0 = ((F.length * 29) % 66) * scU, /* 색 범위 안에서의 시작 자리 */ hueS = scS, hueL = scL, fcol = multi ? warmRgb(hue0, hueS, hueL) : acc; /* 파스텔: 진하기를 낮추고 밝기를 올린다 */
         /* q 번째 선이나 점의 색. 알록달록일 때는 색상이 26도씩 돌아 한 별자리 안에 여러 색이 섞인다 */
-        function hueAt(q) { return multi ? warmRgb(hue0 + q * 13, hueS, hueL) : fcol; }
+        function hueAt(q) { return multi ? warmRgb(hue0 + q * 13 * scU, hueS, hueL) : fcol; }
         for (j = 0; j < best.pts.length; j++) deg.push(0);
         for (j = 0; j < best.E.length; j++) { deg[best.E[j][0]]++; deg[best.E[j][1]]++; }
         /* 고리 달린 점(앵커 기관)은 갈림점이 아닌 곳에 둔다. 갈림점에 두면 중심 서버처럼 읽힌다 */
@@ -462,12 +468,12 @@
         FS.push({ x: x, y: y, tier: tier, a: tierA[tier] * (0.3 + 0.7 * sstep(1.0, 1.6, r0f)) * wl(x) * pb(y), tw: Rs() < 0.1, ring: tier === 2 && Rs() < 0.2 && y > 0.12 * h && y < 0.95 * h, ph: Rs() * TAU, per: 7000 + Rs() * 6000 });
       }
       /* 같은 단계, 같은 농도끼리 묶어 한 번에 칠한다 */
-      var bgS = dark ? 0.55 : 0.45, bgL = dark ? 0.78 : 0.5, radK = multi ? 1.3 : 1;
+      var bgS = Math.min(1, scS + 0.03), bgL = Math.min(0.9, scL + 0.02), radK = multi ? 1.3 : 1;
       var rad = [Math.max(0.6, 0.68 * u) * radK, Math.max(0.75, 0.92 * u) * radK, Math.max(0.95, 1.22 * u) * radK], par = [0.4, 0.7, 1], bmap = {}, rings = [];
       for (k = 0; k < FS.length; k++) {
         var s0 = FS[k], qa = Math.max(0.05, Math.round(s0.a * 20) / 20);
         if (s0.ring) rings.push(s0.x, s0.y, rad[2] + 2.9 * u);
-        var hb = multi ? Math.floor(Rs() * 12) : -1, bcol = multi ? warmRgb(hb * 6, bgS, bgL) : null;
+        var hb = multi ? Math.floor(Rs() * 12) : -1, bcol = multi ? warmRgb(hb * 6 * scU, bgS, bgL) : null;
         if (s0.tw) { st.TW.push({ x: s0.x, y: s0.y, r: rad[s0.tier], a: s0.a, par: par[s0.tier], w: TAU / s0.per, ph: s0.ph, col: bcol }); continue; }
         var key = s0.tier + '|' + qa + '|' + hb;
         if (!bmap[key]) { bmap[key] = { style: multi ? colS(bcol, Math.min(1, qa * 1.5)) : inkS(qa), par: par[s0.tier], d: [] }; st.B.push(bmap[key]); }
