@@ -306,6 +306,12 @@ button, select, input { font: inherit; }
       var on = isCustom && +b.dataset.h === st.hue && +b.dataset.s === st.sat && +b.dataset.l === st.lit;
       b.style.borderColor = on ? 'var(--text)' : 'transparent';
     });
+    /* 첫 버튼(Explore AI Cooperatives)은 지금 팔레트의 가운데 색을 따른다. 글자는 바탕 밝기에 따라 검정이나 흰색 */
+    var pc = (LAB.PALETTES[palOf()] || {}).stops, cta1 = document.getElementById('cta1');
+    if (pc && pc[1]) {
+      var c1 = pc[1], lum = (0.2126 * c1[0] + 0.7152 * c1[1] + 0.0722 * c1[2]) / 255;
+      cta1.style.background = 'rgb(' + c1.join(',') + ')'; cta1.style.borderColor = 'transparent'; cta1.style.color = lum > 0.5 ? '#0d1220' : '#ffffff';
+    }
     var mid = hex(hsl(st.hue, st.sat, st.lit)); document.getElementById('swatch').style.background = mid; document.getElementById('hexOut').textContent = mid;
     document.getElementById('rngS').value = st.speed; document.getElementById('valS').textContent = st.speed + '%';
     document.getElementById('chkT').checked = st.text;
