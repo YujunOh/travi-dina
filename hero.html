@@ -62,7 +62,8 @@ button, select, input { font: inherit; }
   box-shadow: inset 0 1px 0 rgba(255,255,255,0.5), inset 0 -1px 0 rgba(255,255,255,0.12), inset 0 0 12px rgba(255,255,255,0.05), 0 10px 30px rgba(0,0,0,0.36); }
 .btn.liquid[data-edge="line"] { border-color: rgba(255,255,255,0.3); }
 .btn.liquid[data-edge="grad"]::before { content: ''; position: absolute; inset: -1px; border-radius: inherit; padding: 1px; pointer-events: none;
-  background: linear-gradient(135deg, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0.22) 22%, rgba(255,255,255,0) 46%, rgba(255,255,255,0) 58%, rgba(255,255,255,0.16) 80%, rgba(255,255,255,0.6) 100%);
+  /* --lg-edge 는 테두리 빛의 세기(0~1.5), --lg-spread 는 모서리에서 밝은 구간이 이어지는 길이(%). 그 사이는 투명해진다 */
+  background: linear-gradient(135deg, rgba(255,255,255, calc(0.85 * var(--lg-edge, 1))) 0%, rgba(255,255,255, calc(0.22 * var(--lg-edge, 1))) var(--lg-spread, 22%), rgba(255,255,255,0) calc(var(--lg-spread, 22%) + 22%), rgba(255,255,255,0) calc(78% - var(--lg-spread, 22%)), rgba(255,255,255, calc(0.16 * var(--lg-edge, 1))) calc(100% - var(--lg-spread, 22%)), rgba(255,255,255, calc(0.6 * var(--lg-edge, 1))) 100%);
   -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor;
   mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); mask-composite: exclude; }
 .btn.liquid::after { content: ''; position: absolute; top: -70%; left: -60%; width: 46%; height: 240%; pointer-events: none; transform: rotate(18deg);
@@ -74,7 +75,7 @@ button, select, input { font: inherit; }
   backdrop-filter: url(#lgDistort) blur(var(--lg-blur, 28px)) saturate(180%) brightness(1.04);
   box-shadow: inset 0 1px 0 rgba(255,255,255,0.95), inset 0 -1px 0 rgba(20,30,70,0.08), inset 0 0 12px rgba(255,255,255,0.3), 0 10px 28px rgba(20,30,70,0.16); }
 :root[data-theme="light"] .btn.liquid[data-edge="line"] { border-color: rgba(255,255,255,0.9); box-shadow: inset 0 1px 0 rgba(255,255,255,0.95), inset 0 -1px 0 rgba(20,30,70,0.08), 0 10px 28px rgba(20,30,70,0.16), 0 0 0 1px rgba(20,30,70,0.08); }
-:root[data-theme="light"] .btn.liquid[data-edge="grad"]::before { background: linear-gradient(135deg, rgba(255,255,255,1) 0%, rgba(255,255,255,0.5) 22%, rgba(20,30,70,0.06) 46%, rgba(20,30,70,0.06) 58%, rgba(20,30,70,0.14) 80%, rgba(20,30,70,0.28) 100%); }
+:root[data-theme="light"] .btn.liquid[data-edge="grad"]::before { background: linear-gradient(135deg, rgba(255,255,255, calc(1 * var(--lg-edge, 1))) 0%, rgba(255,255,255, calc(0.5 * var(--lg-edge, 1))) var(--lg-spread, 22%), rgba(20,30,70, calc(0.05 * var(--lg-edge, 1))) calc(var(--lg-spread, 22%) + 22%), rgba(20,30,70, calc(0.05 * var(--lg-edge, 1))) calc(78% - var(--lg-spread, 22%)), rgba(20,30,70, calc(0.16 * var(--lg-edge, 1))) calc(100% - var(--lg-spread, 22%)), rgba(20,30,70, calc(0.32 * var(--lg-edge, 1))) 100%); }
 .copy h1 { margin: 18px 0 16px; font-family: Outfit, Inter, system-ui, sans-serif; font-weight: 600; line-height: 1.12; }
 .hero[data-layout="center"] .copy h1 { font-size: clamp(34px, 4.4vw, 56px); }
 .hero[data-layout="left"] .copy h1 { font-size: clamp(44px, 5.8vw, 86px); line-height: 1.0; }
@@ -188,6 +189,8 @@ button, select, input { font: inherit; }
     <span class="l">좌우 여백</span><input type="range" id="rngBX" min="10" max="56" step="1"><input type="number" id="numBX" min="10" max="56" step="1" style="width:52px">
     <label class="c"><input type="checkbox" id="chkG"> 리퀴드 글래스</label>
     <span class="l">테두리</span><span class="seg" id="segBE"><button type="button" data-k="grad">그라데이션</button><button type="button" data-k="none">투명</button><button type="button" data-k="line">선</button></span>
+    <span class="l">테두리 빛 세기</span><input type="range" id="rngBE" min="0" max="150" step="1"><input type="number" id="numBE" min="0" max="150" step="1" style="width:56px">
+    <span class="l">퍼짐</span><input type="range" id="rngBS" min="0" max="39" step="1"><input type="number" id="numBS" min="0" max="39" step="1" style="width:52px">
     <span class="l">흐림</span><input type="range" id="rngBB" min="0" max="80" step="1"><input type="number" id="numBB" min="0" max="80" step="1" style="width:52px">
     <span class="l">불투명도 (유리일 때는 흰 기운)</span><input type="range" id="rngBO" min="0" max="100" step="1"><input type="number" id="numBO" min="0" max="100" step="1" style="width:52px">
     <span id="valBtn" style="font-family:ui-monospace,Consolas,monospace;font-size:12px;color:var(--muted)"></span></div>
@@ -266,7 +269,7 @@ button, select, input { font: inherit; }
     /* 어둠이 안쪽으로 들어오는 깊이(0~100). 화면 색마다 따로 */
     reach: num('reach', 30, 0, 100), reachL: num('reachl', 40, 0, 100),
     /* 버튼: 모서리 둥글기(px), 위아래 여백(px), 좌우 여백(px) */
-    br: num('br', 12, 0, 32), by: num('by', 12, 6, 28), bx: num('bx', 22, 10, 56), glass: q.get('glass') !== '0', be: { grad: 1, none: 1, line: 1 }[q.get('be')] ? q.get('be') : 'grad', bo: num('bo', q.get('glass') === '0' ? 100 : 4, 0, 100), bb: num('bb', 28, 0, 80),
+    br: num('br', 12, 0, 32), by: num('by', 12, 6, 28), bx: num('bx', 22, 10, 56), glass: q.get('glass') !== '0', be: { grad: 1, none: 1, line: 1 }[q.get('be')] ? q.get('be') : 'grad', bes: num('bes', 100, 0, 150), bsp: num('bsp', 22, 0, 39), bo: num('bo', q.get('glass') === '0' ? 100 : 4, 0, 100), bb: num('bb', 28, 0, 80),
     /* 별자리 색: 계열(시작 색상 0~360), 다양함(색상 폭 0~360), 채도(0~100), 밝기(30~90) */
     sb: num('sb', 230, 0, 360), sp: num('sp', 15, 0, 360), ss: num('ss', 35, 0, 100), sl: num('sl', 60, 30, 90),
     lc: q.get('lc') === 'u' ? 'u' : 't', fnt: q.get('fnt') !== '0',
@@ -414,6 +417,8 @@ button, select, input { font: inherit; }
       cta1.style.background = 'rgba(' + c1.join(',') + ',' + (st.bo / 100) + ')';
       /* 리퀴드 글래스: 모양은 .btn.liquid 스타일이 맡고, 여기서는 흐림과 흰 기운의 양만 넘긴다. 색은 입히지 않는다 */
       cta1.classList.toggle('liquid', st.glass); cta1.setAttribute('data-edge', st.be);
+      cta1.style.setProperty('--lg-edge', (st.bes / 100).toFixed(2)); cta1.style.setProperty('--lg-spread', st.bsp + '%');
+      [['BE', st.bes], ['BS', st.bsp]].forEach(function (x) { document.getElementById('rng' + x[0]).value = x[1]; document.getElementById('num' + x[0]).value = x[1]; });
       seg(document.getElementById('segBE'), st.be, function (k) { st.be = k; sync(); });
       if (st.glass) {
         cta1.style.background = ''; cta1.style.border = ''; cta1.style.boxShadow = ''; cta1.style.color = '';
@@ -441,7 +446,7 @@ button, select, input { font: inherit; }
     if (st.pal) p.set('pal', st.pal); if (st.speed !== 100) p.set('speed', st.speed);
     if (st.copy !== 'd') p.set('copy', st.copy);
     if (st.lines === '1') p.set('lines', '1'); if (st.lead !== 'self') p.set('lead', st.lead);
-    if (st.br !== 12) p.set('br', st.br); if (st.by !== 12) p.set('by', st.by); if (st.bx !== 22) p.set('bx', st.bx); if (!st.glass) p.set('glass', '0'); if (st.be !== 'grad') p.set('be', st.be); if (st.bo !== (st.glass ? 4 : 100)) p.set('bo', st.bo); if (st.bb !== 28) p.set('bb', st.bb);
+    if (st.br !== 12) p.set('br', st.br); if (st.by !== 12) p.set('by', st.by); if (st.bx !== 22) p.set('bx', st.bx); if (!st.glass) p.set('glass', '0'); if (st.be !== 'grad') p.set('be', st.be); if (st.bes !== 100) p.set('bes', st.bes); if (st.bsp !== 22) p.set('bsp', st.bsp); if (st.bo !== (st.glass ? 4 : 100)) p.set('bo', st.bo); if (st.bb !== 28) p.set('bb', st.bb);
     if (st.sb !== 230) p.set('sb', st.sb); if (st.sp !== 15) p.set('sp', st.sp); if (st.ss !== 35) p.set('ss', st.ss); if (st.sl !== 60) p.set('sl', st.sl);
     if (st.hf !== 90) p.set('hf', st.hf);
     if (st.depth !== 50) p.set('depth', st.depth); if (st.depthL !== 50) p.set('depthl', st.depthL);
@@ -473,6 +478,12 @@ button, select, input { font: inherit; }
   selC.innerHTML = Object.keys(COPY).map(function (k) { return '<option value="' + k + '">' + COPY[k].label + '</option>'; }).join('');
   selC.onchange = function () { st.copy = selC.value; st.h = ''; sync(); };
   document.getElementById('chkF').onchange = function () { st.fnt = this.checked; sync(); };
+  [['BE', 'bes'], ['BS', 'bsp']].forEach(function (x) {
+    ['rng', 'num'].forEach(function (kind) {
+      var el = document.getElementById(kind + x[0]);
+      el.oninput = function () { var v = +el.value; if (isNaN(v)) return; st[x[1]] = Math.max(+el.min, Math.min(+el.max, v)); st.be = 'grad'; sync(); };
+    });
+  });
   document.getElementById('chkG').onchange = function () { st.glass = this.checked; st.bo = st.glass ? 4 : 100; sync(); };
   [['BR', 'br'], ['BY', 'by'], ['BX', 'bx'], ['BO', 'bo'], ['BB', 'bb']].forEach(function (x) {
     ['rng', 'num'].forEach(function (kind) {
