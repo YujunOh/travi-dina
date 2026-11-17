@@ -87,7 +87,8 @@ button, select, input { font: inherit; }
 .cap { position: absolute; right: 40px; bottom: 28px; z-index: 2; font-family: ui-monospace, Consolas, monospace; font-size: 11px; letter-spacing: 0.08em; color: var(--faint); }
 
 /* 첫 화면 바로 아래가 어떻게 이어지는지 보는 자리 */
-.peek { border-top: 1px solid var(--line); padding: 88px 0 200px; }
+/* 위쪽 선은 긋지 않는다. 히어로 아랫부분이 바탕색으로 사라지며 이어진다 */
+.peek { padding: 88px 0 200px; }
 .peek .in { max-width: 1200px; margin: 0 auto; padding: 0 32px; }
 .peek h2 { font-size: 34px; letter-spacing: -0.025em; margin: 12px 0 10px; }
 .peek p { color: var(--muted); font-size: 17px; margin: 0 0 36px; }
@@ -113,6 +114,13 @@ button, select, input { font: inherit; }
 .ctl label.c { display: flex; align-items: center; gap: 5px; cursor: pointer; }
 .no-ui .ctl, .no-ui .cap { display: none; }
 .no-chrome .topbar { display: none; }
+/* 히어로 아래 경계: 스크롤해 내려갈 때 아래 구역과 선으로 갈리지 않게, 히어로 아랫부분이 페이지 바탕색으로 점점 덮인다. 길이는 --foot-fade */
+.hero::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: var(--foot-fade, 140px); pointer-events: none; z-index: 1;
+  background: linear-gradient(to bottom, transparent 0, color-mix(in srgb, var(--bg) 55%, transparent) 55%, var(--bg) 100%); }
+/* 조절 막대를 화면 오른쪽에 세로로 놓는다. 길면 안에서 스크롤한다 */
+.ctl { left: auto !important; right: 14px; top: calc(var(--header-h) + 12px); bottom: 14px !important; transform: none !important; width: 372px; max-width: calc(100vw - 28px) !important;
+  flex-direction: column; flex-wrap: nowrap !important; align-items: stretch !important; overflow-y: auto; gap: 10px !important; }
+.ctl .g { flex-wrap: wrap; row-gap: 6px; }
 /* 헤더 아래 경계: 선을 긋지 않고, 헤더 바탕이 아래로 가며 점점 투명해진다. 길이는 --head-fade 로 조절한다(0이면 예전처럼 선) */
 .topbar.fade { border-bottom-color: transparent; background: transparent; -webkit-backdrop-filter: none; backdrop-filter: none; }
 .topbar.fade::before { content: ''; position: absolute; left: 0; right: 0; top: 0; height: calc(100% + var(--head-fade, 40px)); z-index: -1; pointer-events: none;
@@ -202,6 +210,9 @@ button, select, input { font: inherit; }
   <div class="g"><span class="l">속도</span><input type="range" id="rngS" min="40" max="200" step="5"><span id="valS"></span></div>
   <label class="c"><input type="checkbox" id="chkT"> 글</label>
   <div class="g"><span class="l">헤더 아래 경계가 사라지는 길이</span><input type="range" id="rngHF" min="0" max="120" step="1"><input type="number" id="numHF" min="0" max="120" step="1" style="width:58px"><span class="l">px</span></div>
+  <div class="g"><span class="l">히어로 아래 경계가 사라지는 길이</span><input type="range" id="rngFF" min="0" max="320" step="1"><input type="number" id="numFF" min="0" max="320" step="1" style="width:58px"><span class="l">px</span></div>
+  <div class="g"><span class="l" id="lblEC">가장자리 색</span><input type="color" id="colE" style="width:38px;height:26px;padding:0;border:1px solid var(--line-2);border-radius:6px;background:none;cursor:pointer"><span id="valEC" style="font-family:ui-monospace,Consolas,monospace;font-size:12px"></span>
+    <button type="button" class="act" id="btnEK" style="padding:4px 10px">검정</button><button type="button" class="act" id="btnEN" style="padding:4px 10px">짙은 남색</button><button type="button" class="act" id="btnEB" style="padding:4px 10px">바탕색</button></div>
   <div class="g"><span class="l" id="lblD">바탕 빛</span><input type="range" id="rngD" min="0" max="100" step="1"><input type="number" id="numD" min="0" max="100" step="1" style="width:52px">
     <span class="l">어둠이 들어오는 깊이</span><input type="range" id="rngR" min="0" max="100" step="1"><input type="number" id="numR" min="0" max="100" step="1" style="width:52px"></div>
   <button class="act" type="button" id="btnLink">이 상태 링크 복사</button>
@@ -252,6 +263,8 @@ button, select, input { font: inherit; }
   var q = new URLSearchParams(location.search);
   function byId(id) { for (var i = 0; i < V.length; i++) if (V[i].id === id) return V[i]; return null; }
   function num(key, def, lo, hi) { var v = q.get(key); v = v == null || v === '' || isNaN(+v) ? def : +v; return Math.max(lo, Math.min(hi, v)); }
+  function hexOr(v, def) { return /^[0-9a-fA-F]{6}$/.test(v || '') ? v.toLowerCase() : def; }
+  function rgbOfHex(h) { return [parseInt(h.slice(0, 2), 16), parseInt(h.slice(2, 4), 16), parseInt(h.slice(4, 6), 16)]; }
   var st = {
     v: (byId(q.get('v')) || HERO[0] || V[0] || {}).id,
     theme: q.get('theme') === 'light' ? 'light' : 'dark',
@@ -264,7 +277,9 @@ button, select, input { font: inherit; }
     lines: q.get('lines') === '1' ? '1' : '2',
     lead: q.has('lead') ? q.get('lead') : 'self',
     /* 로고 글꼴, 굵기(400~900), 크기(px) */
-    hf: num('hf', 90, 0, 120),
+    hf: num('hf', 90, 0, 120), ff: num('ff', 140, 0, 320),
+    /* 바탕 빛의 가장자리 색. 화면 색마다 따로 (# 없이 여섯 자리) */
+    ec: hexOr(q.get('ec'), '000000'), ecL: hexOr(q.get('ecl'), '0e1018'),
     depth: num('depth', 50, 0, 100), depthL: num('depthl', 50, 0, 200),
     /* 어둠이 안쪽으로 들어오는 깊이(0~100). 화면 색마다 따로 */
     reach: num('reach', 30, 0, 100), reachL: num('reachl', 40, 0, 100),
@@ -328,7 +343,7 @@ button, select, input { font: inherit; }
   function makeP() {
     /* 별자리 후보는 늘 따뜻한 무지개 파스텔로 그린다. 고른 팔레트는 버튼 색만 바꾼다 */
     P = LAB.makeP(st.v === 'h1-constellation' ? 'rainbow' : palOf(), st.theme);
-    P.layout = st.layout; P.quiet = QUIET[st.layout]; P.depth = (st.theme === 'light' ? st.depthL : st.depth) / 100; P.reach = (st.theme === 'light' ? st.reachL : st.reach) / 100;
+    P.layout = st.layout; P.quiet = QUIET[st.layout]; P.depth = (st.theme === 'light' ? st.depthL : st.depth) / 100; P.reach = (st.theme === 'light' ? st.reachL : st.reach) / 100; P.edge = rgbOfHex(st.theme === 'light' ? st.ecL : st.ec);
     P.star = { base: st.sb, spread: st.sp, sat: st.ss / 100, lit: st.sl / 100 };
     state = null; stats.frames = 0; stats.sumMs = 0; stats.maxMs = 0;
   }
@@ -432,6 +447,9 @@ button, select, input { font: inherit; }
     var mid = hex(hsl(st.hue, st.sat, st.lit)); document.getElementById('swatch').style.background = mid; document.getElementById('hexOut').textContent = mid;
     document.getElementById('rngS').value = st.speed; document.getElementById('valS').textContent = st.speed + '%';
     document.getElementById('chkT').checked = st.text;
+    hero.style.setProperty('--foot-fade', st.ff + 'px'); document.getElementById('rngFF').value = st.ff; document.getElementById('numFF').value = st.ff;
+    var ecv = st.theme === 'light' ? st.ecL : st.ec; document.getElementById('colE').value = '#' + ecv; document.getElementById('valEC').textContent = '#' + ecv;
+    document.getElementById('lblEC').textContent = '가장자리 색 · ' + (st.theme === 'light' ? '밝은 화면' : '어두운 화면');
     var tb = document.querySelector('.topbar'); tb.classList.toggle('fade', st.hf > 0); tb.style.setProperty('--head-fade', st.hf + 'px');
     document.getElementById('rngHF').value = st.hf; document.getElementById('numHF').value = st.hf;
     var isL = st.theme === 'light', dv = isL ? st.depthL : st.depth, dmax = isL ? 200 : 100;
@@ -448,7 +466,8 @@ button, select, input { font: inherit; }
     if (st.lines === '1') p.set('lines', '1'); if (st.lead !== 'self') p.set('lead', st.lead);
     if (st.br !== 12) p.set('br', st.br); if (st.by !== 12) p.set('by', st.by); if (st.bx !== 22) p.set('bx', st.bx); if (!st.glass) p.set('glass', '0'); if (st.be !== 'grad') p.set('be', st.be); if (st.bes !== 100) p.set('bes', st.bes); if (st.bsp !== 22) p.set('bsp', st.bsp); if (st.bo !== (st.glass ? 4 : 100)) p.set('bo', st.bo); if (st.bb !== 28) p.set('bb', st.bb);
     if (st.sb !== 230) p.set('sb', st.sb); if (st.sp !== 15) p.set('sp', st.sp); if (st.ss !== 35) p.set('ss', st.ss); if (st.sl !== 60) p.set('sl', st.sl);
-    if (st.hf !== 90) p.set('hf', st.hf);
+    if (st.hf !== 90) p.set('hf', st.hf); if (st.ff !== 140) p.set('ff', st.ff);
+    if (st.ec !== '000000') p.set('ec', st.ec); if (st.ecL !== '0e1018') p.set('ecl', st.ecL);
     if (st.depth !== 50) p.set('depth', st.depth); if (st.depthL !== 50) p.set('depthl', st.depthL);
     if (st.reach !== 30) p.set('reach', st.reach); if (st.reachL !== 40) p.set('reachl', st.reachL);
     if (st.lc === 'u') p.set('lc', 'u'); if (!st.fnt) p.set('fnt', '0');
@@ -508,6 +527,12 @@ button, select, input { font: inherit; }
   selLd.onchange = function () { st.lead = selLd.value; sync(); };
   document.getElementById('rngS').oninput = function () { st.speed = +this.value; sync(); };
   document.getElementById('chkT').onchange = function () { st.text = this.checked; sync(); };
+  ['rngFF', 'numFF'].forEach(function (id) { var el = document.getElementById(id); el.oninput = function () { var v = +el.value; if (isNaN(v)) return; st.ff = Math.max(0, Math.min(320, v)); sync(); }; });
+  function setEdge(h) { if (st.theme === 'light') st.ecL = h; else st.ec = h; apply(); }
+  document.getElementById('colE').oninput = function () { setEdge(this.value.replace('#', '').toLowerCase()); };
+  document.getElementById('btnEK').onclick = function () { setEdge('000000'); };
+  document.getElementById('btnEN').onclick = function () { setEdge('0a1030'); };
+  document.getElementById('btnEB').onclick = function () { setEdge(st.theme === 'light' ? 'fbfbfd' : '0b0f1a'); };
   ['rngHF', 'numHF'].forEach(function (id) { var el = document.getElementById(id); el.oninput = function () { var v = +el.value; if (isNaN(v)) return; st.hf = Math.max(0, Math.min(120, v)); sync(); }; });
   ['rngR', 'numR'].forEach(function (id) { var el = document.getElementById(id); el.oninput = function () { var v = +el.value; if (isNaN(v)) return; v = Math.max(0, Math.min(100, v)); if (st.theme === 'light') st.reachL = v; else st.reach = v; apply(); }; });
   ['rngD', 'numD'].forEach(function (id) { var el = document.getElementById(id); el.oninput = function () { var v = +el.value; if (isNaN(v)) return; if (st.theme === 'light') st.depthL = Math.max(0, Math.min(200, v)); else st.depth = Math.max(0, Math.min(100, v)); apply(); }; });
