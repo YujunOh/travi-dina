@@ -285,7 +285,7 @@ button, select, input { font: inherit; }
     ho: num('ho', 30, 0, 100), hf: num('hf', 90, 0, 120), ff: num('ff', 90, 0, 320),
     /* 바탕 빛의 가장자리 색. 화면 색마다 따로 (# 없이 여섯 자리) */
     ec: hexOr(q.get('ec'), '000000'), ecL: hexOr(q.get('ecl'), '000000'),
-    depth: num('depth', 40, 0, 100), depthL: num('depthl', 40, 0, 200),
+    depth: num('depth', 40, 0, 100), depthL: num('depthl', 0, 0, 200),
     /* 어둠이 안쪽으로 들어오는 깊이(0~100). 화면 색마다 따로 */
     reach: num('reach', 90, 0, 100), reachL: num('reachl', 30, 0, 100),
     /* 밝은 곳과 어두운 곳 사이 경계의 부드러움(0~100). 화면 색마다 따로 */
@@ -478,7 +478,7 @@ button, select, input { font: inherit; }
     if (st.sb !== 230) p.set('sb', st.sb); if (st.sp !== 15) p.set('sp', st.sp); if (st.ss !== 35) p.set('ss', st.ss); if (st.sl !== 60) p.set('sl', st.sl);
     if (st.ho !== 30) p.set('ho', st.ho); if (st.hf !== 90) p.set('hf', st.hf); if (st.ff !== 90) p.set('ff', st.ff);
     if (st.ec !== '000000') p.set('ec', st.ec); if (st.ecL !== '000000') p.set('ecl', st.ecL);
-    if (st.depth !== 40) p.set('depth', st.depth); if (st.depthL !== 40) p.set('depthl', st.depthL);
+    if (st.depth !== 40) p.set('depth', st.depth); if (st.depthL !== 0) p.set('depthl', st.depthL);
     if (st.shape !== 'spot') p.set('shape', st.shape);
     if (st.soft !== 60) p.set('soft', st.soft); if (st.softL !== 100) p.set('softl', st.softL);
     if (st.reach !== 90) p.set('reach', st.reach); if (st.reachL !== 30) p.set('reachl', st.reachL);
