@@ -493,7 +493,7 @@
          값이 세기다. 가운데의 밝음은 바깥으로 가며 부드럽게 사라지고, 가장자리의 어둠은 가운데로 오며 부드럽게 사라진다. true 는 0.35 로 본다 */
       var dk = P.depth === true ? 0.35 : Math.max(0, Math.min(2, +P.depth || 0)); /* 1 을 넘는 값은 밝은 화면에서 가장자리를 더 짙게, 더 안쪽까지 누른다 */
       if (dk > 0) {
-        var Qd = P.quiet || { x: 0.5, y: 0.5, rx: 0.31, ry: 0.26 }, gcx = Qd.x * w, gcy = Qd.y * h, gr = Math.max(w, h) * 0.74;
+        var Qd = P.quiet || { x: 0.5, y: 0.5, rx: 0.31, ry: 0.26 }, gcx = Qd.x * w, gcy = Qd.y * h, rch = Math.max(0, Math.min(1, +P.reach || 0)), gr = Math.max(w, h) * (0.74 - 0.38 * rch); /* reach 가 클수록 빛의 반지름이 줄어 어둠이 안쪽까지 들어온다 */
         var gd = ctx.createRadialGradient(gcx, gcy, 0, gcx, gcy, gr);
         if (P.dark) {
           gd.addColorStop(0, 'rgba(96,124,214,' + r3(0.5 * dk) + ')'); gd.addColorStop(0.2, 'rgba(78,104,190,' + r3(0.34 * dk) + ')');

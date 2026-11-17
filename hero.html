@@ -135,18 +135,18 @@ button, select, input { font: inherit; }
 </div></section>
 
 <aside class="ctl" id="ctl" aria-label="시안 조절">
-  <div class="g"><span class="l">후보</span><div class="seg" id="segV"></div><select id="selOld" title="실험실의 이전 버전"></select></div>
+  <div class="g" hidden data-fixed="1"><span class="l">후보</span><div class="seg" id="segV"></div><select id="selOld" title="실험실의 이전 버전"></select></div>
   <div class="g"><span class="l">테마</span><div class="seg" id="segT"><button type="button" data-k="light">밝게</button><button type="button" data-k="dark">어둡게</button></div></div>
   <div class="g"><span class="l">글 배치</span><div class="seg" id="segL"><button type="button" data-k="center">가운데</button><button type="button" data-k="left">왼쪽 크게</button></div></div>
   <div class="g" hidden data-fixed="1"><span class="l">팔레트</span><select id="selP"></select></div>
-  <div class="g" id="gStar" style="flex-wrap:wrap;row-gap:6px"><span class="l">별자리 색</span>
+  <div class="g" hidden data-fixed="1" id="gStar" style="flex-wrap:wrap;row-gap:6px"><span class="l">별자리 색</span>
     <span class="seg" id="segSP"><button type="button" data-k="fixed">정한 값 (푸른 계열)</button><button type="button" data-k="warm">빨주노</button><button type="button" data-k="wide">따뜻하게 넓게</button><button type="button" data-k="rainbow">무지개</button><button type="button" data-k="cool">푸른 계열</button><button type="button" data-k="one">한 가지 색</button></span>
     <span id="starStrip" style="display:inline-flex;height:18px;width:150px;border-radius:9px;overflow:hidden;outline:1px solid var(--line-2)"></span></div>
-  <div class="g" style="flex-wrap:wrap;row-gap:6px"><span class="l">계열</span><input type="range" id="rngSB" min="0" max="360" step="1"><input type="number" id="numSB" min="0" max="360" step="1" style="width:58px">
+  <div class="g" hidden data-fixed="1" style="flex-wrap:wrap;row-gap:6px"><span class="l">계열</span><input type="range" id="rngSB" min="0" max="360" step="1"><input type="number" id="numSB" min="0" max="360" step="1" style="width:58px">
     <span class="l">다양하게</span><input type="range" id="rngSP" min="0" max="360" step="1"><input type="number" id="numSP" min="0" max="360" step="1" style="width:58px">
     <span class="l">채도</span><input type="range" id="rngSS" min="0" max="100" step="1"><input type="number" id="numSS" min="0" max="100" step="1" style="width:52px">
     <span class="l">밝기</span><input type="range" id="rngSL" min="30" max="90" step="1"><input type="number" id="numSL" min="30" max="90" step="1" style="width:52px"></div>
-  <div class="g" hidden data-fixed="1" id="gSw" style="flex-wrap:wrap;row-gap:6px"><span class="l">색 고르기</span><span id="swRow" style="display:inline-flex;flex-wrap:wrap;gap:10px 14px;align-items:center"></span></div>
+  <div class="g" id="gSw" style="flex-wrap:wrap;row-gap:6px"><span class="l">버튼 색</span><button type="button" class="act" id="btnNavy" style="padding:4px 10px">정한 남색</button><span id="swRow" style="display:inline-flex;flex-wrap:wrap;gap:10px 14px;align-items:center"></span></div>
   <div class="g" id="gCustom" hidden><span class="l">색상</span><input type="range" id="rngH" min="0" max="360" step="1"><input type="number" id="numH" min="0" max="360" step="1" style="width:58px">
     <span class="l">진하기</span><input type="range" id="rngSa" min="0" max="100" step="1"><input type="number" id="numSa" min="0" max="100" step="1" style="width:52px">
     <span class="l">밝기</span><input type="range" id="rngLi" min="20" max="90" step="1"><input type="number" id="numLi" min="20" max="90" step="1" style="width:52px">
@@ -158,14 +158,15 @@ button, select, input { font: inherit; }
     <span class="l">위아래 여백</span><input type="range" id="rngBY" min="6" max="28" step="1"><input type="number" id="numBY" min="6" max="28" step="1" style="width:52px">
     <span class="l">좌우 여백</span><input type="range" id="rngBX" min="10" max="56" step="1"><input type="number" id="numBX" min="10" max="56" step="1" style="width:52px">
     <span id="valBtn" style="font-family:ui-monospace,Consolas,monospace;font-size:12px;color:var(--muted)"></span></div>
-  <div class="g"><span class="l">로고 표기</span><div class="seg" id="segLC"><button type="button" data-k="t">Travi</button><button type="button" data-k="u">TRAVI</button></div>
+  <div class="g" hidden data-fixed="1"><span class="l">로고 표기</span><div class="seg" id="segLC"><button type="button" data-k="t">Travi</button><button type="button" data-k="u">TRAVI</button></div>
     <label class="c"><input type="checkbox" id="chkF"> 분수</label></div>
-  <div class="g"><span class="l">로고 글꼴</span><select id="selLF"></select>
+  <div class="g" hidden data-fixed="1"><span class="l">로고 글꼴</span><select id="selLF"></select>
     <span class="l">굵기</span><input type="range" id="rngLW" min="400" max="900" step="10"><input type="number" id="numLW" min="400" max="900" step="10" style="width:62px">
     <span class="l">크기</span><input type="range" id="rngLS" min="16" max="36" step="1"><span id="valLS"></span></div>
   <div class="g"><span class="l">속도</span><input type="range" id="rngS" min="40" max="200" step="5"><span id="valS"></span></div>
   <label class="c"><input type="checkbox" id="chkT"> 글</label>
-  <div class="g"><span class="l" id="lblD">바탕 빛</span><input type="range" id="rngD" min="0" max="100" step="1"><input type="number" id="numD" min="0" max="100" step="1" style="width:52px"></div>
+  <div class="g"><span class="l" id="lblD">바탕 빛</span><input type="range" id="rngD" min="0" max="100" step="1"><input type="number" id="numD" min="0" max="100" step="1" style="width:52px">
+    <span class="l">어둠이 들어오는 깊이</span><input type="range" id="rngR" min="0" max="100" step="1"><input type="number" id="numR" min="0" max="100" step="1" style="width:52px"></div>
   <button class="act" type="button" id="btnLink">이 상태 링크 복사</button>
   <a class="act" href="diagram-lab.html">실험실</a>
   <span class="l">H 키: 막대 숨김</span>
@@ -227,6 +228,8 @@ button, select, input { font: inherit; }
     lead: q.has('lead') ? q.get('lead') : 'self',
     /* 로고 글꼴, 굵기(400~900), 크기(px) */
     depth: num('depth', 35, 0, 100), depthL: num('depthl', 35, 0, 200),
+    /* 어둠이 안쪽으로 들어오는 깊이(0~100). 화면 색마다 따로 */
+    reach: num('reach', 0, 0, 100), reachL: num('reachl', 40, 0, 100),
     /* 버튼: 모서리 둥글기(px), 위아래 여백(px), 좌우 여백(px) */
     br: num('br', 12, 0, 32), by: num('by', 12, 6, 28), bx: num('bx', 22, 10, 56),
     /* 별자리 색: 계열(시작 색상 0~360), 다양함(색상 폭 0~360), 채도(0~100), 밝기(30~90) */
@@ -287,7 +290,7 @@ button, select, input { font: inherit; }
   function makeP() {
     /* 별자리 후보는 늘 따뜻한 무지개 파스텔로 그린다. 고른 팔레트는 버튼 색만 바꾼다 */
     P = LAB.makeP(st.v === 'h1-constellation' ? 'rainbow' : palOf(), st.theme);
-    P.layout = st.layout; P.quiet = QUIET[st.layout]; P.depth = (st.theme === 'light' ? st.depthL : st.depth) / 100;
+    P.layout = st.layout; P.quiet = QUIET[st.layout]; P.depth = (st.theme === 'light' ? st.depthL : st.depth) / 100; P.reach = (st.theme === 'light' ? st.reachL : st.reach) / 100;
     P.star = { base: st.sb, spread: st.sp, sat: st.ss / 100, lit: st.sl / 100 };
     state = null; stats.frames = 0; stats.sumMs = 0; stats.maxMs = 0;
   }
@@ -360,7 +363,7 @@ button, select, input { font: inherit; }
     seg(document.getElementById('segN'), st.lines, function (k) { st.lines = k; sync(); });
     document.getElementById('selOld').value = hi >= 0 ? '' : st.v;
     document.getElementById('selP').value = palOf();
-    var isCustom = palOf() === 'custom'; document.getElementById('gCustom').hidden = true; /* 버튼 색을 고정해서 직접 조절 줄은 늘 숨긴다 */
+    var isCustom = palOf() === 'custom'; document.getElementById('gCustom').hidden = !isCustom;
     [['H', st.hue], ['Sa', st.sat], ['Li', st.lit]].forEach(function (x) { document.getElementById('rng' + x[0]).value = x[1]; document.getElementById('num' + x[0]).value = x[1]; });
     Array.prototype.forEach.call(document.querySelectorAll('#swRow .sw'), function (b) {
       var on = isCustom && +b.dataset.h === st.hue && +b.dataset.s === st.sat && +b.dataset.l === st.lit;
@@ -368,7 +371,8 @@ button, select, input { font: inherit; }
     });
     /* 첫 버튼(Explore AI Cooperatives)은 지금 팔레트의 가운데 색을 따른다. 글자는 바탕 밝기에 따라 검정이나 흰색 */
     var pc = (LAB.PALETTES[palOf()] || {}).stops, cta1 = document.getElementById('cta1');
-    pc = [null, [27, 45, 106]]; /* 버튼 색은 #1b2d6a 로 고정한다 */
+    /* 버튼 색: 견본이나 막대로 고르면 그 색, 고르지 않으면 정한 남색(#1b2d6a) */
+    pc = st.pal === 'custom' ? [null, hsl(st.hue, st.sat, st.lit)] : [null, [27, 45, 106]];
     if (pc && pc[1]) {
       var c1 = pc[1], lum = (0.2126 * c1[0] + 0.7152 * c1[1] + 0.0722 * c1[2]) / 255;
       cta1.style.background = 'rgb(' + c1.join(',') + ')'; cta1.style.borderColor = 'transparent'; cta1.style.color = lum > 0.5 ? '#0d1220' : '#ffffff';
@@ -378,6 +382,7 @@ button, select, input { font: inherit; }
     document.getElementById('chkT').checked = st.text; var isL = st.theme === 'light', dv = isL ? st.depthL : st.depth, dmax = isL ? 200 : 100;
     ['rngD', 'numD'].forEach(function (id) { var el = document.getElementById(id); el.max = dmax; el.value = dv; });
     document.getElementById('lblD').textContent = '바탕 빛 · ' + (isL ? '밝은 화면 (0~200)' : '어두운 화면 (0~100)');
+    var rv = isL ? st.reachL : st.reach; document.getElementById('rngR').value = rv; document.getElementById('numR').value = rv;
     hero.classList.toggle('depth', dv > 0);
     /* 도메인 아이콘 색: 테마별로 정해 둔 단색(없으면 글자색) */
     var icCol = (window.TRAVI_ICON_COLORS || {})[st.theme] || {};
@@ -389,6 +394,7 @@ button, select, input { font: inherit; }
     if (st.br !== 12) p.set('br', st.br); if (st.by !== 12) p.set('by', st.by); if (st.bx !== 22) p.set('bx', st.bx);
     if (st.sb !== 230) p.set('sb', st.sb); if (st.sp !== 15) p.set('sp', st.sp); if (st.ss !== 35) p.set('ss', st.ss); if (st.sl !== 60) p.set('sl', st.sl);
     if (st.depth !== 35) p.set('depth', st.depth); if (st.depthL !== 35) p.set('depthl', st.depthL);
+    if (st.reach !== 0) p.set('reach', st.reach); if (st.reachL !== 40) p.set('reachl', st.reachL);
     if (st.lc === 'u') p.set('lc', 'u'); if (!st.fnt) p.set('fnt', '0');
     if (st.lf !== 'Montserrat') p.set('lf', st.lf); if (st.lw !== 800) p.set('lw', st.lw); if (st.ls !== 28) p.set('ls', st.ls);
     if (st.pal === 'custom') { p.set('hue', st.hue); p.set('sat', st.sat); p.set('lit', st.lit); }
@@ -428,6 +434,7 @@ button, select, input { font: inherit; }
       el.oninput = function () { var v = +el.value; if (isNaN(v)) return; st[x[1]] = Math.max(+el.min, Math.min(+el.max, v)); apply(); };
     });
   });
+  document.getElementById('btnNavy').onclick = function () { st.pal = ''; apply(); };
   var selLF = document.getElementById('selLF');
   selLF.innerHTML = LOGO_FONTS.map(function (f) { return '<option value="' + f[0] + '">' + f[0] + ' (최대 ' + f[1] + ')</option>'; }).join('');
   selLF.onchange = function () { st.lf = selLF.value; sync(); };
@@ -438,6 +445,7 @@ button, select, input { font: inherit; }
   selLd.onchange = function () { st.lead = selLd.value; sync(); };
   document.getElementById('rngS').oninput = function () { st.speed = +this.value; sync(); };
   document.getElementById('chkT').onchange = function () { st.text = this.checked; sync(); };
+  ['rngR', 'numR'].forEach(function (id) { var el = document.getElementById(id); el.oninput = function () { var v = +el.value; if (isNaN(v)) return; v = Math.max(0, Math.min(100, v)); if (st.theme === 'light') st.reachL = v; else st.reach = v; apply(); }; });
   ['rngD', 'numD'].forEach(function (id) { var el = document.getElementById(id); el.oninput = function () { var v = +el.value; if (isNaN(v)) return; if (st.theme === 'light') st.depthL = Math.max(0, Math.min(200, v)); else st.depth = Math.max(0, Math.min(100, v)); apply(); }; });
   document.getElementById('btnLink').onclick = function () {
     var b = this, url = location.href;
