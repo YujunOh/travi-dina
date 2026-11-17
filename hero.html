@@ -228,7 +228,7 @@ button, select, input { font: inherit; }
     /* 로고 글꼴, 굵기(400~900), 크기(px) */
     depth: num('depth', 35, 0, 100),
     /* 버튼: 모서리 둥글기(px), 위아래 여백(px), 좌우 여백(px) */
-    br: num('br', 8, 0, 32), by: num('by', 14, 6, 28), bx: num('bx', 24, 10, 56),
+    br: num('br', 12, 0, 32), by: num('by', 12, 6, 28), bx: num('bx', 22, 10, 56),
     /* 별자리 색: 계열(시작 색상 0~360), 다양함(색상 폭 0~360), 채도(0~100), 밝기(30~90) */
     sb: num('sb', 230, 0, 360), sp: num('sp', 15, 0, 360), ss: num('ss', 35, 0, 100), sl: num('sl', 60, 30, 90),
     lc: q.get('lc') === 'u' ? 'u' : 't', fnt: q.get('fnt') !== '0',
@@ -384,7 +384,7 @@ button, select, input { font: inherit; }
     if (st.pal) p.set('pal', st.pal); if (st.speed !== 100) p.set('speed', st.speed);
     if (st.copy !== 'd') p.set('copy', st.copy);
     if (st.lines === '1') p.set('lines', '1'); if (st.lead !== 'self') p.set('lead', st.lead);
-    if (st.br !== 8) p.set('br', st.br); if (st.by !== 14) p.set('by', st.by); if (st.bx !== 24) p.set('bx', st.bx);
+    if (st.br !== 12) p.set('br', st.br); if (st.by !== 12) p.set('by', st.by); if (st.bx !== 22) p.set('bx', st.bx);
     if (st.sb !== 230) p.set('sb', st.sb); if (st.sp !== 15) p.set('sp', st.sp); if (st.ss !== 35) p.set('ss', st.ss); if (st.sl !== 60) p.set('sl', st.sl);
     if (st.depth !== 35) p.set('depth', st.depth);
     if (st.lc === 'u') p.set('lc', 'u'); if (!st.fnt) p.set('fnt', '0');
