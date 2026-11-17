@@ -51,6 +51,23 @@ button, select, input { font: inherit; }
 /* 바탕 깊이를 켜면 글 뒤를 누르던 막을 걷는다. 바탕 자체가 가운데에서 밝아지기 때문이다 */
 .hero.depth .scrim { display: none; }
 .ctl .g[hidden] { display: none !important; }
+/* 리퀴드 글래스 버튼. 색을 입히지 않은 맑은 유리판: 뒤 배경을 강하게 흐리고(--lg-blur) 물결처럼 살짝 굴절시켜 비춘다(#lgDistort).
+   가장자리를 따라 빛이 돌고 윗면에 빛이 맺히며(::before), 가는 빛줄기가 가끔 천천히 훑고 지나간다(::after). --lg-tint 는 유리에 도는 흰 기운의 양 */
+.btn.liquid { position: relative; overflow: hidden; isolation: isolate; color: #fff;
+  background: rgba(255,255,255, calc(var(--lg-tint, 0.1) * 0.9));
+  -webkit-backdrop-filter: blur(var(--lg-blur, 28px)) saturate(200%) brightness(1.2);
+  backdrop-filter: url(#lgDistort) blur(var(--lg-blur, 28px)) saturate(200%) brightness(1.2);
+  border: 1px solid rgba(255,255,255,0.34);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.75), inset 0 -1px 1px rgba(255,255,255,0.2), inset 1px 0 0 rgba(255,255,255,0.16), inset -1px 0 0 rgba(255,255,255,0.1), inset 0 0 20px rgba(255,255,255,0.1), 0 12px 34px rgba(0,0,0,0.42); }
+.btn.liquid::before { content: ''; position: absolute; inset: 0; border-radius: inherit; z-index: -1; pointer-events: none;
+  background: linear-gradient(135deg, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.1) 26%, rgba(255,255,255,0) 50%, rgba(255,255,255,0.08) 76%, rgba(255,255,255,0.3) 100%); }
+.btn.liquid::after { content: ''; position: absolute; top: -70%; left: -60%; width: 46%; height: 240%; pointer-events: none; transform: rotate(18deg);
+  background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,0.32), rgba(255,255,255,0)); animation: lgSheen 8s ease-in-out infinite; }
+@keyframes lgSheen { 0%, 58% { left: -60%; } 88%, 100% { left: 140%; } }
+:root[data-theme="light"] .btn.liquid { color: #0d1220; background: rgba(255,255,255, calc(var(--lg-tint, 0.1) * 2 + 0.28)); border-color: rgba(255,255,255,0.95);
+  -webkit-backdrop-filter: blur(var(--lg-blur, 28px)) saturate(190%) brightness(1.05);
+  backdrop-filter: url(#lgDistort) blur(var(--lg-blur, 28px)) saturate(190%) brightness(1.05);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,1), inset 0 -1px 1px rgba(20,30,70,0.1), inset 0 0 18px rgba(255,255,255,0.55), 0 12px 32px rgba(20,30,70,0.2), 0 0 0 1px rgba(20,30,70,0.07); }
 .copy h1 { margin: 18px 0 16px; font-family: Outfit, Inter, system-ui, sans-serif; font-weight: 600; line-height: 1.12; }
 .hero[data-layout="center"] .copy h1 { font-size: clamp(34px, 4.4vw, 56px); }
 .hero[data-layout="left"] .copy h1 { font-size: clamp(44px, 5.8vw, 86px); line-height: 1.0; }
@@ -88,6 +105,10 @@ button, select, input { font: inherit; }
 .ctl label.c { display: flex; align-items: center; gap: 5px; cursor: pointer; }
 .no-ui .ctl, .no-ui .cap { display: none; }
 .no-chrome .topbar { display: none; }
+/* 헤더 아래 경계: 선을 긋지 않고, 헤더 바탕이 아래로 가며 점점 투명해진다. 길이는 --head-fade 로 조절한다(0이면 예전처럼 선) */
+.topbar.fade { border-bottom-color: transparent; background: transparent; -webkit-backdrop-filter: none; backdrop-filter: none; }
+.topbar.fade::before { content: ''; position: absolute; left: 0; right: 0; top: 0; height: calc(100% + var(--head-fade, 40px)); z-index: -1; pointer-events: none;
+  background: linear-gradient(to bottom, color-mix(in srgb, var(--bg) 90%, transparent) 0, color-mix(in srgb, var(--bg) 84%, transparent) calc(100% - var(--head-fade, 40px) * 1.6), transparent 100%); }
 .no-text .copy, .no-text .scrim { display: none; }
 @media (max-width: 900px) { .nav a.h { display: none; } .doms { grid-template-columns: 1fr 1fr; } .topbar .in { padding: 0 16px; gap: 14px; } .cap { right: 16px; } }
 @media (max-width: 560px) { .peek .in { padding: 0 16px; } .ctl { font-size: 12px; } }
@@ -108,6 +129,7 @@ button, select, input { font: inherit; }
   </nav>
 </div></header>
 
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="lgDistort" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB"><feTurbulence type="fractalNoise" baseFrequency="0.014 0.022" numOctaves="2" seed="7" result="n"/><feGaussianBlur in="n" stdDeviation="2.2" result="nb"/><feDisplacementMap in="SourceGraphic" in2="nb" scale="26" xChannelSelector="R" yChannelSelector="G"/></filter></svg>
 <main class="hero" id="hero" data-layout="center">
   <canvas id="cv" aria-hidden="true"></canvas>
   <div class="scrim"></div>
@@ -157,9 +179,9 @@ button, select, input { font: inherit; }
   <div class="g" style="flex-wrap:wrap;row-gap:6px"><span class="l">버튼 모서리</span><input type="range" id="rngBR" min="0" max="32" step="1"><input type="number" id="numBR" min="0" max="32" step="1" style="width:52px">
     <span class="l">위아래 여백</span><input type="range" id="rngBY" min="6" max="28" step="1"><input type="number" id="numBY" min="6" max="28" step="1" style="width:52px">
     <span class="l">좌우 여백</span><input type="range" id="rngBX" min="10" max="56" step="1"><input type="number" id="numBX" min="10" max="56" step="1" style="width:52px">
-    <label class="c"><input type="checkbox" id="chkG"> 유리</label>
-    <span class="l">흐림</span><input type="range" id="rngBB" min="0" max="40" step="1"><input type="number" id="numBB" min="0" max="40" step="1" style="width:52px">
-    <span class="l">불투명도</span><input type="range" id="rngBO" min="0" max="100" step="1"><input type="number" id="numBO" min="0" max="100" step="1" style="width:52px">
+    <label class="c"><input type="checkbox" id="chkG"> 리퀴드 글래스</label>
+    <span class="l">흐림</span><input type="range" id="rngBB" min="0" max="80" step="1"><input type="number" id="numBB" min="0" max="80" step="1" style="width:52px">
+    <span class="l">불투명도 (유리일 때는 흰 기운)</span><input type="range" id="rngBO" min="0" max="100" step="1"><input type="number" id="numBO" min="0" max="100" step="1" style="width:52px">
     <span id="valBtn" style="font-family:ui-monospace,Consolas,monospace;font-size:12px;color:var(--muted)"></span></div>
   <div class="g" hidden data-fixed="1"><span class="l">로고 표기</span><div class="seg" id="segLC"><button type="button" data-k="t">Travi</button><button type="button" data-k="u">TRAVI</button></div>
     <label class="c"><input type="checkbox" id="chkF"> 분수</label></div>
@@ -168,6 +190,7 @@ button, select, input { font: inherit; }
     <span class="l">크기</span><input type="range" id="rngLS" min="16" max="36" step="1"><span id="valLS"></span></div>
   <div class="g"><span class="l">속도</span><input type="range" id="rngS" min="40" max="200" step="5"><span id="valS"></span></div>
   <label class="c"><input type="checkbox" id="chkT"> 글</label>
+  <div class="g"><span class="l">헤더 아래 경계가 사라지는 길이</span><input type="range" id="rngHF" min="0" max="120" step="1"><input type="number" id="numHF" min="0" max="120" step="1" style="width:58px"><span class="l">px</span></div>
   <div class="g"><span class="l" id="lblD">바탕 빛</span><input type="range" id="rngD" min="0" max="100" step="1"><input type="number" id="numD" min="0" max="100" step="1" style="width:52px">
     <span class="l">어둠이 들어오는 깊이</span><input type="range" id="rngR" min="0" max="100" step="1"><input type="number" id="numR" min="0" max="100" step="1" style="width:52px"></div>
   <button class="act" type="button" id="btnLink">이 상태 링크 복사</button>
@@ -230,11 +253,12 @@ button, select, input { font: inherit; }
     lines: q.get('lines') === '1' ? '1' : '2',
     lead: q.has('lead') ? q.get('lead') : 'self',
     /* 로고 글꼴, 굵기(400~900), 크기(px) */
-    depth: num('depth', 35, 0, 100), depthL: num('depthl', 35, 0, 200),
+    hf: num('hf', 40, 0, 120),
+    depth: num('depth', 50, 0, 100), depthL: num('depthl', 50, 0, 200),
     /* 어둠이 안쪽으로 들어오는 깊이(0~100). 화면 색마다 따로 */
-    reach: num('reach', 0, 0, 100), reachL: num('reachl', 40, 0, 100),
+    reach: num('reach', 30, 0, 100), reachL: num('reachl', 40, 0, 100),
     /* 버튼: 모서리 둥글기(px), 위아래 여백(px), 좌우 여백(px) */
-    br: num('br', 12, 0, 32), by: num('by', 12, 6, 28), bx: num('bx', 22, 10, 56), glass: q.get('glass') !== '0', bo: num('bo', q.get('glass') === '0' ? 100 : 28, 0, 100), bb: num('bb', 16, 0, 40),
+    br: num('br', 12, 0, 32), by: num('by', 12, 6, 28), bx: num('bx', 22, 10, 56), glass: q.get('glass') !== '0', bo: num('bo', q.get('glass') === '0' ? 100 : 10, 0, 100), bb: num('bb', 28, 0, 80),
     /* 별자리 색: 계열(시작 색상 0~360), 다양함(색상 폭 0~360), 채도(0~100), 밝기(30~90) */
     sb: num('sb', 230, 0, 360), sp: num('sp', 15, 0, 360), ss: num('ss', 35, 0, 100), sl: num('sl', 60, 30, 90),
     lc: q.get('lc') === 'u' ? 'u' : 't', fnt: q.get('fnt') !== '0',
@@ -380,22 +404,23 @@ button, select, input { font: inherit; }
     if (pc && pc[1]) {
       var c1 = pc[1], lum = (0.2126 * c1[0] + 0.7152 * c1[1] + 0.0722 * c1[2]) / 255;
       cta1.style.background = 'rgba(' + c1.join(',') + ',' + (st.bo / 100) + ')';
+      /* 리퀴드 글래스: 모양은 .btn.liquid 스타일이 맡고, 여기서는 흐림과 흰 기운의 양만 넘긴다. 색은 입히지 않는다 */
+      cta1.classList.toggle('liquid', st.glass);
       if (st.glass) {
-        /* 유리: 뒤 배경을 흐리게 비추고, 밝은 테두리와 윗면의 빛, 아랫면의 옅은 그늘로 두께감을 낸다 */
-        var bf = 'blur(' + st.bb + 'px) saturate(170%)', dk2 = st.theme === 'dark';
-        cta1.style.backdropFilter = bf; cta1.style.webkitBackdropFilter = bf;
-        cta1.style.border = '1px solid ' + (dk2 ? 'rgba(255,255,255,0.26)' : 'rgba(255,255,255,0.7)');
-        cta1.style.boxShadow = 'inset 0 1px 0 ' + (dk2 ? 'rgba(255,255,255,0.34)' : 'rgba(255,255,255,0.9)') + ', inset 0 -1px 0 rgba(0,0,0,0.14), 0 10px 28px ' + (dk2 ? 'rgba(0,0,0,0.38)' : 'rgba(20,30,70,0.2)');
-        /* 바탕이 많이 비치면 글자색은 바탕색이 아니라 화면 색을 따른다 */
-        cta1.style.color = st.bo < 55 ? (dk2 ? '#ffffff' : '#0d1220') : (lum > 0.5 ? '#0d1220' : '#ffffff');
+        cta1.style.background = ''; cta1.style.border = ''; cta1.style.boxShadow = ''; cta1.style.color = '';
+        cta1.style.backdropFilter = ''; cta1.style.webkitBackdropFilter = '';
+        cta1.style.setProperty('--lg-blur', st.bb + 'px'); cta1.style.setProperty('--lg-tint', (st.bo / 100).toFixed(3));
       } else {
-        cta1.style.backdropFilter = ''; cta1.style.webkitBackdropFilter = ''; cta1.style.border = '1px solid transparent'; cta1.style.boxShadow = '';
+        cta1.style.border = '1px solid transparent'; cta1.style.boxShadow = '';
         cta1.style.color = lum > 0.5 ? '#0d1220' : '#ffffff';
       }
     }
     var mid = hex(hsl(st.hue, st.sat, st.lit)); document.getElementById('swatch').style.background = mid; document.getElementById('hexOut').textContent = mid;
     document.getElementById('rngS').value = st.speed; document.getElementById('valS').textContent = st.speed + '%';
-    document.getElementById('chkT').checked = st.text; var isL = st.theme === 'light', dv = isL ? st.depthL : st.depth, dmax = isL ? 200 : 100;
+    document.getElementById('chkT').checked = st.text;
+    var tb = document.querySelector('.topbar'); tb.classList.toggle('fade', st.hf > 0); tb.style.setProperty('--head-fade', st.hf + 'px');
+    document.getElementById('rngHF').value = st.hf; document.getElementById('numHF').value = st.hf;
+    var isL = st.theme === 'light', dv = isL ? st.depthL : st.depth, dmax = isL ? 200 : 100;
     ['rngD', 'numD'].forEach(function (id) { var el = document.getElementById(id); el.max = dmax; el.value = dv; });
     document.getElementById('lblD').textContent = '바탕 빛 · ' + (isL ? '밝은 화면 (0~200)' : '어두운 화면 (0~100)');
     var rv = isL ? st.reachL : st.reach; document.getElementById('rngR').value = rv; document.getElementById('numR').value = rv;
@@ -407,10 +432,11 @@ button, select, input { font: inherit; }
     if (st.pal) p.set('pal', st.pal); if (st.speed !== 100) p.set('speed', st.speed);
     if (st.copy !== 'd') p.set('copy', st.copy);
     if (st.lines === '1') p.set('lines', '1'); if (st.lead !== 'self') p.set('lead', st.lead);
-    if (st.br !== 12) p.set('br', st.br); if (st.by !== 12) p.set('by', st.by); if (st.bx !== 22) p.set('bx', st.bx); if (!st.glass) p.set('glass', '0'); if (st.bo !== (st.glass ? 28 : 100)) p.set('bo', st.bo); if (st.bb !== 16) p.set('bb', st.bb);
+    if (st.br !== 12) p.set('br', st.br); if (st.by !== 12) p.set('by', st.by); if (st.bx !== 22) p.set('bx', st.bx); if (!st.glass) p.set('glass', '0'); if (st.bo !== (st.glass ? 10 : 100)) p.set('bo', st.bo); if (st.bb !== 28) p.set('bb', st.bb);
     if (st.sb !== 230) p.set('sb', st.sb); if (st.sp !== 15) p.set('sp', st.sp); if (st.ss !== 35) p.set('ss', st.ss); if (st.sl !== 60) p.set('sl', st.sl);
-    if (st.depth !== 35) p.set('depth', st.depth); if (st.depthL !== 35) p.set('depthl', st.depthL);
-    if (st.reach !== 0) p.set('reach', st.reach); if (st.reachL !== 40) p.set('reachl', st.reachL);
+    if (st.hf !== 40) p.set('hf', st.hf);
+    if (st.depth !== 50) p.set('depth', st.depth); if (st.depthL !== 50) p.set('depthl', st.depthL);
+    if (st.reach !== 30) p.set('reach', st.reach); if (st.reachL !== 40) p.set('reachl', st.reachL);
     if (st.lc === 'u') p.set('lc', 'u'); if (!st.fnt) p.set('fnt', '0');
     if (st.lf !== 'Montserrat') p.set('lf', st.lf); if (st.lw !== 800) p.set('lw', st.lw); if (st.ls !== 28) p.set('ls', st.ls);
     if (st.pal === 'custom') { p.set('hue', st.hue); p.set('sat', st.sat); p.set('lit', st.lit); }
@@ -438,7 +464,7 @@ button, select, input { font: inherit; }
   selC.innerHTML = Object.keys(COPY).map(function (k) { return '<option value="' + k + '">' + COPY[k].label + '</option>'; }).join('');
   selC.onchange = function () { st.copy = selC.value; st.h = ''; sync(); };
   document.getElementById('chkF').onchange = function () { st.fnt = this.checked; sync(); };
-  document.getElementById('chkG').onchange = function () { st.glass = this.checked; st.bo = st.glass ? 28 : 100; sync(); };
+  document.getElementById('chkG').onchange = function () { st.glass = this.checked; st.bo = st.glass ? 10 : 100; sync(); };
   [['BR', 'br'], ['BY', 'by'], ['BX', 'bx'], ['BO', 'bo'], ['BB', 'bb']].forEach(function (x) {
     ['rng', 'num'].forEach(function (kind) {
       var el = document.getElementById(kind + x[0]);
@@ -462,6 +488,7 @@ button, select, input { font: inherit; }
   selLd.onchange = function () { st.lead = selLd.value; sync(); };
   document.getElementById('rngS').oninput = function () { st.speed = +this.value; sync(); };
   document.getElementById('chkT').onchange = function () { st.text = this.checked; sync(); };
+  ['rngHF', 'numHF'].forEach(function (id) { var el = document.getElementById(id); el.oninput = function () { var v = +el.value; if (isNaN(v)) return; st.hf = Math.max(0, Math.min(120, v)); sync(); }; });
   ['rngR', 'numR'].forEach(function (id) { var el = document.getElementById(id); el.oninput = function () { var v = +el.value; if (isNaN(v)) return; v = Math.max(0, Math.min(100, v)); if (st.theme === 'light') st.reachL = v; else st.reach = v; apply(); }; });
   ['rngD', 'numD'].forEach(function (id) { var el = document.getElementById(id); el.oninput = function () { var v = +el.value; if (isNaN(v)) return; if (st.theme === 'light') st.depthL = Math.max(0, Math.min(200, v)); else st.depth = Math.max(0, Math.min(100, v)); apply(); }; });
   document.getElementById('btnLink').onclick = function () {
