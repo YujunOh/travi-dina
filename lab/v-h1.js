@@ -500,8 +500,10 @@
           gd.addColorStop(0.42, 'rgba(48,66,132,' + r3(0.14 * dk) + ')'); gd.addColorStop(0.6, 'rgba(10,14,28,' + r3(0.04 * dk) + ')');
           gd.addColorStop(0.8, 'rgba(0,0,0,' + r3(0.34 * dk) + ')'); gd.addColorStop(1, 'rgba(0,0,0,' + r3(0.72 * dk) + ')');
         } else {
-          gd.addColorStop(0, 'rgba(255,255,255,' + r3(0.9 * dk) + ')'); gd.addColorStop(0.42, 'rgba(255,255,255,' + r3(0.3 * dk) + ')');
-          gd.addColorStop(0.62, 'rgba(120,132,170,' + r3(0.02 * dk) + ')'); gd.addColorStop(1, 'rgba(60,74,120,' + r3(0.36 * dk) + ')');
+          /* 밝은 화면: 바탕이 이미 밝아서 가운데를 더 밝히는 것만으로는 티가 안 난다. 가장자리를 푸른 회색으로 눌러 차이를 만든다 */
+          gd.addColorStop(0, 'rgba(255,255,255,' + r3(0.95 * dk) + ')'); gd.addColorStop(0.34, 'rgba(255,255,255,' + r3(0.5 * dk) + ')');
+          gd.addColorStop(0.52, 'rgba(170,184,220,' + r3(0.14 * dk) + ')'); gd.addColorStop(0.74, 'rgba(104,122,180,' + r3(0.4 * dk) + ')');
+          gd.addColorStop(1, 'rgba(58,76,140,' + r3(0.7 * dk) + ')');
         }
         ctx.fillStyle = gd; ctx.fillRect(0, 0, w, h);
       }
