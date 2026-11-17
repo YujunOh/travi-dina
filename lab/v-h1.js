@@ -22,6 +22,28 @@
   var LFADE = 7000;   // 이웃으로 건너간 점선이 다 사라지기까지
   var SEED_C = 20261, SEED_L = 4127;
 
+  /* 실제 별자리의 점과 선. 좌표는 대략 0~1 범위의 그림 좌표(x 오른쪽, y 아래)이고 선은 긋는 차례대로 적는다 */
+  var REAL = [
+    /* 북두칠성: 국자 네 점과 손잡이 세 점 */
+    { n: 'Big Dipper', p: [[0, 0.30], [0.20, 0.20], [0.37, 0.27], [0.54, 0.38], [0.58, 0.64], [0.88, 0.68], [0.94, 0.40]], e: [[0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 6], [6, 3]] },
+    /* 오리온: 어깨 둘, 허리띠 셋, 발 둘이 이루는 모래시계 */
+    { n: 'Orion', p: [[0.22, 0.06], [0.74, 0.12], [0.38, 0.50], [0.49, 0.47], [0.60, 0.44], [0.28, 0.94], [0.80, 0.86]], e: [[0, 1], [1, 4], [4, 3], [3, 2], [2, 0], [2, 5], [5, 6], [6, 4]] },
+    /* 카시오페이아: W 모양 */
+    { n: 'Cassiopeia', p: [[0, 0.18], [0.22, 0.72], [0.48, 0.34], [0.72, 0.82], [1.0, 0.26]], e: [[0, 1], [1, 2], [2, 3], [3, 4]] },
+    /* 백조: 긴 몸통과 양 날개가 만나는 십자 */
+    { n: 'Cygnus', p: [[0.50, 0], [0.50, 0.34], [0.50, 0.68], [0.50, 1.0], [0.20, 0.44], [-0.04, 0.60], [0.80, 0.26], [1.04, 0.12]], e: [[0, 1], [1, 2], [2, 3], [1, 4], [4, 5], [1, 6], [6, 7]] },
+    /* 사자: 낫 모양 머리와 삼각형 엉덩이 */
+    { n: 'Leo', p: [[0.20, 0.82], [0.21, 0.58], [0.30, 0.40], [0.23, 0.22], [0.09, 0.10], [0, 0.24], [0.72, 0.64], [1.0, 0.70], [0.75, 0.40]], e: [[0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [2, 8], [8, 7], [7, 6], [6, 0]] },
+    /* 거문고: 직녀별과 평행사변형 */
+    { n: 'Lyra', p: [[0.50, 0], [0.44, 0.30], [0.74, 0.38], [0.66, 0.98], [0.36, 0.90]], e: [[0, 1], [1, 2], [2, 3], [3, 4], [4, 1]] },
+    /* 전갈: 머리에서 꼬리 끝 갈고리까지 이어지는 긴 곡선 */
+    { n: 'Scorpius', p: [[0.96, 0], [0.86, 0.16], [0.98, 0.30], [0.70, 0.26], [0.58, 0.42], [0.52, 0.62], [0.42, 0.82], [0.26, 0.94], [0.10, 0.88], [0.04, 0.70]], e: [[0, 1], [1, 2], [1, 3], [3, 4], [4, 5], [5, 6], [6, 7], [7, 8], [8, 9]] },
+    /* 케페우스: 뾰족지붕 집 */
+    { n: 'Cepheus', p: [[0.50, 0], [0.14, 0.44], [0.86, 0.40], [0.24, 0.98], [0.80, 0.94]], e: [[0, 1], [1, 3], [3, 4], [4, 2], [2, 0]] },
+    /* 쌍둥이: 나란한 두 줄을 머리에서 잇는다 */
+    { n: 'Gemini', p: [[0.10, 0.10], [0.30, 0.34], [0.48, 0.60], [0.66, 0.92], [0.40, 0], [0.60, 0.22], [0.80, 0.46], [1.0, 0.74]], e: [[3, 2], [2, 1], [1, 0], [0, 4], [4, 5], [5, 6], [6, 7]] }
+  ];
+
   function rng(seed) { var a = seed >>> 0; return function () { a = (a + 0x6D2B79F5) >>> 0; var t = a; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
   function clamp(x, a, b) { return x < a ? a : x > b ? b : x; }
   function sstep(a, b, x) { var k = clamp((x - a) / (b - a), 0, 1); return k * k * (3 - 2 * k); }
@@ -247,12 +269,51 @@
         return sc;
       }
 
+      /* 3-1) 실제 별자리. 성도에서 흔히 긋는 선 모양을 점 좌표(가로 x, 세로 y)와 선 차례로 적어 둔 것이다.
+            구역의 긴 축에 별자리의 긴 쪽을 맞추고, 들어가는 가장 큰 크기로 놓는다. 한 화면에 같은 별자리를 두 번 쓰지 않는다 */
+      var usedReal = {};
+      function fitReal(fr, Rr, fi) {
+        var am = (fr.a0 + fr.a1) / 2, axisLen = fr.a1 - fr.a0, nT = REAL.length, start = Math.floor(Rr() * nT), tI, q;
+        var Lmax = Math.min(axisLen * 0.95, Math.max(fr.span, 3.4 * seg0));
+        for (var pass2 = 0; pass2 < 2; pass2++) for (tI = 0; tI < nT; tI++) {
+          var ti = (start + tI) % nT; if (pass2 === 0 && usedReal[ti]) continue;
+          var T0 = REAL[ti], minX = 1e9, maxX = -1e9, minY = 1e9, maxY = -1e9;
+          for (q = 0; q < T0.p.length; q++) { minX = Math.min(minX, T0.p[q][0]); maxX = Math.max(maxX, T0.p[q][0]); minY = Math.min(minY, T0.p[q][1]); maxY = Math.max(maxY, T0.p[q][1]); }
+          var tw = maxX - minX, th = maxY - minY, wide = tw >= th, lng = Math.max(tw, th), mcx = (minX + maxX) / 2, mcy = (minY + maxY) / 2;
+          var flips = [[1, 1], [-1, 1], [1, -1], [-1, -1]], f0 = Math.floor(Rr() * 4);
+          var scales = [1, 0.88, 0.78, 0.68, 0.6, 0.52, 0.45], shifts = [0, 0.14, -0.14, 0.28, -0.28];
+          for (var si = 0; si < scales.length; si++) {
+            var L = Lmax * scales[si] / lng; if (L * lng < 1.7 * seg0) break;
+            for (var sh = 0; sh < shifts.length; sh++) {
+              var a0c = am + shifts[sh] * axisLen, rg0 = fr.range(a0c); if (rg0[0] !== rg0[0]) continue;
+              for (var bsh = 0; bsh < 3; bsh++) {
+                var b0c = rg0[0] + (rg0[1] - rg0[0]) * [0.5, 0.36, 0.64][bsh];
+                for (var fq = 0; fq < 4; fq++) {
+                  var fl = flips[(f0 + fq) % 4], pts = [], ok = true;
+                  for (q = 0; q < T0.p.length && ok; q++) {
+                    var lx = (T0.p[q][0] - mcx) * L * fl[0], ly = (T0.p[q][1] - mcy) * L * fl[1];
+                    /* 별자리의 긴 쪽을 구역의 긴 축(e1)에 맞춘다 */
+                    var ua = wide ? lx : ly, ub = wide ? ly : lx;
+                    var px = fr.cx + (a0c + ua) * fr.e1x + (b0c + ub) * fr.e2x, py = fr.cy + (a0c + ua) * fr.e1y + (b0c + ub) * fr.e2y;
+                    if (!okPt(px, py, fr.i)) ok = false; else pts.push({ x: px, y: py });
+                  }
+                  for (q = 0; q < T0.e.length && ok; q++) { var A2 = pts[T0.e[q][0]], B2 = pts[T0.e[q][1]]; if (rho((A2.x + B2.x) / 2, (A2.y + B2.y) / 2) < RIN - 0.03) ok = false; }
+                  if (ok) { usedReal[ti] = 1; return { pts: pts, E: T0.e.map(function (e) { return [e[0], e[1]]; }) }; }
+                }
+              }
+            }
+          }
+        }
+        return null;
+      }
+
       var TG = [7, 8, 6, 7, 9, 6, 8, 5], v = seg0 / SEG_MS, F = [];
       for (i = 0; i < NF; i++) {
         var fr = frame(i); if (!fr) continue;
         var Rf = rng(seed + 101 * (i + 1)), tgt = TG[(i + Math.floor(R() * 8)) % 8];
         var segF = fr.seg * (0.94 + 0.12 * Rf());
-        var best = null, bs = 1e9;
+        /* 먼저 실제 별자리 모양을 맞춰 넣어 보고, 자리가 모자라 하나도 안 들어가면 예전처럼 지어낸 모양을 쓴다 */
+        var best = fitReal(fr, Rf, i), bs = 1e9;
         for (var shrink = 0; shrink < 3 && !best; shrink++) {
           for (var tryN = 0; tryN < 90; tryN++) { var cd = candidate(fr, Rf, segF, tgt); if (!cd) continue; var scv = score(cd, segF, tgt, i); if (scv < bs) { bs = scv; best = cd; } }
           segF *= 0.84;
