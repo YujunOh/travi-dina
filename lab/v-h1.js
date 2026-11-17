@@ -489,28 +489,34 @@
       /* 판 전체가 아주 천천히 미끄러진다(최대 초당 0.6px쯤). 점 하나하나는 제자리다. 먼 단계일수록 덜 움직여 깊이가 생긴다 */
       var dx = s.dA * Math.sin(clk * TAU / 83000 + 0.6), dy = s.dA * 0.7 * Math.sin(clk * TAU / 61000 + 2.1), GH = s.gh;
 
-      /* 바탕 빛(P.depth, 0~1): 앞에서 가운데 글을 향해 빛을 비춘 것처럼 가운데가 주변보다 밝고, 바깥으로 갈수록 서서히 어두워진다.
-         값이 세기다. 가운데의 밝음은 바깥으로 가며 부드럽게 사라지고, 가장자리의 어둠은 가운데로 오며 부드럽게 사라진다. true 는 0.35 로 본다 */
-      var dk = P.depth === true ? 0.35 : Math.max(0, Math.min(2, +P.depth || 0)); /* 1 을 넘는 값은 밝은 화면에서 가장자리를 더 짙게, 더 안쪽까지 누른다 */
+      /* 바탕 빛(P.depth, 0~2): 앞에서 가운데 글을 향해 빛을 비춘 것처럼 가운데가 주변보다 밝고, 바깥으로 갈수록 서서히 어두워진다.
+         P.reach(0~1)는 어둠이 안쪽으로 들어오는 깊이, P.soft(0~1)는 밝은 곳과 어두운 곳 사이 경계의 부드러움, P.edge 는 가장자리 색이다.
+         가운데의 밝음과 가장자리의 어둠을 따로 그려 겹친다. 둘 다 부드러운 곡선을 스무 칸으로 나눠 이어서 띠가 지지 않는다 */
+      var dk = P.depth === true ? 0.35 : Math.max(0, Math.min(2, +P.depth || 0));
       if (dk > 0) {
-        var Qd = P.quiet || { x: 0.5, y: 0.5, rx: 0.31, ry: 0.26 }, gcx = Qd.x * w, gcy = Qd.y * h, rch = Math.max(0, Math.min(1, +P.reach || 0)), gr = Math.max(w, h) * (0.74 - 0.38 * rch); /* reach 가 클수록 빛의 반지름이 줄어 어둠이 안쪽까지 들어온다 */
-        var gd = ctx.createRadialGradient(gcx, gcy, 0, gcx, gcy, gr);
-        if (P.dark) {
-          gd.addColorStop(0, 'rgba(96,124,214,' + r3(0.5 * dk) + ')'); gd.addColorStop(0.2, 'rgba(78,104,190,' + r3(0.34 * dk) + ')');
-          gd.addColorStop(0.42, 'rgba(48,66,132,' + r3(0.14 * dk) + ')'); gd.addColorStop(0.6, 'rgba(10,14,28,' + r3(0.04 * dk) + ')');
-          /* 가장자리 색: 기본은 검정. P.edge 로 바꿀 수 있다 */
-          var de = P.edge || [0, 0, 0];
-          gd.addColorStop(0.8, 'rgba(' + de[0] + ',' + de[1] + ',' + de[2] + ',' + r3(0.34 * dk) + ')'); gd.addColorStop(1, 'rgba(' + de[0] + ',' + de[1] + ',' + de[2] + ',' + r3(0.72 * dk) + ')');
-        } else {
-          /* 밝은 화면: 바탕이 이미 밝아서 가운데를 더 밝히는 것만으로는 티가 안 난다. 가장자리를 거의 검정으로 눌러 차이를 만든다 */
-          /* 세기가 1 을 넘으면(ov) 가장자리 색이 더 짙은 남색으로 가고, 어두워지기 시작하는 자리가 가운데 쪽으로 당겨진다 */
-          var ov = Math.max(0, dk - 1), le = P.edge || [14, 16, 24], eR = Math.round(le[0] * (1 - 0.55 * ov)), eG = Math.round(le[1] * (1 - 0.55 * ov)), eB = Math.round(le[2] * (1 - 0.5 * ov)); /* 가장자리 색: 기본은 거의 검정. P.edge 로 바꿀 수 있다 */
-          var mR = Math.round((le[0] + 44) * (1 - 0.45 * ov)), mG = Math.round((le[1] + 46) * (1 - 0.45 * ov)), mB = Math.round((le[2] + 52) * (1 - 0.42 * ov)), pull = 0.12 * ov; /* 중간 색: 가장자리 색보다 조금 밝게 */
-          gd.addColorStop(0, 'rgba(255,255,255,' + r3(0.95 * Math.min(1, dk)) + ')'); gd.addColorStop(0.34 - pull, 'rgba(255,255,255,' + r3(0.5 * Math.min(1, dk)) + ')');
-          gd.addColorStop(0.52 - pull, 'rgba(120,124,136,' + r3(0.14 * dk) + ')'); gd.addColorStop(0.74 - pull, 'rgba(' + mR + ',' + mG + ',' + mB + ',' + r3(0.4 * dk) + ')');
-          gd.addColorStop(1, 'rgba(' + eR + ',' + eG + ',' + eB + ',' + r3(0.7 * dk) + ')');
+        var Qd = P.quiet || { x: 0.5, y: 0.5, rx: 0.31, ry: 0.26 }, gcx = Qd.x * w, gcy = Qd.y * h, rch = Math.max(0, Math.min(1, +P.reach || 0)), gr = Math.max(w, h) * (0.74 - 0.38 * rch);
+        var soft = P.soft == null ? 0.5 : Math.max(0, Math.min(1, +P.soft)), ov = Math.max(0, dk - 1), NG = 20, gi, gk;
+        /* 부드러울수록 밝음은 더 멀리까지 남고, 어둠은 더 안쪽에서부터 아주 천천히 시작한다 */
+        var glowEnd = 0.34 + 0.5 * soft, darkStart = Math.max(0, 0.58 - 0.56 * soft - 0.12 * ov);
+        var glowC = P.dark ? [96, 124, 214] : [255, 255, 255], glowA = P.dark ? 0.5 * Math.min(1, dk) : 0.95 * Math.min(1, dk);
+        var edC = P.edge || (P.dark ? [0, 0, 0] : [14, 16, 24]), edA = Math.min(1, (P.dark ? 0.72 : 0.7) * dk);
+        if (ov > 0) edC = [Math.round(edC[0] * (1 - 0.5 * ov)), Math.round(edC[1] * (1 - 0.5 * ov)), Math.round(edC[2] * (1 - 0.45 * ov))];
+        /* 빛의 모양. 기본(spot)은 글 묶음을 감싸는 타원: 가로 반지름은 글 자리 폭에서, 세로는 글 자리의 가로세로 비에서 나온다.
+           reach 가 클수록 타원이 작아져 그림자가 글 가까이까지 들어온다. P.spot 이 false 면 화면 전체에 걸친 원이다 */
+        var spot = P.spot !== false, sy = 1;
+        if (spot) { gr = Qd.rx * w * (2.5 - 1.7 * rch); sy = Math.max(0.42, Math.min(1, (Qd.ry * h) / (Qd.rx * w) * 1.18)); }
+        var g1 = ctx.createRadialGradient(0, 0, 0, 0, 0, gr), g2 = ctx.createRadialGradient(0, 0, 0, 0, 0, gr);
+        for (gi = 0; gi <= NG; gi++) {
+          gk = gi / NG;
+          var ga = glowA * Math.pow(1 - sstep(0, glowEnd, gk), 1.4), ea = edA * Math.pow(sstep(darkStart, 1, gk), 1.25 + 0.9 * soft);
+          g1.addColorStop(gk, 'rgba(' + glowC[0] + ',' + glowC[1] + ',' + glowC[2] + ',' + r3(ga) + ')');
+          g2.addColorStop(gk, 'rgba(' + edC[0] + ',' + edC[1] + ',' + edC[2] + ',' + r3(ea) + ')');
         }
-        ctx.fillStyle = gd; ctx.fillRect(0, 0, w, h);
+        /* 가운데를 원점으로 옮기고 세로를 눌러 타원으로 그린다. 칠하는 네모는 눌린 만큼 키워 화면 전체를 덮는다 */
+        ctx.save(); ctx.translate(gcx, gcy); ctx.scale(1, sy);
+        ctx.fillStyle = g1; ctx.fillRect(-gcx, -gcy / sy, w, h / sy);
+        ctx.fillStyle = g2; ctx.fillRect(-gcx, -gcy / sy, w, h / sy);
+        ctx.restore();
       }
 
       /* 배경 별 */
