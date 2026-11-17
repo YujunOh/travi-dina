@@ -126,7 +126,7 @@
 
       var st = {
         F: [], B: [], TW: [], RG: null, T: 26000, clock: 0, lastT: null, u: u, gh: gh,
-        ink: ink, acc: acc, inkS: inkS, accS: accS, colS: colS, multi: multi, aR: aR, aL: aL, aA: aA, lw0: lw0, lw1: lw1,
+        ink: ink, acc: acc, inkS: inkS, accS: accS, colS: colS, multi: multi, shoot: dark ? [255, 250, 232] : [240, 160, 50], aR: aR, aL: aL, aA: aA, lw0: lw0, lw1: lw1,
         lwL: Math.max(0.75, 0.55 * u), lwR: Math.max(0.7, 0.5 * u), dash: [3.2 * u, 3.8 * u], dA: 5 * u, ringS: inkS(aRing * 0.7)
       };
       if (w < 60 || h < 60) return st;
@@ -351,9 +351,9 @@
         }
         if (!best) continue;
         /* 점과 선을 그리기 좋은 꼴로 옮기고, 선마다 시작 시각을 매긴다 */
-        var deg = [], Pp = [], Ee = [], cxs = 0, cys = 0, hue0 = (F.length * 67 + 8) % 360, hueS = dark ? 0.52 : 0.42, hueL = dark ? 0.76 : 0.5, fcol = multi ? hslRgb(hue0, hueS, hueL) : acc; /* 파스텔: 진하기를 낮추고 밝기를 올린다 */
+        var deg = [], Pp = [], Ee = [], cxs = 0, cys = 0, hue0 = (F.length * 37) % 110, /* 따뜻한 쪽 색상 범위 안에서의 시작 자리(0~110) */ hueS = dark ? 0.52 : 0.42, hueL = dark ? 0.76 : 0.5, fcol = multi ? hslRgb(340 + hue0, hueS, hueL) : acc; /* 파스텔: 진하기를 낮추고 밝기를 올린다 */
         /* q 번째 선이나 점의 색. 알록달록일 때는 색상이 26도씩 돌아 한 별자리 안에 여러 색이 섞인다 */
-        function hueAt(q) { return multi ? hslRgb(hue0 + q * 26, hueS, hueL) : fcol; }
+        function hueAt(q) { return multi ? hslRgb(340 + (hue0 + q * 22) % 110, hueS, hueL) : fcol; }
         for (j = 0; j < best.pts.length; j++) deg.push(0);
         for (j = 0; j < best.E.length; j++) { deg[best.E[j][0]]++; deg[best.E[j][1]]++; }
         /* 고리 달린 점(앵커 기관)은 갈림점이 아닌 곳에 둔다. 갈림점에 두면 중심 서버처럼 읽힌다 */
@@ -461,7 +461,7 @@
       for (k = 0; k < FS.length; k++) {
         var s0 = FS[k], qa = Math.max(0.05, Math.round(s0.a * 20) / 20);
         if (s0.ring) rings.push(s0.x, s0.y, rad[2] + 2.9 * u);
-        var hb = multi ? Math.floor(Rs() * 12) : -1, bcol = multi ? hslRgb(hb * 30 + 8, bgS, bgL) : null;
+        var hb = multi ? Math.floor(Rs() * 12) : -1, bcol = multi ? hslRgb(340 + hb * 10, bgS, bgL) : null;
         if (s0.tw) { st.TW.push({ x: s0.x, y: s0.y, r: rad[s0.tier], a: s0.a, par: par[s0.tier], w: TAU / s0.per, ph: s0.ph, col: bcol }); continue; }
         var key = s0.tier + '|' + qa + '|' + hb;
         if (!bmap[key]) { bmap[key] = { style: multi ? colS(bcol, Math.min(1, qa * 1.5)) : inkS(qa), par: par[s0.tier], d: [] }; st.B.push(bmap[key]); }
@@ -522,10 +522,10 @@
             ctx.lineCap = 'round';
             for (var gm = 0; gm < NSEG; gm++) {
               var a0m = gm / NSEG, a1m = (gm + 1) / NSEG;
-              ctx.strokeStyle = s.inkS(0.85 * fadem * (1 - a0m) * (1 - a0m)); ctx.lineWidth = Math.max(0.6, (1.6 - 1.1 * a0m) * u);
+              ctx.strokeStyle = s.colS(s.shoot, 0.95 * fadem * (1 - a0m) * (1 - a0m)); ctx.lineWidth = Math.max(0.6, (1.6 - 1.1 * a0m) * u);
               ctx.beginPath(); ctx.moveTo(hxm - vxm * tailm * a0m, hym - vym * tailm * a0m); ctx.lineTo(hxm - vxm * tailm * a1m, hym - vym * tailm * a1m); ctx.stroke();
             }
-            ctx.fillStyle = s.inkS(0.95 * fadem); ctx.beginPath(); ctx.arc(hxm, hym, 1.5 * u, 0, TAU); ctx.fill();
+            ctx.fillStyle = s.colS(s.shoot, fadem); ctx.beginPath(); ctx.arc(hxm, hym, 1.5 * u, 0, TAU); ctx.fill();
           }
         }
       }
@@ -543,11 +543,11 @@
           ctx.lineCap = 'round';
           for (var gb = 0; gb < NB2; gb++) {
             var b0 = gb / NB2, b1 = (gb + 1) / NB2;
-            ctx.strokeStyle = s.inkS(0.9 * fb * Math.pow(1 - b0, 2.2)); ctx.lineWidth = Math.max(0.8, (3.2 - 2.6 * b0) * u);
+            ctx.strokeStyle = s.colS(s.shoot, fb * Math.pow(1 - b0, 2.2)); ctx.lineWidth = Math.max(0.8, (3.2 - 2.6 * b0) * u);
             ctx.beginPath(); ctx.moveTo(bxh - ubx * tailB * b0, byh - uby * tailB * b0); ctx.lineTo(bxh - ubx * tailB * b1, byh - uby * tailB * b1); ctx.stroke();
           }
-          ctx.fillStyle = s.inkS(0.16 * fb); ctx.beginPath(); ctx.arc(bxh, byh, 7 * u, 0, TAU); ctx.fill();
-          ctx.fillStyle = s.inkS(fb); ctx.beginPath(); ctx.arc(bxh, byh, 2.6 * u, 0, TAU); ctx.fill();
+          ctx.fillStyle = s.colS(s.shoot, 0.22 * fb); ctx.beginPath(); ctx.arc(bxh, byh, 7 * u, 0, TAU); ctx.fill();
+          ctx.fillStyle = s.colS(s.shoot, fb); ctx.beginPath(); ctx.arc(bxh, byh, 2.6 * u, 0, TAU); ctx.fill();
         }
       }
 

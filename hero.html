@@ -51,7 +51,7 @@ button, select, input { font: inherit; }
 /* 바탕 깊이를 켜면 글 뒤를 누르던 막을 걷는다. 바탕 자체가 가운데에서 밝아지기 때문이다 */
 .hero.depth .scrim { display: none; }
 .copy h1 { margin: 18px 0 20px; font-family: Outfit, Inter, system-ui, sans-serif; font-weight: 600; line-height: 1.12; }
-.hero[data-layout="center"] .copy h1 { font-size: clamp(36px, 5vw, 64px); }
+.hero[data-layout="center"] .copy h1 { font-size: clamp(34px, 4.4vw, 56px); }
 .hero[data-layout="left"] .copy h1 { font-size: clamp(44px, 5.8vw, 86px); line-height: 1.0; }
 .copy .lead { font-size: 18px; line-height: 1.65; color: var(--muted); margin: 0 0 30px; }
 .hero[data-layout="center"] .copy .lead { max-width: 620px; margin-left: auto; margin-right: auto; }
@@ -266,7 +266,8 @@ button, select, input { font: inherit; }
   window.__hero = { stats: stats, state: st };
 
   function makeP() {
-    P = LAB.makeP(palOf(), st.theme);
+    /* 별자리 후보는 늘 따뜻한 무지개 파스텔로 그린다. 고른 팔레트는 버튼 색만 바꾼다 */
+    P = LAB.makeP(st.v === 'h1-constellation' ? 'rainbow' : palOf(), st.theme);
     P.layout = st.layout; P.quiet = QUIET[st.layout]; P.depth = st.depth;
     state = null; stats.frames = 0; stats.sumMs = 0; stats.maxMs = 0;
   }
