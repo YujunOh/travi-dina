@@ -198,7 +198,7 @@ button, select, input { font: inherit; }
     <label class="c"><input type="checkbox" id="chkG"> 리퀴드 글래스</label>
     <span class="l">테두리</span><span class="seg" id="segBE"><button type="button" data-k="grad">그라데이션</button><button type="button" data-k="none">투명</button><button type="button" data-k="line">선</button></span>
     <span class="l">테두리 빛 세기</span><input type="range" id="rngBE" min="0" max="150" step="1"><input type="number" id="numBE" min="0" max="150" step="1" style="width:56px">
-    <span class="l">퍼짐</span><input type="range" id="rngBS" min="0" max="39" step="1"><input type="number" id="numBS" min="0" max="39" step="1" style="width:52px">
+    <span class="l">퍼짐</span><input type="range" id="rngBS" min="0" max="50" step="1"><input type="number" id="numBS" min="0" max="50" step="1" style="width:52px">
     <span class="l">흐림</span><input type="range" id="rngBB" min="0" max="80" step="1"><input type="number" id="numBB" min="0" max="80" step="1" style="width:52px">
     <span class="l">불투명도 (유리일 때는 흰 기운)</span><input type="range" id="rngBO" min="0" max="100" step="1"><input type="number" id="numBO" min="0" max="100" step="1" style="width:52px">
     <span id="valBtn" style="font-family:ui-monospace,Consolas,monospace;font-size:12px;color:var(--muted)"></span></div>
@@ -277,14 +277,14 @@ button, select, input { font: inherit; }
     lines: q.get('lines') === '1' ? '1' : '2',
     lead: q.has('lead') ? q.get('lead') : 'self',
     /* 로고 글꼴, 굵기(400~900), 크기(px) */
-    hf: num('hf', 90, 0, 120), ff: num('ff', 140, 0, 320),
+    hf: num('hf', 90, 0, 120), ff: num('ff', 90, 0, 320),
     /* 바탕 빛의 가장자리 색. 화면 색마다 따로 (# 없이 여섯 자리) */
     ec: hexOr(q.get('ec'), '000000'), ecL: hexOr(q.get('ecl'), '0e1018'),
     depth: num('depth', 50, 0, 100), depthL: num('depthl', 50, 0, 200),
     /* 어둠이 안쪽으로 들어오는 깊이(0~100). 화면 색마다 따로 */
     reach: num('reach', 30, 0, 100), reachL: num('reachl', 40, 0, 100),
     /* 버튼: 모서리 둥글기(px), 위아래 여백(px), 좌우 여백(px) */
-    br: num('br', 12, 0, 32), by: num('by', 12, 6, 28), bx: num('bx', 22, 10, 56), glass: q.get('glass') !== '0', be: { grad: 1, none: 1, line: 1 }[q.get('be')] ? q.get('be') : 'grad', bes: num('bes', 100, 0, 150), bsp: num('bsp', 22, 0, 39), bo: num('bo', q.get('glass') === '0' ? 100 : 4, 0, 100), bb: num('bb', 28, 0, 80),
+    br: num('br', 12, 0, 32), by: num('by', 12, 6, 28), bx: num('bx', 22, 10, 56), glass: q.get('glass') !== '0', be: { grad: 1, none: 1, line: 1 }[q.get('be')] ? q.get('be') : 'grad', bes: num('bes', 150, 0, 150), bsp: num('bsp', 40, 0, 50), bo: num('bo', q.get('glass') === '0' ? 100 : 4, 0, 100), bb: num('bb', 28, 0, 80),
     /* 별자리 색: 계열(시작 색상 0~360), 다양함(색상 폭 0~360), 채도(0~100), 밝기(30~90) */
     sb: num('sb', 230, 0, 360), sp: num('sp', 15, 0, 360), ss: num('ss', 35, 0, 100), sl: num('sl', 60, 30, 90),
     lc: q.get('lc') === 'u' ? 'u' : 't', fnt: q.get('fnt') !== '0',
@@ -464,9 +464,9 @@ button, select, input { font: inherit; }
     if (st.pal) p.set('pal', st.pal); if (st.speed !== 100) p.set('speed', st.speed);
     if (st.copy !== 'd') p.set('copy', st.copy);
     if (st.lines === '1') p.set('lines', '1'); if (st.lead !== 'self') p.set('lead', st.lead);
-    if (st.br !== 12) p.set('br', st.br); if (st.by !== 12) p.set('by', st.by); if (st.bx !== 22) p.set('bx', st.bx); if (!st.glass) p.set('glass', '0'); if (st.be !== 'grad') p.set('be', st.be); if (st.bes !== 100) p.set('bes', st.bes); if (st.bsp !== 22) p.set('bsp', st.bsp); if (st.bo !== (st.glass ? 4 : 100)) p.set('bo', st.bo); if (st.bb !== 28) p.set('bb', st.bb);
+    if (st.br !== 12) p.set('br', st.br); if (st.by !== 12) p.set('by', st.by); if (st.bx !== 22) p.set('bx', st.bx); if (!st.glass) p.set('glass', '0'); if (st.be !== 'grad') p.set('be', st.be); if (st.bes !== 150) p.set('bes', st.bes); if (st.bsp !== 40) p.set('bsp', st.bsp); if (st.bo !== (st.glass ? 4 : 100)) p.set('bo', st.bo); if (st.bb !== 28) p.set('bb', st.bb);
     if (st.sb !== 230) p.set('sb', st.sb); if (st.sp !== 15) p.set('sp', st.sp); if (st.ss !== 35) p.set('ss', st.ss); if (st.sl !== 60) p.set('sl', st.sl);
-    if (st.hf !== 90) p.set('hf', st.hf); if (st.ff !== 140) p.set('ff', st.ff);
+    if (st.hf !== 90) p.set('hf', st.hf); if (st.ff !== 90) p.set('ff', st.ff);
     if (st.ec !== '000000') p.set('ec', st.ec); if (st.ecL !== '0e1018') p.set('ecl', st.ecL);
     if (st.depth !== 50) p.set('depth', st.depth); if (st.depthL !== 50) p.set('depthl', st.depthL);
     if (st.reach !== 30) p.set('reach', st.reach); if (st.reachL !== 40) p.set('reachl', st.reachL);
@@ -554,7 +554,15 @@ button, select, input { font: inherit; }
   });
 
   buildSwatches(); customStops(); fit(); makeP(); sync();
-  window.addEventListener('resize', function () { fit(); if (still) settle(); });
+  /* 조절 막대는 페이지를 확대하거나 축소해도 화면에서 같은 크기로 보이게 한다. 확대 비율은 창 바깥 폭과 안쪽 폭의 비로 어림한다 */
+  function fixCtlZoom() {
+    var z = window.outerWidth && window.innerWidth ? window.outerWidth / window.innerWidth : 1;
+    if (!(z > 0.2 && z < 6)) z = 1;
+    z = Math.round(z * 20) / 20; /* 창 테두리 때문에 생기는 작은 오차를 5% 단위로 맞춘다 */
+    var ctl = document.getElementById('ctl'); ctl.style.zoom = (1 / z).toFixed(3); ctl.setAttribute('data-zoom', z);
+  }
+  fixCtlZoom();
+  window.addEventListener('resize', function () { fixCtlZoom(); fit(); if (still) settle(); });
   if (still) settle();
   last = performance.now(); requestAnimationFrame(loop);
 })();
