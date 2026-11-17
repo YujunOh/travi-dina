@@ -37,7 +37,7 @@ button, select, input { font: inherit; }
 .hero[data-layout="center"] .scrim { background: radial-gradient(ellipse 44% 36% at 50% 52%, color-mix(in srgb, var(--bg) 74%, transparent) 0%, color-mix(in srgb, var(--bg) 46%, transparent) 55%, transparent 100%); }
 .hero[data-layout="left"] .scrim { background: linear-gradient(90deg, color-mix(in srgb, var(--bg) 94%, transparent) 0%, color-mix(in srgb, var(--bg) 86%, transparent) 30%, transparent 64%); }
 .copy { position: absolute; z-index: 2; }
-.hero[data-layout="center"] .copy { left: 50%; top: 52%; transform: translate(-50%, -50%); width: min(92vw, 900px); text-align: center; }
+.hero[data-layout="center"] .copy { left: 50%; top: 52%; transform: translate(-50%, -50%); width: min(92vw, 1120px); text-align: center; }
 .hero[data-layout="left"] .copy { left: max(32px, 7vw); top: 54%; transform: translateY(-50%); width: min(86vw, 660px); text-align: left; }
 .eyebrow { font-size: 12px; letter-spacing: 0.22em; font-weight: 700; color: var(--muted); }
 .copy h1 { margin: 18px 0 20px; font-weight: 700; letter-spacing: -0.035em; line-height: 1.06; }
@@ -130,6 +130,8 @@ button, select, input { font: inherit; }
   <div class="g"><span class="l">글 배치</span><div class="seg" id="segL"><button type="button" data-k="center">가운데</button><button type="button" data-k="left">왼쪽 크게</button></div></div>
   <div class="g"><span class="l">팔레트</span><select id="selP"></select></div>
   <div class="g"><span class="l">문구</span><select id="selC"></select></div>
+  <div class="g"><span class="l">제목</span><div class="seg" id="segN"><button type="button" data-k="2">두 줄</button><button type="button" data-k="1">한 줄</button></div></div>
+  <div class="g"><span class="l">소개 문구</span><select id="selLd"></select></div>
   <div class="g"><span class="l">속도</span><input type="range" id="rngS" min="40" max="200" step="5"><span id="valS"></span></div>
   <label class="c"><input type="checkbox" id="chkT"> 글</label>
   <button class="act" type="button" id="btnLink">이 상태 링크 복사</button>
@@ -166,6 +168,13 @@ button, select, input { font: inherit; }
     c: { label: 'Your data stays yours', center: 'Your data stays yours.|The model is shared.', left: 'Your data stays yours.|The model is shared.', lead: LEAD_NEW }
   };
 
+  /* 소개 문구 후보. 빈 값은 고른 문구(위의 COPY)에 딸린 소개 문구를 그대로 쓴다 */
+  var LEADS = {
+    '': { label: '문구에 딸린 것' },
+    turn: { label: 'Turn independent resources…', text: 'Turn independent resources into collaborative intelligence, while retaining control of what you own.' },
+    self: { label: 'Self-sovereign collaborative intelligence', text: 'Self-sovereign collaborative intelligence' },
+    none: { label: '없음', text: '' }
+  };
   var q = new URLSearchParams(location.search);
   function byId(id) { for (var i = 0; i < V.length; i++) if (V[i].id === id) return V[i]; return null; }
   var st = {
@@ -176,7 +185,9 @@ button, select, input { font: inherit; }
     speed: Math.max(40, Math.min(200, +(q.get('speed') || 100))),
     text: q.get('text') !== '0', chrome: q.get('chrome') !== '0', ui: q.get('ui') !== '0',
     copy: COPY[q.get('copy')] ? q.get('copy') : 'd',
-    h: q.get('h') || ''
+    h: q.get('h') || '',
+    lines: q.get('lines') === '1' ? '1' : '2',
+    lead: q.get('lead') || ''
   };
 
   /* 후보마다 테마별 기본 팔레트를 정해 둘 수 있다(heroPal: { light, dark }) */
@@ -210,7 +221,7 @@ button, select, input { font: inherit; }
     ctx.restore();
     var ms = performance.now() - t0; stats.frames++; stats.sumMs += ms; if (ms > stats.maxMs) stats.maxMs = ms;
   }
-  var still = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var still = false; // 움직임을 줄이는 설정(Windows 의 애니메이션 효과 끔)이어도 멈추지 않는다. 후보를 비교하려면 움직임이 보여야 한다
   function settle() { for (var i = 0; i < 240; i++) frame(16); } // 움직임을 줄이는 설정이면 4초쯤 돌린 장면에서 멈춘다
   function loop(now) {
     var dt = Math.max(0, Math.min(64, now - last)); last = now;
@@ -231,16 +242,19 @@ button, select, input { font: inherit; }
     document.body.classList.toggle('no-ui', !st.ui);
     document.body.classList.toggle('no-chrome', !st.chrome);
     document.body.classList.toggle('no-text', !st.text);
-    document.getElementById('lead').textContent = COPY[st.copy].lead;
+    if (!LEADS[st.lead]) st.lead = '';
+    document.getElementById('lead').textContent = st.lead ? LEADS[st.lead].text : COPY[st.copy].lead;
+    document.getElementById('selLd').value = st.lead;
     var cta = COPY[st.copy].cta || ['Join TRAVI', 'Explore Coops'];
     document.getElementById('cta1').textContent = cta[0]; document.getElementById('cta2').textContent = cta[1];
     document.getElementById('selC').value = st.copy;
-    document.getElementById('h1').innerHTML = (st.h || COPY[st.copy][st.layout]).split('|').map(function (s) { return s.replace(/[&<>]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]; }); }).join('<br>');
+    document.getElementById('h1').innerHTML = (st.h || COPY[st.copy][st.layout]).split('|').map(function (s) { return s.replace(/[&<>]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]; }); }).join(st.lines === '1' ? ' ' : '<br>');
     var hi = HERO.indexOf(v);
     document.getElementById('cap').textContent = (hi >= 0 ? 'CANDIDATE ' + (hi + 1) + ' OF ' + HERO.length + ' · ' : 'LAB · ') + (v.en || v.id || '');
-    seg(document.getElementById('segV'), st.v, function (k) { st.v = k; st.pal = ''; apply(); });
-    seg(document.getElementById('segT'), st.theme, function (k) { st.theme = k; st.pal = ''; apply(); });
+    seg(document.getElementById('segV'), st.v, function (k) { st.pal = palOf(); st.v = k; apply(); });
+    seg(document.getElementById('segT'), st.theme, function (k) { st.pal = palOf(); st.theme = k; apply(); });
     seg(document.getElementById('segL'), st.layout, function (k) { st.layout = k; apply(); });
+    seg(document.getElementById('segN'), st.lines, function (k) { st.lines = k; sync(); });
     document.getElementById('selOld').value = hi >= 0 ? '' : st.v;
     document.getElementById('selP').value = palOf();
     document.getElementById('rngS').value = st.speed; document.getElementById('valS').textContent = st.speed + '%';
@@ -251,6 +265,7 @@ button, select, input { font: inherit; }
     var p = new URLSearchParams(); p.set('v', st.v); p.set('theme', st.theme); p.set('layout', st.layout);
     if (st.pal) p.set('pal', st.pal); if (st.speed !== 100) p.set('speed', st.speed);
     if (st.copy !== 'd') p.set('copy', st.copy);
+    if (st.lines === '1') p.set('lines', '1'); if (st.lead) p.set('lead', st.lead);
     if (!st.text) p.set('text', '0'); if (!st.chrome) p.set('chrome', '0'); if (!st.ui) p.set('ui', '0'); if (st.h) p.set('h', st.h);
     try { history.replaceState(null, '', location.pathname + '?' + p.toString()); } catch (e) {}
   }
@@ -261,13 +276,16 @@ button, select, input { font: inherit; }
   HERO.forEach(function (v, i) { var b = document.createElement('button'); b.type = 'button'; b.dataset.k = v.id; b.textContent = (i + 1) + ' ' + (v.short || v.name); b.title = v.idea || ''; segV.appendChild(b); });
   var selOld = document.getElementById('selOld');
   selOld.innerHTML = '<option value="">이전 버전</option>' + OLD.map(function (v) { return '<option value="' + v.id + '">' + v.name + '</option>'; }).join('');
-  selOld.onchange = function () { if (selOld.value) { st.v = selOld.value; st.pal = ''; apply(); } };
+  selOld.onchange = function () { if (selOld.value) { st.pal = palOf(); st.v = selOld.value; apply(); } };
   var selP = document.getElementById('selP');
   selP.innerHTML = Object.keys(LAB.PALETTES).map(function (k) { return '<option value="' + k + '">' + LAB.PALETTES[k].label + '</option>'; }).join('');
   selP.onchange = function () { st.pal = selP.value; apply(); };
   var selC = document.getElementById('selC');
   selC.innerHTML = Object.keys(COPY).map(function (k) { return '<option value="' + k + '">' + COPY[k].label + '</option>'; }).join('');
   selC.onchange = function () { st.copy = selC.value; st.h = ''; sync(); };
+  var selLd = document.getElementById('selLd');
+  selLd.innerHTML = Object.keys(LEADS).map(function (k) { return '<option value="' + k + '">' + LEADS[k].label + '</option>'; }).join('');
+  selLd.onchange = function () { st.lead = selLd.value; sync(); };
   document.getElementById('rngS').oninput = function () { st.speed = +this.value; sync(); };
   document.getElementById('chkT').onchange = function () { st.text = this.checked; sync(); };
   document.getElementById('btnLink').onclick = function () {
