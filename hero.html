@@ -124,7 +124,8 @@ button, select, input { font: inherit; }
 /* 헤더 아래 경계: 선을 긋지 않고, 헤더 바탕이 아래로 가며 점점 투명해진다. 길이는 --head-fade 로 조절한다(0이면 예전처럼 선) */
 .topbar.fade { border-bottom-color: transparent; background: transparent; -webkit-backdrop-filter: none; backdrop-filter: none; }
 .topbar.fade::before { content: ''; position: absolute; left: 0; right: 0; top: 0; height: calc(100% + var(--head-fade, 40px)); z-index: -1; pointer-events: none;
-  background: linear-gradient(to bottom, color-mix(in srgb, var(--bg) 90%, transparent) 0, color-mix(in srgb, var(--bg) 84%, transparent) calc(100% - var(--head-fade, 40px) * 1.6), transparent 100%); }
+  /* --head-alpha 는 헤더 바탕의 불투명도. 맨 위(스크롤 전)에서는 조절 막대 값, 스크롤하면 90% */
+  background: linear-gradient(to bottom, color-mix(in srgb, var(--bg) var(--head-alpha, 90%), transparent) 0, color-mix(in srgb, var(--bg) calc(var(--head-alpha, 90%) * 0.93), transparent) calc(100% - var(--head-fade, 40px) * 1.6), transparent 100%); }
 .no-text .copy, .no-text .scrim { display: none; }
 @media (max-width: 900px) { .nav a.h { display: none; } .doms { grid-template-columns: 1fr 1fr; } .topbar .in { padding: 0 16px; gap: 14px; } .cap { right: 16px; } }
 @media (max-width: 560px) { .peek .in { padding: 0 16px; } .ctl { font-size: 12px; } }
@@ -209,6 +210,7 @@ button, select, input { font: inherit; }
     <span class="l">크기</span><input type="range" id="rngLS" min="16" max="36" step="1"><span id="valLS"></span></div>
   <div class="g"><span class="l">속도</span><input type="range" id="rngS" min="40" max="200" step="5"><span id="valS"></span></div>
   <label class="c"><input type="checkbox" id="chkT"> 글</label>
+  <div class="g"><span class="l">헤더 불투명도 (스크롤 전에만. 내리면 90)</span><input type="range" id="rngHO" min="0" max="100" step="1"><input type="number" id="numHO" min="0" max="100" step="1" style="width:52px"></div>
   <div class="g"><span class="l">헤더 아래 경계가 사라지는 길이</span><input type="range" id="rngHF" min="0" max="120" step="1"><input type="number" id="numHF" min="0" max="120" step="1" style="width:58px"><span class="l">px</span></div>
   <div class="g"><span class="l">히어로 아래 경계가 사라지는 길이</span><input type="range" id="rngFF" min="0" max="320" step="1"><input type="number" id="numFF" min="0" max="320" step="1" style="width:58px"><span class="l">px</span></div>
   <div class="g"><span class="l" id="lblEC">가장자리 색</span><input type="color" id="colE" style="width:38px;height:26px;padding:0;border:1px solid var(--line-2);border-radius:6px;background:none;cursor:pointer"><span id="valEC" style="font-family:ui-monospace,Consolas,monospace;font-size:12px"></span>
@@ -277,7 +279,7 @@ button, select, input { font: inherit; }
     lines: q.get('lines') === '1' ? '1' : '2',
     lead: q.has('lead') ? q.get('lead') : 'self',
     /* 로고 글꼴, 굵기(400~900), 크기(px) */
-    hf: num('hf', 90, 0, 120), ff: num('ff', 90, 0, 320),
+    ho: num('ho', 30, 0, 100), hf: num('hf', 90, 0, 120), ff: num('ff', 90, 0, 320),
     /* 바탕 빛의 가장자리 색. 화면 색마다 따로 (# 없이 여섯 자리) */
     ec: hexOr(q.get('ec'), '000000'), ecL: hexOr(q.get('ecl'), '0e1018'),
     depth: num('depth', 50, 0, 100), depthL: num('depthl', 50, 0, 200),
@@ -451,6 +453,7 @@ button, select, input { font: inherit; }
     var ecv = st.theme === 'light' ? st.ecL : st.ec; document.getElementById('colE').value = '#' + ecv; document.getElementById('valEC').textContent = '#' + ecv;
     document.getElementById('lblEC').textContent = '가장자리 색 · ' + (st.theme === 'light' ? '밝은 화면' : '어두운 화면');
     var tb = document.querySelector('.topbar'); tb.classList.toggle('fade', st.hf > 0); tb.style.setProperty('--head-fade', st.hf + 'px');
+    document.getElementById('rngHO').value = st.ho; document.getElementById('numHO').value = st.ho; headAlpha();
     document.getElementById('rngHF').value = st.hf; document.getElementById('numHF').value = st.hf;
     var isL = st.theme === 'light', dv = isL ? st.depthL : st.depth, dmax = isL ? 200 : 100;
     ['rngD', 'numD'].forEach(function (id) { var el = document.getElementById(id); el.max = dmax; el.value = dv; });
@@ -466,7 +469,7 @@ button, select, input { font: inherit; }
     if (st.lines === '1') p.set('lines', '1'); if (st.lead !== 'self') p.set('lead', st.lead);
     if (st.br !== 12) p.set('br', st.br); if (st.by !== 12) p.set('by', st.by); if (st.bx !== 22) p.set('bx', st.bx); if (!st.glass) p.set('glass', '0'); if (st.be !== 'grad') p.set('be', st.be); if (st.bes !== 150) p.set('bes', st.bes); if (st.bsp !== 40) p.set('bsp', st.bsp); if (st.bo !== (st.glass ? 4 : 100)) p.set('bo', st.bo); if (st.bb !== 28) p.set('bb', st.bb);
     if (st.sb !== 230) p.set('sb', st.sb); if (st.sp !== 15) p.set('sp', st.sp); if (st.ss !== 35) p.set('ss', st.ss); if (st.sl !== 60) p.set('sl', st.sl);
-    if (st.hf !== 90) p.set('hf', st.hf); if (st.ff !== 90) p.set('ff', st.ff);
+    if (st.ho !== 30) p.set('ho', st.ho); if (st.hf !== 90) p.set('hf', st.hf); if (st.ff !== 90) p.set('ff', st.ff);
     if (st.ec !== '000000') p.set('ec', st.ec); if (st.ecL !== '0e1018') p.set('ecl', st.ecL);
     if (st.depth !== 50) p.set('depth', st.depth); if (st.depthL !== 50) p.set('depthl', st.depthL);
     if (st.reach !== 30) p.set('reach', st.reach); if (st.reachL !== 40) p.set('reachl', st.reachL);
@@ -533,6 +536,14 @@ button, select, input { font: inherit; }
   document.getElementById('btnEK').onclick = function () { setEdge('000000'); };
   document.getElementById('btnEN').onclick = function () { setEdge('0a1030'); };
   document.getElementById('btnEB').onclick = function () { setEdge(st.theme === 'light' ? 'fbfbfd' : '0b0f1a'); };
+  /* 헤더 불투명도: 맨 위에서는 막대 값, 조금이라도 스크롤하면 90%. 경계를 선으로 둘 때(길이 0)도 같은 값을 쓴다 */
+  function headAlpha() {
+    var tb = document.querySelector('.topbar'), top = (window.scrollY || 0) < 24, a = top ? st.ho : 90;
+    tb.style.setProperty('--head-alpha', a + '%');
+    if (!tb.classList.contains('fade')) tb.style.background = 'color-mix(in srgb, var(--bg) ' + a + '%, transparent)'; else tb.style.background = '';
+  }
+  window.addEventListener('scroll', headAlpha, { passive: true });
+  ['rngHO', 'numHO'].forEach(function (id) { var el = document.getElementById(id); el.oninput = function () { var v = +el.value; if (isNaN(v)) return; st.ho = Math.max(0, Math.min(100, v)); sync(); }; });
   ['rngHF', 'numHF'].forEach(function (id) { var el = document.getElementById(id); el.oninput = function () { var v = +el.value; if (isNaN(v)) return; st.hf = Math.max(0, Math.min(120, v)); sync(); }; });
   ['rngR', 'numR'].forEach(function (id) { var el = document.getElementById(id); el.oninput = function () { var v = +el.value; if (isNaN(v)) return; v = Math.max(0, Math.min(100, v)); if (st.theme === 'light') st.reachL = v; else st.reach = v; apply(); }; });
   ['rngD', 'numD'].forEach(function (id) { var el = document.getElementById(id); el.oninput = function () { var v = +el.value; if (isNaN(v)) return; if (st.theme === 'light') st.depthL = Math.max(0, Math.min(200, v)); else st.depth = Math.max(0, Math.min(100, v)); apply(); }; });
