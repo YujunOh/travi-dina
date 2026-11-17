@@ -157,6 +157,7 @@ button, select, input { font: inherit; }
   <div class="g" style="flex-wrap:wrap;row-gap:6px"><span class="l">버튼 모서리</span><input type="range" id="rngBR" min="0" max="32" step="1"><input type="number" id="numBR" min="0" max="32" step="1" style="width:52px">
     <span class="l">위아래 여백</span><input type="range" id="rngBY" min="6" max="28" step="1"><input type="number" id="numBY" min="6" max="28" step="1" style="width:52px">
     <span class="l">좌우 여백</span><input type="range" id="rngBX" min="10" max="56" step="1"><input type="number" id="numBX" min="10" max="56" step="1" style="width:52px">
+    <span class="l">불투명도</span><input type="range" id="rngBO" min="0" max="100" step="1"><input type="number" id="numBO" min="0" max="100" step="1" style="width:52px">
     <span id="valBtn" style="font-family:ui-monospace,Consolas,monospace;font-size:12px;color:var(--muted)"></span></div>
   <div class="g" hidden data-fixed="1"><span class="l">로고 표기</span><div class="seg" id="segLC"><button type="button" data-k="t">Travi</button><button type="button" data-k="u">TRAVI</button></div>
     <label class="c"><input type="checkbox" id="chkF"> 분수</label></div>
@@ -231,7 +232,7 @@ button, select, input { font: inherit; }
     /* 어둠이 안쪽으로 들어오는 깊이(0~100). 화면 색마다 따로 */
     reach: num('reach', 0, 0, 100), reachL: num('reachl', 40, 0, 100),
     /* 버튼: 모서리 둥글기(px), 위아래 여백(px), 좌우 여백(px) */
-    br: num('br', 12, 0, 32), by: num('by', 12, 6, 28), bx: num('bx', 22, 10, 56),
+    br: num('br', 12, 0, 32), by: num('by', 12, 6, 28), bx: num('bx', 22, 10, 56), bo: num('bo', 100, 0, 100),
     /* 별자리 색: 계열(시작 색상 0~360), 다양함(색상 폭 0~360), 채도(0~100), 밝기(30~90) */
     sb: num('sb', 230, 0, 360), sp: num('sp', 15, 0, 360), ss: num('ss', 35, 0, 100), sl: num('sl', 60, 30, 90),
     lc: q.get('lc') === 'u' ? 'u' : 't', fnt: q.get('fnt') !== '0',
@@ -344,10 +345,10 @@ button, select, input { font: inherit; }
     document.getElementById('selLF').value = st.lf; document.getElementById('rngLW').value = st.lw; document.getElementById('numLW').value = st.lw;
     document.getElementById('rngLS').value = st.ls; document.getElementById('valLS').textContent = st.ls + 'px';
     /* 버튼 모양: 첫 화면의 두 버튼에 같이 적용한다 */
-    [['BR', st.br], ['BY', st.by], ['BX', st.bx]].forEach(function (x) { document.getElementById('rng' + x[0]).value = x[1]; document.getElementById('num' + x[0]).value = x[1]; });
+    [['BR', st.br], ['BY', st.by], ['BX', st.bx], ['BO', st.bo]].forEach(function (x) { document.getElementById('rng' + x[0]).value = x[1]; document.getElementById('num' + x[0]).value = x[1]; });
     ['cta1', 'cta2'].forEach(function (id) { var el = document.getElementById(id); el.style.borderRadius = st.br + 'px'; el.style.padding = st.by + 'px ' + st.bx + 'px'; });
     var cb = document.getElementById('cta1').getBoundingClientRect();
-    document.getElementById('valBtn').textContent = 'radius ' + st.br + 'px, padding ' + st.by + 'px ' + st.bx + 'px, 크기 ' + Math.round(cb.width) + '×' + Math.round(cb.height);
+    document.getElementById('valBtn').textContent = 'radius ' + st.br + 'px, padding ' + st.by + 'px ' + st.bx + 'px, 불투명도 ' + st.bo + '%, 크기 ' + Math.round(cb.width) + '×' + Math.round(cb.height);
     /* 별자리 색 조절: 막대와 숫자 칸을 맞추고, 지금 범위의 색을 띠로 보여 준다 */
     [['SB', st.sb], ['SP', st.sp], ['SS', st.ss], ['SL', st.sl]].forEach(function (x) { document.getElementById('rng' + x[0]).value = x[1]; document.getElementById('num' + x[0]).value = x[1]; });
     var strip = document.getElementById('starStrip'), cells = '';
@@ -375,7 +376,7 @@ button, select, input { font: inherit; }
     pc = st.pal === 'custom' ? [null, hsl(st.hue, st.sat, st.lit)] : [null, [27, 45, 106]];
     if (pc && pc[1]) {
       var c1 = pc[1], lum = (0.2126 * c1[0] + 0.7152 * c1[1] + 0.0722 * c1[2]) / 255;
-      cta1.style.background = 'rgb(' + c1.join(',') + ')'; cta1.style.borderColor = 'transparent'; cta1.style.color = lum > 0.5 ? '#0d1220' : '#ffffff';
+      cta1.style.background = 'rgba(' + c1.join(',') + ',' + (st.bo / 100) + ')'; cta1.style.borderColor = 'transparent'; cta1.style.color = lum > 0.5 ? '#0d1220' : '#ffffff';
     }
     var mid = hex(hsl(st.hue, st.sat, st.lit)); document.getElementById('swatch').style.background = mid; document.getElementById('hexOut').textContent = mid;
     document.getElementById('rngS').value = st.speed; document.getElementById('valS').textContent = st.speed + '%';
@@ -391,7 +392,7 @@ button, select, input { font: inherit; }
     if (st.pal) p.set('pal', st.pal); if (st.speed !== 100) p.set('speed', st.speed);
     if (st.copy !== 'd') p.set('copy', st.copy);
     if (st.lines === '1') p.set('lines', '1'); if (st.lead !== 'self') p.set('lead', st.lead);
-    if (st.br !== 12) p.set('br', st.br); if (st.by !== 12) p.set('by', st.by); if (st.bx !== 22) p.set('bx', st.bx);
+    if (st.br !== 12) p.set('br', st.br); if (st.by !== 12) p.set('by', st.by); if (st.bx !== 22) p.set('bx', st.bx); if (st.bo !== 100) p.set('bo', st.bo);
     if (st.sb !== 230) p.set('sb', st.sb); if (st.sp !== 15) p.set('sp', st.sp); if (st.ss !== 35) p.set('ss', st.ss); if (st.sl !== 60) p.set('sl', st.sl);
     if (st.depth !== 35) p.set('depth', st.depth); if (st.depthL !== 35) p.set('depthl', st.depthL);
     if (st.reach !== 0) p.set('reach', st.reach); if (st.reachL !== 40) p.set('reachl', st.reachL);
@@ -422,7 +423,7 @@ button, select, input { font: inherit; }
   selC.innerHTML = Object.keys(COPY).map(function (k) { return '<option value="' + k + '">' + COPY[k].label + '</option>'; }).join('');
   selC.onchange = function () { st.copy = selC.value; st.h = ''; sync(); };
   document.getElementById('chkF').onchange = function () { st.fnt = this.checked; sync(); };
-  [['BR', 'br'], ['BY', 'by'], ['BX', 'bx']].forEach(function (x) {
+  [['BR', 'br'], ['BY', 'by'], ['BX', 'bx'], ['BO', 'bo']].forEach(function (x) {
     ['rng', 'num'].forEach(function (kind) {
       var el = document.getElementById(kind + x[0]);
       el.oninput = function () { var v = +el.value; if (isNaN(v)) return; st[x[1]] = Math.max(+el.min, Math.min(+el.max, v)); sync(); };
