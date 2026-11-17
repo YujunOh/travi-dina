@@ -129,6 +129,7 @@ button, select, input { font: inherit; }
   <div class="g"><span class="l">테마</span><div class="seg" id="segT"><button type="button" data-k="light">밝게</button><button type="button" data-k="dark">어둡게</button></div></div>
   <div class="g"><span class="l">글 배치</span><div class="seg" id="segL"><button type="button" data-k="center">가운데</button><button type="button" data-k="left">왼쪽 크게</button></div></div>
   <div class="g"><span class="l">팔레트</span><select id="selP"></select></div>
+  <div class="g" id="gSw" style="flex-wrap:wrap;row-gap:6px"><span class="l">색 고르기</span><span id="swRow" style="display:inline-flex;flex-wrap:wrap;gap:10px 14px;align-items:center"></span></div>
   <div class="g" id="gCustom" hidden><span class="l">색상</span><input type="range" id="rngH" min="0" max="360" step="1"><input type="number" id="numH" min="0" max="360" step="1" style="width:58px">
     <span class="l">진하기</span><input type="range" id="rngSa" min="0" max="100" step="1"><input type="number" id="numSa" min="0" max="100" step="1" style="width:52px">
     <span class="l">밝기</span><input type="range" id="rngLi" min="20" max="90" step="1"><input type="number" id="numLi" min="20" max="90" step="1" style="width:52px">
@@ -208,6 +209,30 @@ button, select, input { font: inherit; }
   function customStops() {
     LAB.PALETTES.custom.stops = [hsl(st.hue + 14, st.sat, Math.min(92, st.lit + 8)), hsl(st.hue, st.sat, st.lit), hsl(st.hue - 14, st.sat, Math.max(15, st.lit - 6))];
   }
+  /* 눌러서 고르는 색 견본. 값은 색상(0~360), 진하기(0~100), 밝기(20~90)이고 고르면 '직접 조절' 팔레트가 그 값으로 바뀐다 */
+  var SWATCHES = [
+    { g: '숲색', items: [['Forest green', 120, 61, 34], ['Deep forest', 135, 55, 27], ['Pine', 150, 50, 32], ['Moss', 105, 45, 38], ['Fern', 125, 42, 45], ['Emerald', 150, 62, 42], ['Sage', 135, 28, 52]] },
+    { g: '남색', items: [['Navy', 222, 62, 34], ['Deep navy', 226, 60, 26], ['Royal', 221, 66, 44], ['Steel blue', 212, 50, 48], ['Indigo blue', 232, 55, 46], ['Sky navy', 214, 70, 58]] },
+    { g: '노랑', items: [['Gold', 45, 90, 52], ['Amber', 40, 92, 50], ['Sunflower', 48, 95, 58], ['Mustard', 44, 72, 46], ['Butter', 50, 90, 68]] },
+    { g: '주황', items: [['Orange', 24, 82, 53], ['Burnt orange', 20, 80, 46], ['Tangerine', 28, 92, 56], ['Coral', 14, 82, 60], ['Apricot', 30, 90, 66], ['Rust', 16, 68, 42]] }
+  ];
+  function buildSwatches() {
+    var row = document.getElementById('swRow'); row.innerHTML = '';
+    SWATCHES.forEach(function (grp) {
+      var box = document.createElement('span'); box.style.cssText = 'display:inline-flex;align-items:center;gap:5px';
+      var lab = document.createElement('span'); lab.textContent = grp.g; lab.style.cssText = 'font-size:11px;color:var(--muted);margin-right:2px'; box.appendChild(lab);
+      grp.items.forEach(function (it) {
+        var b = document.createElement('button'); b.type = 'button'; b.className = 'sw';
+        var col = hex(hsl(it[1], it[2], it[3]));
+        b.title = it[0] + ' ' + col + ' (색상 ' + it[1] + ', 진하기 ' + it[2] + ', 밝기 ' + it[3] + ')';
+        b.setAttribute('aria-label', it[0]); b.dataset.h = it[1]; b.dataset.s = it[2]; b.dataset.l = it[3];
+        b.style.cssText = 'width:22px;height:22px;border-radius:50%;padding:0;cursor:pointer;border:2px solid transparent;outline:1px solid var(--line-2);background:' + col;
+        b.onclick = function () { st.hue = it[1]; st.sat = it[2]; st.lit = it[3]; st.pal = 'custom'; apply(); };
+        box.appendChild(b);
+      });
+      row.appendChild(box);
+    });
+  }
   /* 후보마다 테마별 기본 팔레트를 정해 둘 수 있다(heroPal: { light, dark }) */
   function palOf() {
     if (st.pal && LAB.PALETTES[st.pal]) return st.pal;
@@ -277,6 +302,10 @@ button, select, input { font: inherit; }
     document.getElementById('selP').value = palOf();
     var isCustom = palOf() === 'custom'; document.getElementById('gCustom').hidden = !isCustom;
     [['H', st.hue], ['Sa', st.sat], ['Li', st.lit]].forEach(function (x) { document.getElementById('rng' + x[0]).value = x[1]; document.getElementById('num' + x[0]).value = x[1]; });
+    Array.prototype.forEach.call(document.querySelectorAll('#swRow .sw'), function (b) {
+      var on = isCustom && +b.dataset.h === st.hue && +b.dataset.s === st.sat && +b.dataset.l === st.lit;
+      b.style.borderColor = on ? 'var(--text)' : 'transparent';
+    });
     var mid = hex(hsl(st.hue, st.sat, st.lit)); document.getElementById('swatch').style.background = mid; document.getElementById('hexOut').textContent = mid;
     document.getElementById('rngS').value = st.speed; document.getElementById('valS').textContent = st.speed + '%';
     document.getElementById('chkT').checked = st.text;
@@ -333,7 +362,7 @@ button, select, input { font: inherit; }
     if (IC[k]) box.innerHTML = IC[k]; else box.style.display = 'none';
   });
 
-  customStops(); fit(); makeP(); sync();
+  buildSwatches(); customStops(); fit(); makeP(); sync();
   window.addEventListener('resize', function () { fit(); if (still) settle(); });
   if (still) settle();
   last = performance.now(); requestAnimationFrame(loop);
