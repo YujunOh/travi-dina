@@ -491,7 +491,7 @@
 
       /* 바탕 빛(P.depth, 0~1): 앞에서 가운데 글을 향해 빛을 비춘 것처럼 가운데가 주변보다 밝고, 바깥으로 갈수록 서서히 어두워진다.
          값이 세기다. 가운데의 밝음은 바깥으로 가며 부드럽게 사라지고, 가장자리의 어둠은 가운데로 오며 부드럽게 사라진다. true 는 0.35 로 본다 */
-      var dk = P.depth === true ? 0.35 : Math.max(0, Math.min(1, +P.depth || 0));
+      var dk = P.depth === true ? 0.35 : Math.max(0, Math.min(2, +P.depth || 0)); /* 1 을 넘는 값은 밝은 화면에서 가장자리를 더 짙게, 더 안쪽까지 누른다 */
       if (dk > 0) {
         var Qd = P.quiet || { x: 0.5, y: 0.5, rx: 0.31, ry: 0.26 }, gcx = Qd.x * w, gcy = Qd.y * h, gr = Math.max(w, h) * 0.74;
         var gd = ctx.createRadialGradient(gcx, gcy, 0, gcx, gcy, gr);
@@ -501,9 +501,12 @@
           gd.addColorStop(0.8, 'rgba(0,0,0,' + r3(0.34 * dk) + ')'); gd.addColorStop(1, 'rgba(0,0,0,' + r3(0.72 * dk) + ')');
         } else {
           /* 밝은 화면: 바탕이 이미 밝아서 가운데를 더 밝히는 것만으로는 티가 안 난다. 가장자리를 푸른 회색으로 눌러 차이를 만든다 */
-          gd.addColorStop(0, 'rgba(255,255,255,' + r3(0.95 * dk) + ')'); gd.addColorStop(0.34, 'rgba(255,255,255,' + r3(0.5 * dk) + ')');
-          gd.addColorStop(0.52, 'rgba(170,184,220,' + r3(0.14 * dk) + ')'); gd.addColorStop(0.74, 'rgba(104,122,180,' + r3(0.4 * dk) + ')');
-          gd.addColorStop(1, 'rgba(58,76,140,' + r3(0.7 * dk) + ')');
+          /* 세기가 1 을 넘으면(ov) 가장자리 색이 더 짙은 남색으로 가고, 어두워지기 시작하는 자리가 가운데 쪽으로 당겨진다 */
+          var ov = Math.max(0, dk - 1), eR = Math.round(58 - 34 * ov), eG = Math.round(76 - 44 * ov), eB = Math.round(140 - 58 * ov);
+          var mR = Math.round(104 - 40 * ov), mG = Math.round(122 - 46 * ov), mB = Math.round(180 - 50 * ov), pull = 0.12 * ov;
+          gd.addColorStop(0, 'rgba(255,255,255,' + r3(0.95 * Math.min(1, dk)) + ')'); gd.addColorStop(0.34 - pull, 'rgba(255,255,255,' + r3(0.5 * Math.min(1, dk)) + ')');
+          gd.addColorStop(0.52 - pull, 'rgba(170,184,220,' + r3(0.14 * dk) + ')'); gd.addColorStop(0.74 - pull, 'rgba(' + mR + ',' + mG + ',' + mB + ',' + r3(0.4 * dk) + ')');
+          gd.addColorStop(1, 'rgba(' + eR + ',' + eG + ',' + eB + ',' + r3(0.7 * dk) + ')');
         }
         ctx.fillStyle = gd; ctx.fillRect(0, 0, w, h);
       }

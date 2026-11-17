@@ -165,7 +165,7 @@ button, select, input { font: inherit; }
     <span class="l">크기</span><input type="range" id="rngLS" min="16" max="36" step="1"><span id="valLS"></span></div>
   <div class="g"><span class="l">속도</span><input type="range" id="rngS" min="40" max="200" step="5"><span id="valS"></span></div>
   <label class="c"><input type="checkbox" id="chkT"> 글</label>
-  <div class="g"><span class="l">바탕 빛 (가운데 밝게, 주변 어둡게)</span><input type="range" id="rngD" min="0" max="100" step="1"><input type="number" id="numD" min="0" max="100" step="1" style="width:52px"></div>
+  <div class="g"><span class="l" id="lblD">바탕 빛</span><input type="range" id="rngD" min="0" max="100" step="1"><input type="number" id="numD" min="0" max="100" step="1" style="width:52px"></div>
   <button class="act" type="button" id="btnLink">이 상태 링크 복사</button>
   <a class="act" href="diagram-lab.html">실험실</a>
   <span class="l">H 키: 막대 숨김</span>
@@ -226,7 +226,7 @@ button, select, input { font: inherit; }
     lines: q.get('lines') === '1' ? '1' : '2',
     lead: q.has('lead') ? q.get('lead') : 'self',
     /* 로고 글꼴, 굵기(400~900), 크기(px) */
-    depth: num('depth', 35, 0, 100),
+    depth: num('depth', 35, 0, 100), depthL: num('depthl', 35, 0, 200),
     /* 버튼: 모서리 둥글기(px), 위아래 여백(px), 좌우 여백(px) */
     br: num('br', 12, 0, 32), by: num('by', 12, 6, 28), bx: num('bx', 22, 10, 56),
     /* 별자리 색: 계열(시작 색상 0~360), 다양함(색상 폭 0~360), 채도(0~100), 밝기(30~90) */
@@ -287,7 +287,7 @@ button, select, input { font: inherit; }
   function makeP() {
     /* 별자리 후보는 늘 따뜻한 무지개 파스텔로 그린다. 고른 팔레트는 버튼 색만 바꾼다 */
     P = LAB.makeP(st.v === 'h1-constellation' ? 'rainbow' : palOf(), st.theme);
-    P.layout = st.layout; P.quiet = QUIET[st.layout]; P.depth = st.depth / 100;
+    P.layout = st.layout; P.quiet = QUIET[st.layout]; P.depth = (st.theme === 'light' ? st.depthL : st.depth) / 100;
     P.star = { base: st.sb, spread: st.sp, sat: st.ss / 100, lit: st.sl / 100 };
     state = null; stats.frames = 0; stats.sumMs = 0; stats.maxMs = 0;
   }
@@ -375,8 +375,10 @@ button, select, input { font: inherit; }
     }
     var mid = hex(hsl(st.hue, st.sat, st.lit)); document.getElementById('swatch').style.background = mid; document.getElementById('hexOut').textContent = mid;
     document.getElementById('rngS').value = st.speed; document.getElementById('valS').textContent = st.speed + '%';
-    document.getElementById('chkT').checked = st.text; document.getElementById('rngD').value = st.depth; document.getElementById('numD').value = st.depth;
-    hero.classList.toggle('depth', st.depth > 0);
+    document.getElementById('chkT').checked = st.text; var isL = st.theme === 'light', dv = isL ? st.depthL : st.depth, dmax = isL ? 200 : 100;
+    ['rngD', 'numD'].forEach(function (id) { var el = document.getElementById(id); el.max = dmax; el.value = dv; });
+    document.getElementById('lblD').textContent = '바탕 빛 · ' + (isL ? '밝은 화면 (0~200)' : '어두운 화면 (0~100)');
+    hero.classList.toggle('depth', dv > 0);
     /* 도메인 아이콘 색: 테마별로 정해 둔 단색(없으면 글자색) */
     var icCol = (window.TRAVI_ICON_COLORS || {})[st.theme] || {};
     Array.prototype.forEach.call(document.querySelectorAll('.dom'), function (a) { var c = icCol[a.getAttribute('data-ic')]; if (c) a.style.setProperty('--dc', c); else a.style.removeProperty('--dc'); });
@@ -386,7 +388,7 @@ button, select, input { font: inherit; }
     if (st.lines === '1') p.set('lines', '1'); if (st.lead !== 'self') p.set('lead', st.lead);
     if (st.br !== 12) p.set('br', st.br); if (st.by !== 12) p.set('by', st.by); if (st.bx !== 22) p.set('bx', st.bx);
     if (st.sb !== 230) p.set('sb', st.sb); if (st.sp !== 15) p.set('sp', st.sp); if (st.ss !== 35) p.set('ss', st.ss); if (st.sl !== 60) p.set('sl', st.sl);
-    if (st.depth !== 35) p.set('depth', st.depth);
+    if (st.depth !== 35) p.set('depth', st.depth); if (st.depthL !== 35) p.set('depthl', st.depthL);
     if (st.lc === 'u') p.set('lc', 'u'); if (!st.fnt) p.set('fnt', '0');
     if (st.lf !== 'Montserrat') p.set('lf', st.lf); if (st.lw !== 800) p.set('lw', st.lw); if (st.ls !== 28) p.set('ls', st.ls);
     if (st.pal === 'custom') { p.set('hue', st.hue); p.set('sat', st.sat); p.set('lit', st.lit); }
@@ -436,7 +438,7 @@ button, select, input { font: inherit; }
   selLd.onchange = function () { st.lead = selLd.value; sync(); };
   document.getElementById('rngS').oninput = function () { st.speed = +this.value; sync(); };
   document.getElementById('chkT').onchange = function () { st.text = this.checked; sync(); };
-  ['rngD', 'numD'].forEach(function (id) { var el = document.getElementById(id); el.oninput = function () { var v = +el.value; if (isNaN(v)) return; st.depth = Math.max(0, Math.min(100, v)); apply(); }; });
+  ['rngD', 'numD'].forEach(function (id) { var el = document.getElementById(id); el.oninput = function () { var v = +el.value; if (isNaN(v)) return; if (st.theme === 'light') st.depthL = Math.max(0, Math.min(200, v)); else st.depth = Math.max(0, Math.min(100, v)); apply(); }; });
   document.getElementById('btnLink').onclick = function () {
     var b = this, url = location.href;
     function ok() { b.textContent = '복사됨'; setTimeout(function () { b.textContent = '이 상태 링크 복사'; }, 1500); }
