@@ -439,7 +439,7 @@
 
       /* 6) 배경 점: 아직 코옵에 들지 않은 기관. 자리는 고정이고 크기와 농도 세 단계로 깊이를 낸다. 문구 타원에 가까울수록 드물고 옅다 */
       /* 점 개수는 화면 크기를 따른다. 실험실 카드나 휴대폰에 큰 화면과 같은 수를 넣으면 빽빽해진다 */
-      var Rs = rng(seed + 9001), FS = [], minD = 0.034 * S, tries = 0, want = Math.round(clamp(S / 9.5, 70, 150));
+      var Rs = rng(seed + 9001), FS = [], minD = 0.034 * S, tries = 0, want = Math.round(clamp(S / 17, 36, 80));
       while (FS.length < want && tries++ < 6000) {
         x = Rs() * w; y = Rs() * h; var trr = Rs(), keep = Rs(), r0f = rho(x, y);
         if (r0f < 1.04) continue;
@@ -456,13 +456,15 @@
         FS.push({ x: x, y: y, tier: tier, a: tierA[tier] * (0.3 + 0.7 * sstep(1.0, 1.6, r0f)) * wl(x) * pb(y), tw: Rs() < 0.1, ring: tier === 2 && Rs() < 0.2 && y > 0.12 * h && y < 0.95 * h, ph: Rs() * TAU, per: 4200 + Rs() * 3400 });
       }
       /* 같은 단계, 같은 농도끼리 묶어 한 번에 칠한다 */
-      var rad = [Math.max(0.6, 0.68 * u), Math.max(0.75, 0.92 * u), Math.max(0.95, 1.22 * u)], par = [0.4, 0.7, 1], bmap = {}, rings = [];
+      var bgS = dark ? 0.55 : 0.45, bgL = dark ? 0.78 : 0.5, radK = multi ? 1.3 : 1;
+      var rad = [Math.max(0.6, 0.68 * u) * radK, Math.max(0.75, 0.92 * u) * radK, Math.max(0.95, 1.22 * u) * radK], par = [0.4, 0.7, 1], bmap = {}, rings = [];
       for (k = 0; k < FS.length; k++) {
         var s0 = FS[k], qa = Math.max(0.05, Math.round(s0.a * 20) / 20);
         if (s0.ring) rings.push(s0.x, s0.y, rad[2] + 2.9 * u);
-        if (s0.tw) { st.TW.push({ x: s0.x, y: s0.y, r: rad[s0.tier], a: s0.a, par: par[s0.tier], w: TAU / s0.per, ph: s0.ph }); continue; }
-        var key = s0.tier + '|' + qa;
-        if (!bmap[key]) { bmap[key] = { style: inkS(qa), par: par[s0.tier], d: [] }; st.B.push(bmap[key]); }
+        var hb = multi ? Math.floor(Rs() * 12) : -1, bcol = multi ? hslRgb(hb * 30 + 8, bgS, bgL) : null;
+        if (s0.tw) { st.TW.push({ x: s0.x, y: s0.y, r: rad[s0.tier], a: s0.a, par: par[s0.tier], w: TAU / s0.per, ph: s0.ph, col: bcol }); continue; }
+        var key = s0.tier + '|' + qa + '|' + hb;
+        if (!bmap[key]) { bmap[key] = { style: multi ? colS(bcol, Math.min(1, qa * 1.5)) : inkS(qa), par: par[s0.tier], d: [] }; st.B.push(bmap[key]); }
         bmap[key].d.push(s0.x, s0.y, rad[s0.tier]);
       }
       st.RG = rings; st.F = F; st.T = T; st.clock = T;
@@ -475,7 +477,16 @@
       /* 판 전체가 아주 천천히 미끄러진다(최대 초당 0.6px쯤). 점 하나하나는 제자리다. 먼 단계일수록 덜 움직여 깊이가 생긴다 */
       var dx = s.dA * Math.sin(clk * TAU / 83000 + 0.6), dy = s.dA * 0.7 * Math.sin(clk * TAU / 61000 + 2.1), GH = s.gh;
 
-      /* 배경 점 */
+      /* 바탕 깊이(P.depth): 글이 놓인 가운데가 조금 밝고 별자리 쪽 가장자리로 갈수록 서서히 어두워진다 */
+      if (P.depth) {
+        var Qd = P.quiet || { x: 0.5, y: 0.5, rx: 0.31, ry: 0.26 }, gcx = Qd.x * w, gcy = Qd.y * h, gr = Math.max(w, h) * 0.72;
+        var gd = ctx.createRadialGradient(gcx, gcy, 0, gcx, gcy, gr);
+        if (P.dark) { gd.addColorStop(0, 'rgba(64,92,176,0.34)'); gd.addColorStop(0.42, 'rgba(38,56,116,0.14)'); gd.addColorStop(0.72, 'rgba(8,12,24,0.10)'); gd.addColorStop(1, 'rgba(0,0,0,0.5)'); }
+        else { gd.addColorStop(0, 'rgba(255,255,255,0.7)'); gd.addColorStop(0.45, 'rgba(255,255,255,0.2)'); gd.addColorStop(1, 'rgba(70,84,130,0.2)'); }
+        ctx.fillStyle = gd; ctx.fillRect(0, 0, w, h);
+      }
+
+      /* 배경 별 */
       for (i = 0; i < s.B.length; i++) {
         var b = s.B[i], D = b.d, ox = dx * b.par, oy = dy * b.par;
         ctx.fillStyle = b.style; ctx.beginPath();
@@ -485,7 +496,7 @@
       /* 깜빡임은 배경 점 열에 하나꼴로만, 농도만 잠깐 올라간다 */
       for (i = 0; i < s.TW.length; i++) {
         var q = s.TW[i], bump = Math.sin(clk * q.w + q.ph); bump = bump > 0 ? Math.pow(bump, 6) : 0;
-        ctx.fillStyle = s.inkS(q.a * (1 + 0.9 * bump)); ctx.beginPath(); ctx.arc(q.x + dx * q.par, q.y + dy * q.par, q.r, 0, TAU); ctx.fill();
+        ctx.fillStyle = q.col ? s.colS(q.col, Math.min(1, q.a * 1.5 * (1 + 0.9 * bump))) : s.inkS(q.a * (1 + 0.9 * bump)); ctx.beginPath(); ctx.arc(q.x + dx * q.par, q.y + dy * q.par, q.r, 0, TAU); ctx.fill();
       }
       if (s.RG && s.RG.length) {
         ctx.strokeStyle = s.ringS; ctx.lineWidth = s.lwR; ctx.beginPath();
@@ -579,11 +590,12 @@
         var lx = A.x + dx, ly = A.y + dy, mx2 = B.x + dx, my2 = B.y + dy;
         if (f.ph === 2) {
           pr = (f.tau - f.t3) / f.linkDur; if (pr <= 0) continue; if (pr > 1) pr = 1;
-          ctx.strokeStyle = L.acc; ctx.beginPath(); ctx.moveTo(lx, ly); ctx.lineTo(lx + (mx2 - lx) * pr, ly + (my2 - ly) * pr); ctx.stroke();
-          /* 점선 끝에서 이웃 별자리로 건너가는 점 */
+          /* 이웃 별자리로 건너가는 점. 지나간 자리에 선을 남기지 않는다 */
           if (pr < 1) tips.push(lx + (mx2 - lx) * pr, ly + (my2 - ly) * pr, L.aAcc, i);
           continue;
         }
+        /* 점선은 그리지 않는다. 아래는 예전에 점선을 남기던 코드라 건너뛴다 */
+        continue;
         if (f.ph === 3) {
           /* 점선도 같은 방식: 잉크 점선 위에서 강조색이 옅어진다 */
           ctx.strokeStyle = L.rest; ctx.beginPath(); ctx.moveTo(lx, ly); ctx.lineTo(mx2, my2); ctx.stroke();

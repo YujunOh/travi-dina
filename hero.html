@@ -23,15 +23,13 @@ button, select, input { font: inherit; }
 .topbar .in { height: 100%; display: flex; align-items: center; gap: 32px; padding: 0 40px; }
 /* 로고는 그림 없이 굵은 글씨. 자간을 벌리지 않는다. 글꼴, 굵기, 크기는 아래 조절 막대가 바꾼다 */
 .brand { display: flex; align-items: center; font-family: var(--logo-font, Outfit), Inter, system-ui, sans-serif; font-weight: var(--logo-weight, 650); font-size: var(--logo-size, 22px); letter-spacing: 0; }
-/* 로고 첫 글자 T 의 머리 위에서 물줄기 다섯 가닥이 부채꼴로 곧게 뻗어 오른다. 옅은 선 위를 짧은 물마디가 아주 천천히 흐른다 */
+/* 로고 첫 글자 T 의 머리 위로 물방울 점들이 다섯 갈래 부채꼴로 곧게 솟는다. 처음에 빠르다가 올라갈수록 느려지며 옅어진다 */
 .brand .mark { position: relative; display: inline-block; }
-.brand .spray { position: absolute; left: calc(0.29em - 0.75em); top: calc(0.24em - 0.82em); width: 1.5em; height: 0.86em; -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 55%); mask-image: linear-gradient(to bottom, transparent 0%, #000 55%); overflow: visible; pointer-events: none; }
-.brand .spray g { fill: none; stroke-linecap: round; }
-.brand .spray g:nth-child(4n+1) { stroke: #a9bbec; } .brand .spray g:nth-child(4n+2) { stroke: #a8dcc0; }
-.brand .spray g:nth-child(4n+3) { stroke: #f2d49a; } .brand .spray g:nth-child(4n+4) { stroke: #efb1b1; }
-.brand .spray .line { stroke-width: 0.03; opacity: 0.22; }
-.brand .spray .flow { stroke-width: 0.055; stroke-dasharray: 0.1 0.15; opacity: 0.85; animation: flow 8.5s linear infinite; }
-@keyframes flow { from { stroke-dashoffset: 0; } to { stroke-dashoffset: -3.25; } }
+.brand .spray { position: absolute; left: 0.29em; top: 0.24em; width: 0; height: 0; pointer-events: none; }
+.brand .spray i { position: absolute; left: -0.03em; top: -0.03em; width: 0.06em; height: 0.06em; border-radius: 50%; opacity: 0; animation: rise 9s cubic-bezier(0.16, 0.6, 0.3, 1) infinite; animation-delay: var(--delay); }
+.brand .spray i[data-tone="0"] { background: #a9bbec; } .brand .spray i[data-tone="1"] { background: #a8dcc0; }
+.brand .spray i[data-tone="2"] { background: #f2d49a; } .brand .spray i[data-tone="3"] { background: #efb1b1; }
+@keyframes rise { 0% { transform: translate(0, 0) scale(1); opacity: 0; } 5% { opacity: 0.95; } 45% { opacity: 0.7; } 100% { transform: translate(var(--x), var(--y)) scale(0.6); opacity: 0; } }
 .sp { flex: 1; }
 .nav { display: flex; align-items: center; gap: 30px; font-size: 14px; font-weight: 500; color: var(--muted); }
 .nav a:hover { color: var(--text); }
@@ -50,6 +48,8 @@ button, select, input { font: inherit; }
 .hero[data-layout="center"] .copy { left: 50%; top: 52%; transform: translate(-50%, -50%); width: min(92vw, 1120px); text-align: center; }
 .hero[data-layout="left"] .copy { left: max(32px, 7vw); top: 54%; transform: translateY(-50%); width: min(86vw, 660px); text-align: left; }
 .eyebrow { font-size: 12px; letter-spacing: 0.22em; font-weight: 700; color: var(--muted); }
+/* 바탕 깊이를 켜면 글 뒤를 누르던 막을 걷는다. 바탕 자체가 가운데에서 밝아지기 때문이다 */
+.hero.depth .scrim { display: none; }
 .copy h1 { margin: 18px 0 20px; font-family: Outfit, Inter, system-ui, sans-serif; font-weight: 600; line-height: 1.12; }
 .hero[data-layout="center"] .copy h1 { font-size: clamp(36px, 5vw, 64px); }
 .hero[data-layout="left"] .copy h1 { font-size: clamp(44px, 5.8vw, 86px); line-height: 1.0; }
@@ -95,7 +95,7 @@ button, select, input { font: inherit; }
 <body>
 
 <header class="topbar"><div class="in">
-  <a class="brand" href="index.html"><span class="mark"><svg class="spray" viewBox="-0.75 -0.82 1.5 0.86" aria-hidden="true"><g><path class="line" d="M0 0 L-0.62 -0.46"/><path class="flow" d="M0 0 L-0.62 -0.46"/></g><g><path class="line" d="M0 0 L-0.3 -0.66"/><path class="flow" d="M0 0 L-0.3 -0.66"/></g><g><path class="line" d="M0 0 L0.0 -0.76"/><path class="flow" d="M0 0 L0.0 -0.76"/></g><g><path class="line" d="M0 0 L0.3 -0.66"/><path class="flow" d="M0 0 L0.3 -0.66"/></g><g><path class="line" d="M0 0 L0.62 -0.46"/><path class="flow" d="M0 0 L0.62 -0.46"/></g></svg><span id="logoText">Travi</span></span></a>
+  <a class="brand" href="index.html"><span class="mark"><span class="spray" aria-hidden="true"><i data-tone="0" style="--x:-0.62em;--y:-0.46em;--delay:-0.000s"></i><i data-tone="0" style="--x:-0.62em;--y:-0.46em;--delay:-1.500s"></i><i data-tone="0" style="--x:-0.62em;--y:-0.46em;--delay:-3.000s"></i><i data-tone="0" style="--x:-0.62em;--y:-0.46em;--delay:-4.500s"></i><i data-tone="0" style="--x:-0.62em;--y:-0.46em;--delay:-6.000s"></i><i data-tone="0" style="--x:-0.62em;--y:-0.46em;--delay:-7.500s"></i><i data-tone="1" style="--x:-0.3em;--y:-0.66em;--delay:-0.555s"></i><i data-tone="1" style="--x:-0.3em;--y:-0.66em;--delay:-2.055s"></i><i data-tone="1" style="--x:-0.3em;--y:-0.66em;--delay:-3.555s"></i><i data-tone="1" style="--x:-0.3em;--y:-0.66em;--delay:-5.055s"></i><i data-tone="1" style="--x:-0.3em;--y:-0.66em;--delay:-6.555s"></i><i data-tone="1" style="--x:-0.3em;--y:-0.66em;--delay:-8.055s"></i><i data-tone="2" style="--x:0.0em;--y:-0.76em;--delay:-1.110s"></i><i data-tone="2" style="--x:0.0em;--y:-0.76em;--delay:-2.610s"></i><i data-tone="2" style="--x:0.0em;--y:-0.76em;--delay:-4.110s"></i><i data-tone="2" style="--x:0.0em;--y:-0.76em;--delay:-5.610s"></i><i data-tone="2" style="--x:0.0em;--y:-0.76em;--delay:-7.110s"></i><i data-tone="2" style="--x:0.0em;--y:-0.76em;--delay:-8.610s"></i><i data-tone="3" style="--x:0.3em;--y:-0.66em;--delay:-1.665s"></i><i data-tone="3" style="--x:0.3em;--y:-0.66em;--delay:-3.165s"></i><i data-tone="3" style="--x:0.3em;--y:-0.66em;--delay:-4.665s"></i><i data-tone="3" style="--x:0.3em;--y:-0.66em;--delay:-6.165s"></i><i data-tone="3" style="--x:0.3em;--y:-0.66em;--delay:-7.665s"></i><i data-tone="3" style="--x:0.3em;--y:-0.66em;--delay:-9.165s"></i><i data-tone="0" style="--x:0.62em;--y:-0.46em;--delay:-2.220s"></i><i data-tone="0" style="--x:0.62em;--y:-0.46em;--delay:-3.720s"></i><i data-tone="0" style="--x:0.62em;--y:-0.46em;--delay:-5.220s"></i><i data-tone="0" style="--x:0.62em;--y:-0.46em;--delay:-6.720s"></i><i data-tone="0" style="--x:0.62em;--y:-0.46em;--delay:-8.220s"></i><i data-tone="0" style="--x:0.62em;--y:-0.46em;--delay:-9.720s"></i></span><span id="logoText">Travi</span></span></a>
   <span class="sp"></span>
   <nav class="nav">
     <a class="h" href="#doms">Cooperatives</a>
@@ -153,6 +153,7 @@ button, select, input { font: inherit; }
     <span class="l">크기</span><input type="range" id="rngLS" min="16" max="36" step="1"><span id="valLS"></span></div>
   <div class="g"><span class="l">속도</span><input type="range" id="rngS" min="40" max="200" step="5"><span id="valS"></span></div>
   <label class="c"><input type="checkbox" id="chkT"> 글</label>
+  <label class="c"><input type="checkbox" id="chkD"> 바탕 깊이 (가운데 밝게, 가장자리 어둡게)</label>
   <button class="act" type="button" id="btnLink">이 상태 링크 복사</button>
   <a class="act" href="diagram-lab.html">실험실</a>
   <span class="l">H 키: 막대 숨김</span>
@@ -210,6 +211,7 @@ button, select, input { font: inherit; }
     lines: q.get('lines') === '1' ? '1' : '2',
     lead: q.get('lead') || '',
     /* 로고 글꼴, 굵기(400~900), 크기(px) */
+    depth: q.get('depth') === '1',
     lc: q.get('lc') === 'u' ? 'u' : 't', fnt: q.get('fnt') !== '0',
     lf: q.get('lf') || 'Outfit', lw: Math.max(400, Math.min(900, +(q.get('lw') || 650))), ls: Math.max(16, Math.min(36, +(q.get('ls') || 22))),
     /* 직접 조절하는 팔레트의 색상(0~360), 진하기(0~100), 밝기(20~90) */
@@ -265,7 +267,7 @@ button, select, input { font: inherit; }
 
   function makeP() {
     P = LAB.makeP(palOf(), st.theme);
-    P.layout = st.layout; P.quiet = QUIET[st.layout];
+    P.layout = st.layout; P.quiet = QUIET[st.layout]; P.depth = st.depth;
     state = null; stats.frames = 0; stats.sumMs = 0; stats.maxMs = 0;
   }
   function fit() {
@@ -339,7 +341,8 @@ button, select, input { font: inherit; }
     }
     var mid = hex(hsl(st.hue, st.sat, st.lit)); document.getElementById('swatch').style.background = mid; document.getElementById('hexOut').textContent = mid;
     document.getElementById('rngS').value = st.speed; document.getElementById('valS').textContent = st.speed + '%';
-    document.getElementById('chkT').checked = st.text;
+    document.getElementById('chkT').checked = st.text; document.getElementById('chkD').checked = st.depth;
+    hero.classList.toggle('depth', st.depth);
     /* 도메인 아이콘 색: 테마별로 정해 둔 단색(없으면 글자색) */
     var icCol = (window.TRAVI_ICON_COLORS || {})[st.theme] || {};
     Array.prototype.forEach.call(document.querySelectorAll('.dom'), function (a) { var c = icCol[a.getAttribute('data-ic')]; if (c) a.style.setProperty('--dc', c); else a.style.removeProperty('--dc'); });
@@ -347,6 +350,7 @@ button, select, input { font: inherit; }
     if (st.pal) p.set('pal', st.pal); if (st.speed !== 100) p.set('speed', st.speed);
     if (st.copy !== 'd') p.set('copy', st.copy);
     if (st.lines === '1') p.set('lines', '1'); if (st.lead) p.set('lead', st.lead);
+    if (st.depth) p.set('depth', '1');
     if (st.lc === 'u') p.set('lc', 'u'); if (!st.fnt) p.set('fnt', '0');
     if (st.lf !== 'Outfit') p.set('lf', st.lf); if (st.lw !== 650) p.set('lw', st.lw); if (st.ls !== 22) p.set('ls', st.ls);
     if (st.pal === 'custom') { p.set('hue', st.hue); p.set('sat', st.sat); p.set('lit', st.lit); }
@@ -384,6 +388,7 @@ button, select, input { font: inherit; }
   selLd.onchange = function () { st.lead = selLd.value; sync(); };
   document.getElementById('rngS').oninput = function () { st.speed = +this.value; sync(); };
   document.getElementById('chkT').onchange = function () { st.text = this.checked; sync(); };
+  document.getElementById('chkD').onchange = function () { st.depth = this.checked; apply(); };
   document.getElementById('btnLink').onclick = function () {
     var b = this, url = location.href;
     function ok() { b.textContent = '복사됨'; setTimeout(function () { b.textContent = '이 상태 링크 복사'; }, 1500); }
