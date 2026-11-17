@@ -23,6 +23,21 @@ button, select, input { font: inherit; }
 .topbar .in { height: 100%; display: flex; align-items: center; gap: 32px; padding: 0 40px; }
 /* 로고는 그림 없이 굵은 글씨. 자간을 벌리지 않는다. 글꼴, 굵기, 크기는 아래 조절 막대가 바꾼다 */
 .brand { display: flex; align-items: center; font-family: var(--logo-font, Outfit), Inter, system-ui, sans-serif; font-weight: var(--logo-weight, 650); font-size: var(--logo-size, 22px); letter-spacing: 0; }
+/* 로고 첫 글자 T 위에서 작은 점들이 분수처럼 솟았다가 양옆으로 떨어진다. 한 바퀴가 8.5초라 아주 느리다 */
+.brand .mark { position: relative; display: inline-block; }
+.brand .spray { position: absolute; left: 0.29em; top: 0.22em; width: 0; height: 0; pointer-events: none; }
+.brand .spray i { position: absolute; left: -0.05em; top: -0.05em; width: 0.1em; height: 0.1em; border-radius: 50%; opacity: 0; animation: fountain 8.5s linear infinite; animation-delay: var(--delay); }
+.brand .spray i:nth-child(4n+1) { background: #a9bbec; } .brand .spray i:nth-child(4n+2) { background: #a8dcc0; }
+.brand .spray i:nth-child(4n+3) { background: #f2d49a; } .brand .spray i:nth-child(4n+4) { background: #efb1b1; }
+@keyframes fountain {
+  0% { transform: translate(0, 0); opacity: 0; } 6% { opacity: 0.9; }
+  14% { transform: translate(calc(var(--dx) * 0.22), calc(var(--rise) * -0.62)); }
+  26% { transform: translate(calc(var(--dx) * 0.42), calc(var(--rise) * -0.92)); }
+  36% { transform: translate(calc(var(--dx) * 0.56), calc(var(--rise) * -1)); opacity: 0.9; }
+  48% { transform: translate(calc(var(--dx) * 0.72), calc(var(--rise) * -0.86)); }
+  60% { transform: translate(calc(var(--dx) * 0.86), calc(var(--rise) * -0.5)); opacity: 0.5; }
+  72%, 100% { transform: translate(var(--dx), 0); opacity: 0; }
+}
 .sp { flex: 1; }
 .nav { display: flex; align-items: center; gap: 30px; font-size: 14px; font-weight: 500; color: var(--muted); }
 .nav a:hover { color: var(--text); }
@@ -86,7 +101,7 @@ button, select, input { font: inherit; }
 <body>
 
 <header class="topbar"><div class="in">
-  <a class="brand" href="index.html">Travi</a>
+  <a class="brand" href="index.html"><span class="mark"><span class="spray" aria-hidden="true"><i style="--dx:-0.62em;--rise:0.78em;--delay:0s"></i><i style="--dx:0.58em;--rise:0.84em;--delay:1.4s"></i><i style="--dx:-0.34em;--rise:0.98em;--delay:2.9s"></i><i style="--dx:0.3em;--rise:1.04em;--delay:4.3s"></i><i style="--dx:-0.86em;--rise:0.6em;--delay:5.6s"></i><i style="--dx:0.82em;--rise:0.64em;--delay:7.1s"></i></span><span id="logoText">Travi</span></span></a>
   <span class="sp"></span>
   <nav class="nav">
     <a class="h" href="#doms">Cooperatives</a>
@@ -137,6 +152,8 @@ button, select, input { font: inherit; }
   <div class="g"><span class="l">문구</span><select id="selC"></select></div>
   <div class="g"><span class="l">제목</span><div class="seg" id="segN"><button type="button" data-k="2">두 줄</button><button type="button" data-k="1">한 줄</button></div></div>
   <div class="g"><span class="l">소개 문구</span><select id="selLd"></select></div>
+  <div class="g"><span class="l">로고 표기</span><div class="seg" id="segLC"><button type="button" data-k="t">Travi</button><button type="button" data-k="u">TRAVI</button></div>
+    <label class="c"><input type="checkbox" id="chkF"> 분수</label></div>
   <div class="g"><span class="l">로고 글꼴</span><select id="selLF"></select>
     <span class="l">굵기</span><input type="range" id="rngLW" min="400" max="900" step="10"><input type="number" id="numLW" min="400" max="900" step="10" style="width:62px">
     <span class="l">크기</span><input type="range" id="rngLS" min="16" max="36" step="1"><span id="valLS"></span></div>
@@ -199,6 +216,7 @@ button, select, input { font: inherit; }
     lines: q.get('lines') === '1' ? '1' : '2',
     lead: q.get('lead') || '',
     /* 로고 글꼴, 굵기(400~900), 크기(px) */
+    lc: q.get('lc') === 'u' ? 'u' : 't', fnt: q.get('fnt') !== '0',
     lf: q.get('lf') || 'Outfit', lw: Math.max(400, Math.min(900, +(q.get('lw') || 650))), ls: Math.max(16, Math.min(36, +(q.get('ls') || 22))),
     /* 직접 조절하는 팔레트의 색상(0~360), 진하기(0~100), 밝기(20~90) */
     hue: Math.max(0, Math.min(360, +(q.get('hue') || 24))), sat: Math.max(0, Math.min(100, +(q.get('sat') || 85))), lit: Math.max(20, Math.min(90, +(q.get('lit') || 66)))
@@ -300,6 +318,9 @@ button, select, input { font: inherit; }
     document.getElementById('selC').value = st.copy;
     document.getElementById('h1').innerHTML = (st.h || COPY[st.copy][st.layout]).split('|').map(function (s) { return s.replace(/[&<>]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]; }); }).map(function (line) { return st.lines === '1' ? line : line.replace(/\.$/, ''); }).join(st.lines === '1' ? ' ' : '<br>'); // 두 줄일 때는 줄 끝의 마침표를 뺀다
     root.style.setProperty('--logo-font', "'" + st.lf + "'"); root.style.setProperty('--logo-weight', st.lw); root.style.setProperty('--logo-size', st.ls + 'px');
+    document.getElementById('logoText').textContent = st.lc === 'u' ? 'TRAVI' : 'Travi';
+    document.querySelector('.brand .spray').style.display = st.fnt ? '' : 'none'; document.getElementById('chkF').checked = st.fnt;
+    seg(document.getElementById('segLC'), st.lc, function (k) { st.lc = k; sync(); });
     document.getElementById('selLF').value = st.lf; document.getElementById('rngLW').value = st.lw; document.getElementById('numLW').value = st.lw;
     document.getElementById('rngLS').value = st.ls; document.getElementById('valLS').textContent = st.ls + 'px';
     var hi = HERO.indexOf(v);
@@ -332,6 +353,7 @@ button, select, input { font: inherit; }
     if (st.pal) p.set('pal', st.pal); if (st.speed !== 100) p.set('speed', st.speed);
     if (st.copy !== 'd') p.set('copy', st.copy);
     if (st.lines === '1') p.set('lines', '1'); if (st.lead) p.set('lead', st.lead);
+    if (st.lc === 'u') p.set('lc', 'u'); if (!st.fnt) p.set('fnt', '0');
     if (st.lf !== 'Outfit') p.set('lf', st.lf); if (st.lw !== 650) p.set('lw', st.lw); if (st.ls !== 22) p.set('ls', st.ls);
     if (st.pal === 'custom') { p.set('hue', st.hue); p.set('sat', st.sat); p.set('lit', st.lit); }
     if (!st.text) p.set('text', '0'); if (!st.chrome) p.set('chrome', '0'); if (!st.ui) p.set('ui', '0'); if (st.h) p.set('h', st.h);
@@ -357,6 +379,7 @@ button, select, input { font: inherit; }
   var selC = document.getElementById('selC');
   selC.innerHTML = Object.keys(COPY).map(function (k) { return '<option value="' + k + '">' + COPY[k].label + '</option>'; }).join('');
   selC.onchange = function () { st.copy = selC.value; st.h = ''; sync(); };
+  document.getElementById('chkF').onchange = function () { st.fnt = this.checked; sync(); };
   var selLF = document.getElementById('selLF');
   selLF.innerHTML = LOGO_FONTS.map(function (f) { return '<option value="' + f[0] + '">' + f[0] + ' (최대 ' + f[1] + ')</option>'; }).join('');
   selLF.onchange = function () { st.lf = selLF.value; sync(); };

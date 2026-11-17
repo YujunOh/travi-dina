@@ -351,9 +351,9 @@
         }
         if (!best) continue;
         /* 점과 선을 그리기 좋은 꼴로 옮기고, 선마다 시작 시각을 매긴다 */
-        var deg = [], Pp = [], Ee = [], cxs = 0, cys = 0, hue0 = (F.length * 67 + 8) % 360, hueL = dark ? 0.68 : 0.46, fcol = multi ? hslRgb(hue0, 0.9, hueL) : acc;
+        var deg = [], Pp = [], Ee = [], cxs = 0, cys = 0, hue0 = (F.length * 67 + 8) % 360, hueS = dark ? 0.52 : 0.42, hueL = dark ? 0.76 : 0.5, fcol = multi ? hslRgb(hue0, hueS, hueL) : acc; /* 파스텔: 진하기를 낮추고 밝기를 올린다 */
         /* q 번째 선이나 점의 색. 알록달록일 때는 색상이 26도씩 돌아 한 별자리 안에 여러 색이 섞인다 */
-        function hueAt(q) { return multi ? hslRgb(hue0 + q * 26, 0.9, hueL) : fcol; }
+        function hueAt(q) { return multi ? hslRgb(hue0 + q * 26, hueS, hueL) : fcol; }
         for (j = 0; j < best.pts.length; j++) deg.push(0);
         for (j = 0; j < best.E.length; j++) { deg[best.E[j][0]]++; deg[best.E[j][1]]++; }
         /* 고리 달린 점(앵커 기관)은 갈림점이 아닌 곳에 둔다. 갈림점에 두면 중심 서버처럼 읽힌다 */
@@ -368,7 +368,7 @@
           var ea = best.E[j][0], eb = best.E[j][1], pa = Pp[ea], pb2 = Pp[eb], len = Math.sqrt((pa.x - pb2.x) * (pa.x - pb2.x) + (pa.y - pb2.y) * (pa.y - pb2.y)), em = Math.min(pa.m, pb2.m);
           if (j > 0) tcur += ea !== lastN ? JUMP : DWELL;
           var ea2 = aA * (0.55 + 0.45 * em) * Math.min(pa.pv, pb2.pv);
-          Ee.push({ a: ea, b: eb, ts: tcur, td: len / v, m: em, rest: multi ? colS(hueAt(j), Math.min(1, aR * em * 2.1)) : inkS(aR * em), ghost: multi ? colS(hueAt(j), aR * em * gh * 1.6) : inkS(aR * em * gh), acc: colS(hueAt(j), ea2), aAcc: ea2, col: hueAt(j) });
+          Ee.push({ a: ea, b: eb, ts: tcur, td: len / v, m: em, rest: multi ? colS(hueAt(j), Math.min(1, aR * em * 2.9)) : inkS(aR * em), ghost: multi ? colS(hueAt(j), aR * em * gh * 2.2) : inkS(aR * em * gh), acc: colS(hueAt(j), ea2), aAcc: ea2, col: hueAt(j) });
           tcur += len / v; pb2.tc = tcur; lastN = eb;
         }
         F.push({ P: Pp, E: Ee, drawDur: tcur, link: null, cx: cxs / Pp.length, cy: cys / Pp.length, off: 0, indeg: 0, tau: 0, ph: 0, g: 1, k: 0, t1: 0, t3: 0, t4: 0, t5: 0, t6: 0, linkDur: 0, col: fcol });
@@ -563,7 +563,7 @@
             if (pr > 0) { if (pr > 1) pr = 1; ctx.strokeStyle = e.acc; ctx.lineWidth = lw1; ctx.beginPath(); ctx.moveTo(ax, ay); ctx.lineTo(ax + (bx - ax) * pr, ay + (by - ay) * pr); ctx.stroke(); }
             continue;
           }
-          if (f.ph === 1) ctx.strokeStyle = s.multi ? s.colS(e.col, Math.min(1, aR * e.m * 2.1 * f.g)) : s.inkS(aR * e.m * f.g); else ctx.strokeStyle = e.rest;
+          if (f.ph === 1) ctx.strokeStyle = s.multi ? s.colS(e.col, Math.min(1, aR * e.m * 2.9 * f.g)) : s.inkS(aR * e.m * f.g); else ctx.strokeStyle = e.rest;
           ctx.lineWidth = lw0; ctx.beginPath(); ctx.moveTo(ax, ay); ctx.lineTo(bx, by); ctx.stroke();
           /* 잉크로 돌아갈 때는 두 색을 섞지 않고, 평소 선 위에 얹힌 강조색 선이 옅어지게 한다. 섞으면 중간에 두 색보다 어둡고 탁한 색이 나온다 */
           if (f.ph === 3 && f.k > 0.01) { kk = f.k; ctx.strokeStyle = s.colS(e.col, e.aAcc * kk); ctx.lineWidth = lw0 + (lw1 - lw0) * kk; ctx.beginPath(); ctx.moveTo(ax, ay); ctx.lineTo(bx, by); ctx.stroke(); }
