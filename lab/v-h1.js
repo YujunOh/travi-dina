@@ -500,12 +500,12 @@
           gd.addColorStop(0.42, 'rgba(48,66,132,' + r3(0.14 * dk) + ')'); gd.addColorStop(0.6, 'rgba(10,14,28,' + r3(0.04 * dk) + ')');
           gd.addColorStop(0.8, 'rgba(0,0,0,' + r3(0.34 * dk) + ')'); gd.addColorStop(1, 'rgba(0,0,0,' + r3(0.72 * dk) + ')');
         } else {
-          /* 밝은 화면: 바탕이 이미 밝아서 가운데를 더 밝히는 것만으로는 티가 안 난다. 가장자리를 푸른 회색으로 눌러 차이를 만든다 */
+          /* 밝은 화면: 바탕이 이미 밝아서 가운데를 더 밝히는 것만으로는 티가 안 난다. 가장자리를 거의 검정으로 눌러 차이를 만든다 */
           /* 세기가 1 을 넘으면(ov) 가장자리 색이 더 짙은 남색으로 가고, 어두워지기 시작하는 자리가 가운데 쪽으로 당겨진다 */
-          var ov = Math.max(0, dk - 1), eR = Math.round(58 - 34 * ov), eG = Math.round(76 - 44 * ov), eB = Math.round(140 - 58 * ov);
-          var mR = Math.round(104 - 40 * ov), mG = Math.round(122 - 46 * ov), mB = Math.round(180 - 50 * ov), pull = 0.12 * ov;
+          var ov = Math.max(0, dk - 1), eR = Math.round(14 - 8 * ov), eG = Math.round(16 - 9 * ov), eB = Math.round(24 - 12 * ov); /* 가장자리 색: 거의 검정 */
+          var mR = Math.round(58 - 26 * ov), mG = Math.round(62 - 28 * ov), mB = Math.round(76 - 32 * ov), pull = 0.12 * ov;
           gd.addColorStop(0, 'rgba(255,255,255,' + r3(0.95 * Math.min(1, dk)) + ')'); gd.addColorStop(0.34 - pull, 'rgba(255,255,255,' + r3(0.5 * Math.min(1, dk)) + ')');
-          gd.addColorStop(0.52 - pull, 'rgba(170,184,220,' + r3(0.14 * dk) + ')'); gd.addColorStop(0.74 - pull, 'rgba(' + mR + ',' + mG + ',' + mB + ',' + r3(0.4 * dk) + ')');
+          gd.addColorStop(0.52 - pull, 'rgba(120,124,136,' + r3(0.14 * dk) + ')'); gd.addColorStop(0.74 - pull, 'rgba(' + mR + ',' + mG + ',' + mB + ',' + r3(0.4 * dk) + ')');
           gd.addColorStop(1, 'rgba(' + eR + ',' + eG + ',' + eB + ',' + r3(0.7 * dk) + ')');
         }
         ctx.fillStyle = gd; ctx.fillRect(0, 0, w, h);
