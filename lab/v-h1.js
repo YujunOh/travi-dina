@@ -489,12 +489,20 @@
       /* 판 전체가 아주 천천히 미끄러진다(최대 초당 0.6px쯤). 점 하나하나는 제자리다. 먼 단계일수록 덜 움직여 깊이가 생긴다 */
       var dx = s.dA * Math.sin(clk * TAU / 83000 + 0.6), dy = s.dA * 0.7 * Math.sin(clk * TAU / 61000 + 2.1), GH = s.gh;
 
-      /* 바탕 깊이(P.depth): 글이 놓인 가운데가 조금 밝고 별자리 쪽 가장자리로 갈수록 서서히 어두워진다 */
-      if (P.depth) {
-        var Qd = P.quiet || { x: 0.5, y: 0.5, rx: 0.31, ry: 0.26 }, gcx = Qd.x * w, gcy = Qd.y * h, gr = Math.max(w, h) * 0.72;
+      /* 바탕 빛(P.depth, 0~1): 앞에서 가운데 글을 향해 빛을 비춘 것처럼 가운데가 주변보다 밝고, 바깥으로 갈수록 서서히 어두워진다.
+         값이 세기다. 가운데의 밝음은 바깥으로 가며 부드럽게 사라지고, 가장자리의 어둠은 가운데로 오며 부드럽게 사라진다. true 는 0.35 로 본다 */
+      var dk = P.depth === true ? 0.35 : Math.max(0, Math.min(1, +P.depth || 0));
+      if (dk > 0) {
+        var Qd = P.quiet || { x: 0.5, y: 0.5, rx: 0.31, ry: 0.26 }, gcx = Qd.x * w, gcy = Qd.y * h, gr = Math.max(w, h) * 0.74;
         var gd = ctx.createRadialGradient(gcx, gcy, 0, gcx, gcy, gr);
-        if (P.dark) { gd.addColorStop(0, 'rgba(64,92,176,0.34)'); gd.addColorStop(0.42, 'rgba(38,56,116,0.14)'); gd.addColorStop(0.72, 'rgba(8,12,24,0.10)'); gd.addColorStop(1, 'rgba(0,0,0,0.5)'); }
-        else { gd.addColorStop(0, 'rgba(255,255,255,0.7)'); gd.addColorStop(0.45, 'rgba(255,255,255,0.2)'); gd.addColorStop(1, 'rgba(70,84,130,0.2)'); }
+        if (P.dark) {
+          gd.addColorStop(0, 'rgba(96,124,214,' + r3(0.5 * dk) + ')'); gd.addColorStop(0.2, 'rgba(78,104,190,' + r3(0.34 * dk) + ')');
+          gd.addColorStop(0.42, 'rgba(48,66,132,' + r3(0.14 * dk) + ')'); gd.addColorStop(0.6, 'rgba(10,14,28,' + r3(0.04 * dk) + ')');
+          gd.addColorStop(0.8, 'rgba(0,0,0,' + r3(0.34 * dk) + ')'); gd.addColorStop(1, 'rgba(0,0,0,' + r3(0.72 * dk) + ')');
+        } else {
+          gd.addColorStop(0, 'rgba(255,255,255,' + r3(0.9 * dk) + ')'); gd.addColorStop(0.42, 'rgba(255,255,255,' + r3(0.3 * dk) + ')');
+          gd.addColorStop(0.62, 'rgba(120,132,170,' + r3(0.02 * dk) + ')'); gd.addColorStop(1, 'rgba(60,74,120,' + r3(0.36 * dk) + ')');
+        }
         ctx.fillStyle = gd; ctx.fillRect(0, 0, w, h);
       }
 
