@@ -266,7 +266,7 @@ button, select, input { font: inherit; }
     var cta = COPY[st.copy].cta || ['Join TRAVI', 'Explore Coops'];
     document.getElementById('cta1').textContent = cta[0]; document.getElementById('cta2').textContent = cta[1];
     document.getElementById('selC').value = st.copy;
-    document.getElementById('h1').innerHTML = (st.h || COPY[st.copy][st.layout]).split('|').map(function (s) { return s.replace(/[&<>]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]; }); }).join(st.lines === '1' ? ' ' : '<br>');
+    document.getElementById('h1').innerHTML = (st.h || COPY[st.copy][st.layout]).split('|').map(function (s) { return s.replace(/[&<>]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]; }); }).map(function (line) { return st.lines === '1' ? line : line.replace(/\.$/, ''); }).join(st.lines === '1' ? ' ' : '<br>'); // 두 줄일 때는 줄 끝의 마침표를 뺀다
     var hi = HERO.indexOf(v);
     document.getElementById('cap').textContent = (hi >= 0 ? 'CANDIDATE ' + (hi + 1) + ' OF ' + HERO.length + ' · ' : 'LAB · ') + (v.en || v.id || '');
     seg(document.getElementById('segV'), st.v, function (k) { st.pal = palOf(); st.v = k; apply(); });
