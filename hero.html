@@ -5,7 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>TRAVI Hero Candidates</title>
 <meta name="robots" content="noindex">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400..700&family=Outfit:wght@100..900&display=swap">
 <style>
 /* 첫 화면 후보 미리보기. 실험실(diagram-lab.html)의 도식을 실제 메인 첫 화면 자리에 얹어 본다.
    주소 뒤 값: v(후보), theme(light·dark), layout(center·left), pal(팔레트), speed, text(0이면 글 숨김), chrome(0이면 헤더 숨김), ui(0이면 조절 막대 숨김) */
@@ -14,7 +15,7 @@
 * { box-sizing: border-box; }
 html, body { margin: 0; }
 html { overflow-x: clip; }
-body { background: var(--bg); color: var(--text); font-family: 'Pretendard Variable', Pretendard, system-ui, sans-serif; word-break: keep-all; -webkit-font-smoothing: antialiased; }
+body { background: var(--bg); color: var(--text); font-family: Inter, system-ui, sans-serif; word-break: keep-all; -webkit-font-smoothing: antialiased; }
 a { color: inherit; text-decoration: none; }
 button, select, input { font: inherit; }
 
@@ -40,8 +41,8 @@ button, select, input { font: inherit; }
 .hero[data-layout="center"] .copy { left: 50%; top: 52%; transform: translate(-50%, -50%); width: min(92vw, 1120px); text-align: center; }
 .hero[data-layout="left"] .copy { left: max(32px, 7vw); top: 54%; transform: translateY(-50%); width: min(86vw, 660px); text-align: left; }
 .eyebrow { font-size: 12px; letter-spacing: 0.22em; font-weight: 700; color: var(--muted); }
-.copy h1 { margin: 18px 0 20px; font-weight: 700; letter-spacing: -0.035em; line-height: 1.06; }
-.hero[data-layout="center"] .copy h1 { font-size: clamp(34px, 4vw, 58px); }
+.copy h1 { margin: 18px 0 20px; font-family: Outfit, Inter, system-ui, sans-serif; font-weight: 600; line-height: 1.12; }
+.hero[data-layout="center"] .copy h1 { font-size: clamp(36px, 5vw, 64px); }
 .hero[data-layout="left"] .copy h1 { font-size: clamp(44px, 5.8vw, 86px); line-height: 1.0; }
 .copy .lead { font-size: 18px; line-height: 1.65; color: var(--muted); margin: 0 0 30px; }
 .hero[data-layout="center"] .copy .lead { max-width: 620px; margin-left: auto; margin-right: auto; }
@@ -101,7 +102,6 @@ button, select, input { font: inherit; }
   <canvas id="cv" aria-hidden="true"></canvas>
   <div class="scrim"></div>
   <div class="copy">
-    <div class="eyebrow">AI COOPERATIVES FABRIC &amp; PLATFORM</div>
     <h1 id="h1"></h1>
     <p class="lead" id="lead"></p>
     <div class="ctas">
@@ -129,6 +129,10 @@ button, select, input { font: inherit; }
   <div class="g"><span class="l">테마</span><div class="seg" id="segT"><button type="button" data-k="light">밝게</button><button type="button" data-k="dark">어둡게</button></div></div>
   <div class="g"><span class="l">글 배치</span><div class="seg" id="segL"><button type="button" data-k="center">가운데</button><button type="button" data-k="left">왼쪽 크게</button></div></div>
   <div class="g"><span class="l">팔레트</span><select id="selP"></select></div>
+  <div class="g" id="gCustom" hidden><span class="l">색상</span><input type="range" id="rngH" min="0" max="360" step="1"><input type="number" id="numH" min="0" max="360" step="1" style="width:58px">
+    <span class="l">진하기</span><input type="range" id="rngSa" min="0" max="100" step="1"><input type="number" id="numSa" min="0" max="100" step="1" style="width:52px">
+    <span class="l">밝기</span><input type="range" id="rngLi" min="20" max="90" step="1"><input type="number" id="numLi" min="20" max="90" step="1" style="width:52px">
+    <span id="swatch" style="display:inline-block;width:22px;height:22px;border-radius:50%;border:1px solid var(--line-2)"></span><span id="hexOut" style="font-family:ui-monospace,Consolas,monospace;font-size:12px"></span></div>
   <div class="g"><span class="l">문구</span><select id="selC"></select></div>
   <div class="g"><span class="l">제목</span><div class="seg" id="segN"><button type="button" data-k="2">두 줄</button><button type="button" data-k="1">한 줄</button></div></div>
   <div class="g"><span class="l">소개 문구</span><select id="selLd"></select></div>
@@ -187,9 +191,23 @@ button, select, input { font: inherit; }
     copy: COPY[q.get('copy')] ? q.get('copy') : 'd',
     h: q.get('h') || '',
     lines: q.get('lines') === '1' ? '1' : '2',
-    lead: q.get('lead') || ''
+    lead: q.get('lead') || '',
+    /* 직접 조절하는 팔레트의 색상(0~360), 진하기(0~100), 밝기(20~90) */
+    hue: Math.max(0, Math.min(360, +(q.get('hue') || 24))), sat: Math.max(0, Math.min(100, +(q.get('sat') || 85))), lit: Math.max(20, Math.min(90, +(q.get('lit') || 66)))
   };
 
+  /* 직접 조절하는 팔레트. 색상·진하기·밝기 숫자 세 개로 색 세 개(조금 노란 쪽, 가운데, 조금 붉은 쪽)를 만든다 */
+  function hsl(h, s, l) {
+    h = ((h % 360) + 360) % 360; s /= 100; l /= 100;
+    var k = function (n) { return (n + h / 30) % 12; }, a = s * Math.min(l, 1 - l);
+    var f = function (n) { return Math.round(255 * (l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1))))); };
+    return [f(0), f(8), f(4)];
+  }
+  function hex(c) { return '#' + c.map(function (v) { return ('0' + v.toString(16)).slice(-2); }).join(''); }
+  LAB.PALETTES.custom = { label: '직접 조절 (숫자)', stops: [[0, 0, 0], [0, 0, 0], [0, 0, 0]] };
+  function customStops() {
+    LAB.PALETTES.custom.stops = [hsl(st.hue + 14, st.sat, Math.min(92, st.lit + 8)), hsl(st.hue, st.sat, st.lit), hsl(st.hue - 14, st.sat, Math.max(15, st.lit - 6))];
+  }
   /* 후보마다 테마별 기본 팔레트를 정해 둘 수 있다(heroPal: { light, dark }) */
   function palOf() {
     if (st.pal && LAB.PALETTES[st.pal]) return st.pal;
@@ -257,6 +275,9 @@ button, select, input { font: inherit; }
     seg(document.getElementById('segN'), st.lines, function (k) { st.lines = k; sync(); });
     document.getElementById('selOld').value = hi >= 0 ? '' : st.v;
     document.getElementById('selP').value = palOf();
+    var isCustom = palOf() === 'custom'; document.getElementById('gCustom').hidden = !isCustom;
+    [['H', st.hue], ['Sa', st.sat], ['Li', st.lit]].forEach(function (x) { document.getElementById('rng' + x[0]).value = x[1]; document.getElementById('num' + x[0]).value = x[1]; });
+    var mid = hex(hsl(st.hue, st.sat, st.lit)); document.getElementById('swatch').style.background = mid; document.getElementById('hexOut').textContent = mid;
     document.getElementById('rngS').value = st.speed; document.getElementById('valS').textContent = st.speed + '%';
     document.getElementById('chkT').checked = st.text;
     /* 도메인 아이콘 색: 테마별로 정해 둔 단색(없으면 글자색) */
@@ -266,10 +287,11 @@ button, select, input { font: inherit; }
     if (st.pal) p.set('pal', st.pal); if (st.speed !== 100) p.set('speed', st.speed);
     if (st.copy !== 'd') p.set('copy', st.copy);
     if (st.lines === '1') p.set('lines', '1'); if (st.lead) p.set('lead', st.lead);
+    if (st.pal === 'custom') { p.set('hue', st.hue); p.set('sat', st.sat); p.set('lit', st.lit); }
     if (!st.text) p.set('text', '0'); if (!st.chrome) p.set('chrome', '0'); if (!st.ui) p.set('ui', '0'); if (st.h) p.set('h', st.h);
     try { history.replaceState(null, '', location.pathname + '?' + p.toString()); } catch (e) {}
   }
-  function apply() { makeP(); sync(); if (still) settle(); }
+  function apply() { customStops(); makeP(); sync(); if (still) settle(); }
 
   /* 조절 막대 채우기 */
   var segV = document.getElementById('segV');
@@ -280,6 +302,12 @@ button, select, input { font: inherit; }
   var selP = document.getElementById('selP');
   selP.innerHTML = Object.keys(LAB.PALETTES).map(function (k) { return '<option value="' + k + '">' + LAB.PALETTES[k].label + '</option>'; }).join('');
   selP.onchange = function () { st.pal = selP.value; apply(); };
+  [['H', 'hue'], ['Sa', 'sat'], ['Li', 'lit']].forEach(function (x) {
+    ['rng', 'num'].forEach(function (kind) {
+      var el = document.getElementById(kind + x[0]);
+      el.oninput = function () { var v = +el.value; if (isNaN(v)) return; st[x[1]] = Math.max(+el.min, Math.min(+el.max, v)); st.pal = 'custom'; apply(); };
+    });
+  });
   var selC = document.getElementById('selC');
   selC.innerHTML = Object.keys(COPY).map(function (k) { return '<option value="' + k + '">' + COPY[k].label + '</option>'; }).join('');
   selC.onchange = function () { st.copy = selC.value; st.h = ''; sync(); };
@@ -305,7 +333,7 @@ button, select, input { font: inherit; }
     if (IC[k]) box.innerHTML = IC[k]; else box.style.display = 'none';
   });
 
-  fit(); makeP(); sync();
+  customStops(); fit(); makeP(); sync();
   window.addEventListener('resize', function () { fit(); if (still) settle(); });
   if (still) settle();
   last = performance.now(); requestAnimationFrame(loop);
