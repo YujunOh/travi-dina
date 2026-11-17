@@ -68,6 +68,12 @@
     function f(n) { var k = (n + h / 30) % 12; return Math.round(255 * (l - a * Math.max(-1, Math.min(k - 3, Math.min(9 - k, 1))))); }
     return [f(0), f(8), f(4)];
   }
+  /* 따뜻한 파스텔 색. k 를 0~66 사이로 접어 색상 340도(분홍)에서 46도(노랑)까지만 쓴다. 연두와 초록은 나오지 않는다.
+     주황에서 노랑 사이는 진하기와 밝기를 조금 올려 누렇게 탁해 보이지 않게 한다 */
+  function warmRgb(k, s, l) {
+    var h = (340 + ((k % 66) + 66) % 66) % 360, y = h > 24 && h < 52;
+    return hslRgb(h, y ? Math.min(1, s + 0.24) : s, y ? Math.min(0.86, l + 0.06) : l);
+  }
   function rng(seed) { var a = seed >>> 0; return function () { a = (a + 0x6D2B79F5) >>> 0; var t = a; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
   function clamp(x, a, b) { return x < a ? a : x > b ? b : x; }
   function sstep(a, b, x) { var k = clamp((x - a) / (b - a), 0, 1); return k * k * (3 - 2 * k); }
@@ -351,9 +357,9 @@
         }
         if (!best) continue;
         /* 점과 선을 그리기 좋은 꼴로 옮기고, 선마다 시작 시각을 매긴다 */
-        var deg = [], Pp = [], Ee = [], cxs = 0, cys = 0, hue0 = (F.length * 37) % 110, /* 따뜻한 쪽 색상 범위 안에서의 시작 자리(0~110) */ hueS = dark ? 0.52 : 0.42, hueL = dark ? 0.76 : 0.5, fcol = multi ? hslRgb(340 + hue0, hueS, hueL) : acc; /* 파스텔: 진하기를 낮추고 밝기를 올린다 */
+        var deg = [], Pp = [], Ee = [], cxs = 0, cys = 0, hue0 = (F.length * 29) % 66, /* 따뜻한 색 범위 안에서의 시작 자리(0~66) */ hueS = dark ? 0.52 : 0.42, hueL = dark ? 0.76 : 0.5, fcol = multi ? warmRgb(hue0, hueS, hueL) : acc; /* 파스텔: 진하기를 낮추고 밝기를 올린다 */
         /* q 번째 선이나 점의 색. 알록달록일 때는 색상이 26도씩 돌아 한 별자리 안에 여러 색이 섞인다 */
-        function hueAt(q) { return multi ? hslRgb(340 + (hue0 + q * 22) % 110, hueS, hueL) : fcol; }
+        function hueAt(q) { return multi ? warmRgb(hue0 + q * 13, hueS, hueL) : fcol; }
         for (j = 0; j < best.pts.length; j++) deg.push(0);
         for (j = 0; j < best.E.length; j++) { deg[best.E[j][0]]++; deg[best.E[j][1]]++; }
         /* 고리 달린 점(앵커 기관)은 갈림점이 아닌 곳에 둔다. 갈림점에 두면 중심 서버처럼 읽힌다 */
@@ -453,7 +459,7 @@
           if (!bad && fg.link) { var l1p = fg.P[fg.link.a], l2p = F[fg.link.j].P[fg.link.b]; if (segD2(x, y, l1p.x, l1p.y, l2p.x, l2p.y) < seg0 * seg0 * 0.03) bad = true; }
         }
         if (bad) continue;
-        FS.push({ x: x, y: y, tier: tier, a: tierA[tier] * (0.3 + 0.7 * sstep(1.0, 1.6, r0f)) * wl(x) * pb(y), tw: Rs() < 0.1, ring: tier === 2 && Rs() < 0.2 && y > 0.12 * h && y < 0.95 * h, ph: Rs() * TAU, per: 4200 + Rs() * 3400 });
+        FS.push({ x: x, y: y, tier: tier, a: tierA[tier] * (0.3 + 0.7 * sstep(1.0, 1.6, r0f)) * wl(x) * pb(y), tw: Rs() < 0.1, ring: tier === 2 && Rs() < 0.2 && y > 0.12 * h && y < 0.95 * h, ph: Rs() * TAU, per: 7000 + Rs() * 6000 });
       }
       /* 같은 단계, 같은 농도끼리 묶어 한 번에 칠한다 */
       var bgS = dark ? 0.55 : 0.45, bgL = dark ? 0.78 : 0.5, radK = multi ? 1.3 : 1;
@@ -461,7 +467,7 @@
       for (k = 0; k < FS.length; k++) {
         var s0 = FS[k], qa = Math.max(0.05, Math.round(s0.a * 20) / 20);
         if (s0.ring) rings.push(s0.x, s0.y, rad[2] + 2.9 * u);
-        var hb = multi ? Math.floor(Rs() * 12) : -1, bcol = multi ? hslRgb(340 + hb * 10, bgS, bgL) : null;
+        var hb = multi ? Math.floor(Rs() * 12) : -1, bcol = multi ? warmRgb(hb * 6, bgS, bgL) : null;
         if (s0.tw) { st.TW.push({ x: s0.x, y: s0.y, r: rad[s0.tier], a: s0.a, par: par[s0.tier], w: TAU / s0.per, ph: s0.ph, col: bcol }); continue; }
         var key = s0.tier + '|' + qa + '|' + hb;
         if (!bmap[key]) { bmap[key] = { style: multi ? colS(bcol, Math.min(1, qa * 1.5)) : inkS(qa), par: par[s0.tier], d: [] }; st.B.push(bmap[key]); }
@@ -495,8 +501,16 @@
       }
       /* 깜빡임은 배경 점 열에 하나꼴로만, 농도만 잠깐 올라간다 */
       for (i = 0; i < s.TW.length; i++) {
-        var q = s.TW[i], bump = Math.sin(clk * q.w + q.ph); bump = bump > 0 ? Math.pow(bump, 6) : 0;
-        ctx.fillStyle = q.col ? s.colS(q.col, Math.min(1, q.a * 1.5 * (1 + 0.9 * bump))) : s.inkS(q.a * (1 + 0.9 * bump)); ctx.beginPath(); ctx.arc(q.x + dx * q.par, q.y + dy * q.par, q.r, 0, TAU); ctx.fill();
+        var q = s.TW[i], bump = Math.sin(clk * q.w + q.ph); bump = bump > 0 ? Math.pow(bump, 14) : 0; /* 뾰족한 봉우리: 주기의 대부분은 가만히 있다가 잠깐만 반짝인다 */
+        var twx = q.x + dx * q.par, twy = q.y + dy * q.par, twa = Math.min(1, q.a * 1.5 + 0.75 * bump);
+        ctx.fillStyle = q.col ? s.colS(q.col, twa) : s.inkS(Math.min(1, q.a * (1 + 0.9 * bump) + 0.5 * bump));
+        ctx.beginPath(); ctx.arc(twx, twy, q.r * (1 + 1.3 * bump), 0, TAU); ctx.fill();
+        /* 반짝이는 순간에만 가는 십자 빛줄기가 뻗는다 */
+        if (bump > 0.04) {
+          var gl = q.r * 7.5 * bump;
+          ctx.strokeStyle = q.col ? s.colS(q.col, 0.85 * bump) : s.inkS(0.85 * bump); ctx.lineWidth = Math.max(0.6, 0.7 * u); ctx.lineCap = 'round';
+          ctx.beginPath(); ctx.moveTo(twx - gl, twy); ctx.lineTo(twx + gl, twy); ctx.moveTo(twx, twy - gl); ctx.lineTo(twx, twy + gl); ctx.stroke();
+        }
       }
       if (s.RG && s.RG.length) {
         ctx.strokeStyle = s.ringS; ctx.lineWidth = s.lwR; ctx.beginPath();
@@ -591,7 +605,7 @@
         if (f.ph === 2) {
           pr = (f.tau - f.t3) / f.linkDur; if (pr <= 0) continue; if (pr > 1) pr = 1;
           /* 이웃 별자리로 건너가는 점. 지나간 자리에 선을 남기지 않는다 */
-          if (pr < 1) tips.push(lx + (mx2 - lx) * pr, ly + (my2 - ly) * pr, L.aAcc, i);
+          if (pr < 1) tips.push(lx + (mx2 - lx) * pr, ly + (my2 - ly) * pr, L.aAcc, i, lx, ly);
           continue;
         }
         /* 점선은 그리지 않는다. 아래는 예전에 점선을 남기던 코드라 건너뛴다 */
@@ -611,7 +625,18 @@
       }
       ctx.setLineDash([]);
       /* 건너가는 점: 강조색으로 채운 점과 그 둘레의 옅은 고리 */
-      for (j = 0; j < tips.length; j += 4) {
+      for (j = 0; j < tips.length; j += 6) {
+        /* 꼬리: 지나온 쪽으로 가늘어지며 옅어진다. 길이는 지나온 거리와 46u 가운데 짧은 쪽 */
+        var tdx = tips[j] - tips[j + 4], tdy = tips[j + 1] - tips[j + 5], tds = Math.sqrt(tdx * tdx + tdy * tdy);
+        if (tds > 1) {
+          var tl = Math.min(tds, 46 * u), tux = tdx / tds, tuy = tdy / tds, NT = 9, tcol = F[tips[j + 3]].col;
+          ctx.lineCap = 'round';
+          for (var tq = 0; tq < NT; tq++) {
+            var t0 = tq / NT, t1 = (tq + 1) / NT;
+            ctx.strokeStyle = s.colS(tcol, tips[j + 2] * 0.85 * (1 - t0) * (1 - t0)); ctx.lineWidth = Math.max(0.6, (4.2 - 3.4 * t0) * u);
+            ctx.beginPath(); ctx.moveTo(tips[j] - tux * tl * t0, tips[j + 1] - tuy * tl * t0); ctx.lineTo(tips[j] - tux * tl * t1, tips[j + 1] - tuy * tl * t1); ctx.stroke();
+          }
+        }
         ctx.fillStyle = s.colS(F[tips[j + 3]].col, tips[j + 2]); ctx.beginPath(); ctx.arc(tips[j], tips[j + 1], 2.6 * u, 0, TAU); ctx.fill();
         ctx.strokeStyle = s.colS(F[tips[j + 3]].col, 0.45 * tips[j + 2]); ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(tips[j], tips[j + 1], 6 * u, 0, TAU); ctx.stroke();
       }
