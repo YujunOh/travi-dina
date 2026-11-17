@@ -23,12 +23,12 @@ button, select, input { font: inherit; }
 .topbar .in { height: 100%; display: flex; align-items: center; gap: 32px; padding: 0 40px; }
 /* 로고는 그림 없이 굵은 글씨. 자간을 벌리지 않는다. 글꼴, 굵기, 크기는 아래 조절 막대가 바꾼다 */
 .brand { display: flex; align-items: center; font-family: var(--logo-font, Outfit), Inter, system-ui, sans-serif; font-weight: var(--logo-weight, 650); font-size: var(--logo-size, 22px); letter-spacing: 0; }
-/* 로고 첫 글자 T 의 머리 위에서 물줄기 네 가닥이 솟았다가 양옆으로 떨어진다. 옅은 선 위를 짧은 물마디가 아주 천천히 흐른다 */
+/* 로고 첫 글자 T 의 머리 위에서 물줄기 다섯 가닥이 부채꼴로 곧게 뻗어 오른다. 옅은 선 위를 짧은 물마디가 아주 천천히 흐른다 */
 .brand .mark { position: relative; display: inline-block; }
-.brand .spray { position: absolute; left: calc(0.29em - 1.1em); top: calc(0.24em - 0.8em); width: 2.2em; height: 1em; overflow: visible; pointer-events: none; }
+.brand .spray { position: absolute; left: calc(0.29em - 0.75em); top: calc(0.24em - 0.82em); width: 1.5em; height: 0.86em; -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 55%); mask-image: linear-gradient(to bottom, transparent 0%, #000 55%); overflow: visible; pointer-events: none; }
 .brand .spray g { fill: none; stroke-linecap: round; }
-.brand .spray g:nth-child(1) { stroke: #a9bbec; } .brand .spray g:nth-child(2) { stroke: #a8dcc0; }
-.brand .spray g:nth-child(3) { stroke: #f2d49a; } .brand .spray g:nth-child(4) { stroke: #efb1b1; }
+.brand .spray g:nth-child(4n+1) { stroke: #a9bbec; } .brand .spray g:nth-child(4n+2) { stroke: #a8dcc0; }
+.brand .spray g:nth-child(4n+3) { stroke: #f2d49a; } .brand .spray g:nth-child(4n+4) { stroke: #efb1b1; }
 .brand .spray .line { stroke-width: 0.03; opacity: 0.22; }
 .brand .spray .flow { stroke-width: 0.055; stroke-dasharray: 0.1 0.15; opacity: 0.85; animation: flow 8.5s linear infinite; }
 @keyframes flow { from { stroke-dashoffset: 0; } to { stroke-dashoffset: -3.25; } }
@@ -95,7 +95,7 @@ button, select, input { font: inherit; }
 <body>
 
 <header class="topbar"><div class="in">
-  <a class="brand" href="index.html"><span class="mark"><svg class="spray" viewBox="-1.1 -0.8 2.2 1" aria-hidden="true"><g><path class="line" d="M0 0 Q-0.46 -0.92 -0.92 0.12"/><path class="flow" d="M0 0 Q-0.46 -0.92 -0.92 0.12"/></g><g><path class="line" d="M0 0 Q-0.23 -1.36 -0.46 0.12"/><path class="flow" d="M0 0 Q-0.23 -1.36 -0.46 0.12"/></g><g><path class="line" d="M0 0 Q0.22 -1.4 0.44 0.12"/><path class="flow" d="M0 0 Q0.22 -1.4 0.44 0.12"/></g><g><path class="line" d="M0 0 Q0.44 -0.96 0.88 0.12"/><path class="flow" d="M0 0 Q0.44 -0.96 0.88 0.12"/></g></svg><span id="logoText">Travi</span></span></a>
+  <a class="brand" href="index.html"><span class="mark"><svg class="spray" viewBox="-0.75 -0.82 1.5 0.86" aria-hidden="true"><g><path class="line" d="M0 0 L-0.62 -0.46"/><path class="flow" d="M0 0 L-0.62 -0.46"/></g><g><path class="line" d="M0 0 L-0.3 -0.66"/><path class="flow" d="M0 0 L-0.3 -0.66"/></g><g><path class="line" d="M0 0 L0.0 -0.76"/><path class="flow" d="M0 0 L0.0 -0.76"/></g><g><path class="line" d="M0 0 L0.3 -0.66"/><path class="flow" d="M0 0 L0.3 -0.66"/></g><g><path class="line" d="M0 0 L0.62 -0.46"/><path class="flow" d="M0 0 L0.62 -0.46"/></g></svg><span id="logoText">Travi</span></span></a>
   <span class="sp"></span>
   <nav class="nav">
     <a class="h" href="#doms">Cooperatives</a>
